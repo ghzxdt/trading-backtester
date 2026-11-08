@@ -13,11 +13,14 @@ app's Python (nothing to install):
 ```
 ..\trading-research\.venv\Scripts\python.exe -B run_studies.py
 ..\trading-research\.venv\Scripts\python.exe -B run_studies.py --symbols SPY QQQ --horizons 1 5
+..\trading-research\.venv\Scripts\python.exe -B run_trades.py
 ..\trading-research\.venv\Scripts\python.exe -B -m unittest discover -s tests
 ```
 
 `run.cmd` does the first of these. Each run writes `reports/<date>-indicator-studies.md` (plus an `.html` page)
-and appends every test to `trials.jsonl`.
+and appends every test to `trials.jsonl`. `run_trades.py` (the app's "Run trade simulation") writes
+`reports/<date>-trade-simulation.md` and `exports/trade_simulation.json`, which the research app's Daily thesis tab
+reads if it exists (ETF pricing only).
 
 ## What a study measures
 
@@ -57,8 +60,8 @@ always visible.
 
 ## Next steps
 
-1. Trade simulator: entries, stops, exits, costs (ETF and Kalshi maker/taker), 4 PM funding for perps, compared
-   with buy-and-hold at the same exposure.
+1. Trade simulator: done 2026-11-08 (no stops yet: daily bars can't show whether a stop would fill). See LOG.md
+   for the first results.
 2. Regime splits for the candidates (VIX level, trend, credit), declared before looking.
 3. Intraday studies (VWAP, opening range, relative volume by time of day) once the research app's minute history
    has a few months of sessions.
