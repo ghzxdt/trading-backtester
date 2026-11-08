@@ -18,5 +18,6 @@ charts with indicators; this app measures which indicators actually carried info
 
 ## How to run
 - Desktop shortcut **Trading Backtester** opens `backtester_app.pyw` (Tk) with the research app's `pythonw.exe`.
+- Next session: read `LOG.md` ("Pick up here") first.
 - Studies: `..\trading-research\.venv\Scripts\python.exe -B run_studies.py` (or `run.cmd`); about 10 seconds.
 - Tests: `..\trading-research\.venv\Scripts\python.exe -B -m unittest discover -s tests`.
