@@ -30,7 +30,7 @@ def python_exe() -> Path:
 
 
 def latest_report() -> Path | None:
-    reports = sorted((HERE / "reports").glob("*-indicator-studies.md"))
+    reports = sorted((HERE / "reports").glob("*.md"), key=lambda path: path.stat().st_mtime)
     if not reports:
         return None
     page = reports[-1].with_suffix(".html")
@@ -76,7 +76,8 @@ class App:
         bar = ttk.Frame(frame)
         bar.pack(fill="x", pady=(0, 10))
         self.buttons = []
-        for label, action in (("Run indicator studies", self.run_studies), ("Open latest report", self.open_report),
+        for label, action in (("Run indicator studies", self.run_studies), ("Run trade simulation", self.run_trades),
+                              ("Open latest report", self.open_report),
                               ("Open reports folder", lambda: os.startfile(HERE / "reports")),
                               ("Run tests", self.run_tests), ("Open research app", self.open_research)):
             button = ttk.Button(bar, text=label, command=action)
@@ -84,7 +85,7 @@ class App:
             self.buttons.append(button)
         self.output = scrolledtext.ScrolledText(frame, height=20, font=("Consolas", 10), wrap="word")
         self.output.pack(fill="both", expand=True)
-        self.write("Ready. 'Run indicator studies' takes about 10 seconds and adds a dated report.\n")
+        self.write("Ready. 'Run indicator studies' takes about 10 seconds and 'Run trade simulation' about 15; each adds a dated report.\n")
         root.after(150, self.drain)
 
     def write(self, text: str):
@@ -137,6 +138,9 @@ class App:
 
     def run_studies(self):
         self.run(["run_studies.py"], "Indicator studies", after=self.open_report)
+
+    def run_trades(self):
+        self.run(["run_trades.py"], "Trade simulation", after=self.open_report)
 
     def run_tests(self):
         self.run(["-m", "unittest", "discover", "-s", "tests"], "Tests")

@@ -3,5 +3,7 @@
   "development": {"start": "2010-01-01", "end": null},
   "holdout": {"start": "1993-01-01", "end": "2009-12-31"},
   "costs_round_trip_bps": {"etf": 2, "kalshi_taker": 24, "kalshi_maker": 4},
+  "funding_bps_per_day": 1.37,
+  "funding_note": "Mean US500 perp funding per daily record (zeros included), measured 2026-11-07; charged for every calendar day held through a 4 PM funding time.",
   "verdict_cost": "etf"
 }
