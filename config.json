@@ -1,0 +1,7 @@
+{
+  "research_app": "C:/Users/gzdt/trading-research",
+  "development": {"start": "2010-01-01", "end": null},
+  "holdout": {"start": "1993-01-01", "end": "2009-12-31"},
+  "costs_round_trip_bps": {"etf": 2, "kalshi_taker": 24, "kalshi_maker": 4},
+  "verdict_cost": "etf"
+}
