@@ -19,6 +19,7 @@ import pandas as pd
 
 from backtester import data, registry
 from backtester.catalog import STUDIES
+from backtester.report_html import render
 from backtester.study import bh_qvalues, evaluate, forward_return, verdict
 
 HERE = Path(__file__).resolve().parent
@@ -130,7 +131,9 @@ def main(argv=None) -> int:
     fingerprint, version = data.fingerprint(root), code_version()
     REPORTS.mkdir(exist_ok=True)
     path = REPORTS / f"{started:%Y-%m-%d}-indicator-studies.md"
-    path.write_text(report(rows, cfg, fingerprint, version, started), encoding="utf-8")
+    text = report(rows, cfg, fingerprint, version, started)
+    path.write_text(text, encoding="utf-8")
+    path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
     registry.append(TRIALS, {"run_at": started.isoformat(timespec="seconds"), "code": version, "data": fingerprint,
                              "seed": args.seed, "draws": args.draws, "report": path.name,
                              "tests": [{"study": r["study"], "version": r["version"], "symbol": r["symbol"],

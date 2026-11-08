@@ -91,6 +91,18 @@ class StudyTests(unittest.TestCase):
         self.assertEqual(study.verdict({**ok, "excess": -0.002}, ok, 0.05, 0.0002), "Opposite effect (weaker than normal)")
 
 
+class ReportPageTests(unittest.TestCase):
+    def test_markdown_report_renders_tables_and_highlights_verdicts(self):
+        from backtester.report_html import render
+        page = render("# Title\n\nSome **bold** text.\n\n| A | Verdict |\n|---|---|\n| <x> | Candidate |\n\n- one\n")
+        self.assertIn("<h1>Title</h1>", page)
+        self.assertIn("<b>bold</b>", page)
+        self.assertIn("<th>A</th>", page)
+        self.assertIn('<td class="v-Candidate">Candidate</td>', page)
+        self.assertIn("&lt;x&gt;", page)  # escaped
+        self.assertIn("<li>one</li>", page)
+
+
 class RegistryTests(unittest.TestCase):
     def test_chain_appends_and_detects_edits(self):
         with tempfile.TemporaryDirectory() as tmp:

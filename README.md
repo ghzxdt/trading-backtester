@@ -6,7 +6,9 @@ them. The point is to turn "I think this indicator helps" into a number before y
 
 ## Run it
 
-It uses the research app's Python environment, so there is nothing to install:
+Double-click **Trading Backtester** on the desktop. The app runs the studies (about 10 seconds) and opens the
+report in your browser, runs the tests, and opens the research app. From a terminal instead, using the research
+app's Python (nothing to install):
 
 ```
 ..\trading-research\.venv\Scripts\python.exe -B run_studies.py
@@ -14,8 +16,8 @@ It uses the research app's Python environment, so there is nothing to install:
 ..\trading-research\.venv\Scripts\python.exe -B -m unittest discover -s tests
 ```
 
-`run.cmd` does the first of these. Each run writes `reports/<date>-indicator-studies.md` and appends every test to
-`trials.jsonl`.
+`run.cmd` does the first of these. Each run writes `reports/<date>-indicator-studies.md` (plus an `.html` page)
+and appends every test to `trials.jsonl`.
 
 ## What a study measures
 
