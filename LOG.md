@@ -17,6 +17,15 @@ regime, not a free lunch. Trades fully invested during a crash produce the -20% 
 Next ideas (each a new registered version, never an edit): a trend or volatility filter (registered before
 testing), stops once intraday bars exist, and leverage scaling for the risk view.
 
+## 2026-11-12
+- Laptop reset: the project moved to `C:\Claude\trading-backtester`, and `config.json` now points to
+  `C:/Claude/trading-research`. Committed the 2026-11-09 study and trade-simulation runs that were left
+  uncommitted before the reset (3 trial records).
+- Re-ran `run_studies.py` on the new laptop (report `2026-11-13-indicator-studies`, named by UTC date). Data
+  fingerprint 3af56709652ae7c6 and all 90 results are identical to the 2026-11-09 run; 456 tests recorded in total.
+- Recreated the "Trading Backtester" desktop shortcut (research app's `pythonw.exe`, `assets\backtester.ico`);
+  the app opens from it.
+
 ## 2026-11-08
 - Started the app: causal indicators, event studies with circular-shift p-values, BH correction, the 1993-2009
   holdout, and a hash-chained trial record. First run: 90 tests. Oversold mean reversion (RSI(2) < 10, RSI(14) < 30,
