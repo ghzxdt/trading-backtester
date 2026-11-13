@@ -1,6 +1,6 @@
 # Indicator studies, 2026-11-08
 
-Code uncommitted; research-app data fingerprint b63e9f180f1e0ab0; 90 tests (90 with enough signals).
+Code bc33571; research-app data fingerprint 3af56709652ae7c6; 90 tests (90 with enough signals).
 
 **How to read this.** Each row asks: after the signal (known at that day's close), how did the index do over the next *h* sessions compared with all days in the same period? *Excess* is that difference in basis points (100 bp = 1%). *p* is the chance of an excess this large from a randomly shifted copy of the same signal pattern; *q* corrects p for every test in this run. *Holdout* re-checks the same rule on 1993-2009 data that played no part in choosing it. *Next-open* is the excess if you buy at the next morning's open instead of the close.
 
@@ -44,9 +44,9 @@ Low touches the 21-day EMA and the close holds above it, in an uptrend (close ab
 
 | Symbol | h | Signals (trades) | Excess bp | Hit rate vs all days | p | q | Holdout signals | Holdout excess bp | Holdout p | Next-open excess bp | Verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| SPY | 1 | 380 (380) | -9.5 | 52% vs 55% | 0.062 | 0.237 | 362 | +7.2 | 0.235 | -9.2 | No evidence |
-| SPY | 5 | 379 (213) | -20.4 | 56% vs 61% | 0.114 | 0.301 | 362 | +16.8 | 0.310 | -20.2 | No evidence |
-| SPY | 10 | 377 (161) | -15.6 | 59% vs 64% | 0.426 | 0.581 | 362 | +17.9 | 0.443 | -15.6 | No evidence |
+| SPY | 1 | 380 (380) | -9.5 | 52% vs 55% | 0.062 | 0.237 | 361 | +7.3 | 0.233 | -9.2 | No evidence |
+| SPY | 5 | 379 (213) | -20.4 | 56% vs 61% | 0.114 | 0.301 | 361 | +16.1 | 0.329 | -20.2 | No evidence |
+| SPY | 10 | 377 (161) | -15.6 | 59% vs 64% | 0.426 | 0.581 | 361 | +16.6 | 0.479 | -15.6 | No evidence |
 | QQQ | 1 | 370 (370) | -9.0 | 55% vs 56% | 0.178 | 0.381 | 197 | -1.0 | 0.931 | -6.4 | No evidence |
 | QQQ | 5 | 370 (221) | -16.9 | 58% vs 60% | 0.294 | 0.458 | 197 | +45.8 | 0.259 | -14.4 | No evidence |
 | QQQ | 10 | 369 (161) | -30.4 | 61% vs 63% | 0.213 | 0.395 | 197 | +68.4 | 0.275 | -28.1 | No evidence |
