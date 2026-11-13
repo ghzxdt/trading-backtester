@@ -1,7 +1,7 @@
 # Trading backtester
 
 Separate app that tests indicator and setup ideas on data collected by the research app
-(`C:\Users\gzdt\trading-research`, see its CLAUDE.md and LOG.md for context). The user develops a thesis there and
+(`C:\Claude\trading-research`, see its CLAUDE.md and LOG.md for context). The user develops a thesis there and
 charts with indicators; this app measures which indicators actually carried information.
 
 ## Rules
