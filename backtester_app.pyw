@@ -49,7 +49,7 @@ def status_text() -> str:
         parts.append("Research app data not found; check config.json")
     try:
         from backtester import registry
-        parts.append(f"{registry.total_tests(HERE / 'trials.jsonl')} tests recorded")
+        parts.append(f"{len(registry.read(HERE / 'trials.jsonl'))} runs recorded")  # runs, not distinct ideas
     except Exception as exc:
         parts.append(f"Trial record unreadable: {exc}")
     report = latest_report()
@@ -61,7 +61,7 @@ class App:
     def __init__(self, root: tk.Tk):
         self.root, self.events, self.busy = root, queue.Queue(), False
         root.title("Trading Backtester")
-        root.geometry("900x600")
+        root.geometry("1040x600")
         root.minsize(720, 460)
         icon = HERE / "assets" / "backtester.ico"
         if icon.exists():
@@ -78,6 +78,7 @@ class App:
         self.buttons = []
         for label, action in (("Run indicator studies", self.run_studies), ("Run trade simulation", self.run_trades),
                               ("Open latest report", self.open_report),
+                              ("Open trade list", self.open_trades),
                               ("Open reports folder", lambda: os.startfile(HERE / "reports")),
                               ("Run tests", self.run_tests), ("Open research app", self.open_research)):
             button = ttk.Button(bar, text=label, command=action)
@@ -151,6 +152,13 @@ class App:
             webbrowser.open(report.as_uri())
         else:
             messagebox.showinfo("Trading Backtester", "No report yet. Click 'Run indicator studies' first.")
+
+    def open_trades(self):
+        lists = sorted((HERE / "exports" / "trades").glob("*.csv"), key=lambda path: path.stat().st_mtime)
+        if lists:
+            os.startfile(lists[-1])  # opens in the default spreadsheet program
+        else:
+            messagebox.showinfo("Trading Backtester", "No trade list yet. Click 'Run trade simulation' first.")
 
     def open_research(self):
         root = research_root()

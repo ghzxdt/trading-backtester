@@ -52,9 +52,11 @@ def price_trades(frame: pd.DataFrame, trades, mode: str, cfg: dict) -> pd.DataFr
         entry = open_[p + 1] if mode == "etf_next_open" else close[p]
         gross = close[e] / entry - 1
         cost = costs_for(mode, cfg, frame.index[p], frame.index[e])
-        rows.append({"signal_day": frame.index[p], "exit_day": frame.index[e], "sessions": e - p,
-                     "gross": gross, "cost": cost, "net": gross - cost})
-    return pd.DataFrame(rows, columns=["signal_day", "exit_day", "sessions", "gross", "cost", "net"])
+        rows.append({"signal_day": frame.index[p], "entry_day": frame.index[p + 1 if mode == "etf_next_open" else p],
+                     "entry_price": entry, "exit_day": frame.index[e], "exit_price": close[e], "sessions": e - p,
+                     "gross": gross, "cost": cost, "net": (1 + gross) * (1 - cost) - 1})
+    return pd.DataFrame(rows, columns=["signal_day", "entry_day", "entry_price", "exit_day", "exit_price",
+                                       "sessions", "gross", "cost", "net"])
 
 
 def daily_returns(frame: pd.DataFrame, trades, mode: str, cfg: dict, mask: pd.Series) -> tuple[pd.Series, float]:
@@ -90,7 +92,8 @@ def summary(returns: pd.Series) -> dict:
     equity = (1 + returns).cumprod()
     years = len(returns) / TRADING_DAYS
     cagr = float(equity.iloc[-1] ** (1 / years) - 1) if years > 0 and equity.iloc[-1] > 0 else -1.0
-    drawdown = float((equity / equity.cummax() - 1).min())
+    peak = equity.cummax().clip(lower=1.0)  # starting capital counts as the first peak
+    drawdown = float((equity / peak - 1).min())
     return {"cagr": cagr, "max_drawdown": drawdown,
             "return_per_drawdown": cagr / abs(drawdown) if drawdown < 0 else None}
 
@@ -119,7 +122,8 @@ def evaluate(frame, signal, exit_rule, mask, mode, cfg, draws=2000, rng=None) ->
     priced = price_trades(frame, trades, mode, cfg)
     returns, exposure = daily_returns(frame, trades, mode, cfg, mask)
     out = {"trades": len(priced), "exposure": exposure, "strategy": summary(returns),
-           "matched": summary(matched_buy_and_hold(frame, mask, exposure, mode, cfg))}
+           "matched": summary(matched_buy_and_hold(frame, mask, exposure, mode, cfg)),
+           "priced": priced}  # the trade list itself; the caller takes it out before anything is saved
     if len(priced):
         wins, losses = priced.loc[priced["net"] > 0, "net"], priced.loc[priced["net"] <= 0, "net"]
         out.update(win_rate=float((priced["net"] > 0).mean()), mean_net=float(priced["net"].mean()),

@@ -4,8 +4,9 @@
 
 12 strategies (SPY/QQQ x 3 oversold signals x 2 exits), each priced four ways (ETF at the close, ETF at the next
 open, Kalshi perp as maker or taker using the ETF as the price proxy), on the development period (2010 on) and the
-untouched 1993-2009 holdout. Writes reports/<date>-trade-simulation.md and .html, exports/trade_simulation.json
-(read by the research app's Daily thesis tab; ETF modes only), and appends the run to trials.jsonl.
+1993-2009 holdout. Writes reports/<date-time>-trade-simulation.md and .html, exports/trade_simulation.json
+(read by the research app's Daily thesis tab; ETF modes only), the list of every simulated trade
+(exports/trades/<date-time>-trade-simulation.csv), and appends the run to trials.jsonl.
 """
 from __future__ import annotations
 
@@ -15,8 +16,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
-from backtester import data, registry, simulate
+from backtester import data, registry, runlog, simulate
 from backtester.report_html import render
 from backtester.strategies import EXITS, MODES, SIGNALS, SYMBOLS, signal_rule
 from run_studies import code_version, period_mask
@@ -34,10 +36,10 @@ def buy_and_hold(frame, mask) -> dict:
     return simulate.summary(frame["close"].pct_change().fillna(0.0)[mask.to_numpy(bool)])
 
 
-def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS) -> tuple[list[dict], dict, dict]:
+def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS) -> tuple[list[dict], dict, dict, pd.DataFrame]:
     cfg = cfg or data.config()
     root = root or data.research_root(cfg)
-    rows, signal_days, full = [], {}, {}
+    rows, signal_days, full, lists = [], {}, {}, []
     for symbol in symbols:
         frame = data.load(symbol, root)
         dev, hold = period_mask(frame.index, cfg["development"]), period_mask(frame.index, cfg["holdout"])
@@ -57,12 +59,32 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS) -> tuple[li
                                                    np.random.default_rng(seed))
                     hold_result = (simulate.evaluate(frame, signal, ex.rule, hold, mode, cfg, draws,
                                                      np.random.default_rng(seed + 1)) if hold.any() else None)
+                    for period, result in (("development", dev_result), ("holdout", hold_result)):
+                        if result is not None:
+                            lists.append(result.pop("priced").assign(
+                                symbol=symbol, signal=name, signal_version=study.version, exit=ex.name,
+                                exit_version=ex.version, pricing=mode, period=period))
                     rows.append({"symbol": symbol, "signal": name, "signal_version": study.version,
                                  "signal_description": study.description, "exit": ex.name,
                                  "exit_version": ex.version, "exit_description": ex.description, "mode": mode,
                                  "dev": dev_result, "holdout": hold_result,
                                  "verdict": simulate.verdict(dev_result, hold_result)})
-    return rows, signal_days, full
+    return rows, signal_days, full, trade_list(lists)
+
+
+TRADE_COLUMNS = ["symbol", "signal", "signal_version", "exit", "exit_version", "pricing", "period", "signal_day",
+                 "entry_day", "entry_price", "exit_day", "exit_price", "sessions", "gross", "cost", "net"]
+
+
+def trade_list(lists: list[pd.DataFrame]) -> pd.DataFrame:
+    """Every simulated trade, one row each. Prices are the adjusted prices the simulation used (dividends
+    included), so they differ from the prices quoted on the day; returns are fractions (0.01 = 1%)."""
+    if not lists:
+        return pd.DataFrame(columns=TRADE_COLUMNS)
+    table = pd.concat(lists, ignore_index=True)[TRADE_COLUMNS]
+    for column in ("signal_day", "entry_day", "exit_day"):
+        table[column] = pd.to_datetime(table[column]).dt.strftime("%Y-%m-%d")
+    return table.round({"entry_price": 4, "exit_price": 4, "gross": 6, "cost": 6, "net": 6})
 
 
 def per_drawdown_note(result: dict | None) -> str:
@@ -106,7 +128,7 @@ def period_lines(label: str, results: list[dict | None]) -> list[str]:
         f"| {name} | " + " | ".join(cell(r, fn) for r in results) + " |" for name, fn in rows]
 
 
-def report(rows, cfg, fingerprint, version, started, draws, full) -> str:
+def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: str | None = None) -> str:
     fees = cfg["costs_round_trip_bps"]
     lines = [f"# Trade simulation, {started:%Y-%m-%d}", "",
              f"Code {version}; research-app data fingerprint {fingerprint}; {len(rows)} strategy x pricing results; "
@@ -169,6 +191,9 @@ def report(rows, cfg, fingerprint, version, started, draws, full) -> str:
         "", "Limits: adjusted daily prices (dividends included), no slippage beyond the stated costs, no stops, no "
         "taxes, 1x only. A Lead is a rule worth watching forward, not proof of an edge; results at higher leverage "
         "scale both the gains and the drawdowns."]
+    if trades_file:
+        lines += ["", f"Every simulated trade is listed in `{trades_file}` (one row per trade and pricing; adjusted "
+                  "prices, returns as fractions)."]
     return "\n".join(lines) + "\n"
 
 
@@ -180,10 +205,23 @@ def compact(result: dict | None) -> dict | None:
     return {**{k: result.get(k) for k in keep}, "strategy": result["strategy"], "matched": result["matched"]}
 
 
-def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full) -> dict:
-    """Evidence for the research app's Daily thesis tab: ETF pricing only (no Kalshi in the thesis)."""
+VERDICT_DEFINITION = ("v1, registered 2026-11-08. Lead: the mean gross trade beats at least 95% of random same-length "
+                      "entries in development and 90% in the 1993-2009 period, and CAGR is above buy-and-hold held at "
+                      "the strategy's time in the market in both. The 1993-2009 period also helped choose these "
+                      "signals, so it is not independent confirmation.")
+
+
+def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full, run_info: dict | None = None) -> dict:
+    """Evidence for the research app's Daily thesis tab: ETF pricing only (no Kalshi in the thesis).
+
+    Schema 1 is unchanged for the reader; the fields from "verdict_definition" down were added 2026-11-13."""
     return {"kind": "trade_simulation", "schema": 1, "generated_at": started.isoformat(timespec="seconds"),
             "code": version, "data_fingerprint": fingerprint, "report": report_name,
+            "verdict_definition": VERDICT_DEFINITION,
+            "data_through": {key.split(":")[0]: value["last_date"] for key, value in signal_days.items()},
+            "entry_notes": {"etf_close": "Needs the order in before the close, on an estimate of that close's signal.",
+                            "etf_next_open": "Signal known after the close; bought at the next session's open."},
+            **(run_info or {}),
             "periods": {"development": cfg["development"], "holdout": cfg["holdout"]},
             "buy_and_hold": full,
             "costs_round_trip_bps": {"etf": cfg["costs_round_trip_bps"]["etf"]},
@@ -211,19 +249,19 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     started = datetime.now(timezone.utc)
     cfg = data.config()
-    root = data.research_root(cfg)
-    rows, signal_days, full = run(args.draws, args.seed, cfg, root)
-    fingerprint, version = data.fingerprint(root), code_version()
+    root, fingerprint = data.snapshot(data.research_root(cfg))  # the run reads this copy, which stays on disk
+    version = code_version()
+    rows, signal_days, full, trades = run(args.draws, args.seed, cfg, root)
     REPORTS.mkdir(exist_ok=True)
-    path = REPORTS / f"{started:%Y-%m-%d}-trade-simulation.md"
-    text = report(rows, cfg, fingerprint, version, started, args.draws, full)
-    path.write_text(text, encoding="utf-8")
-    path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
-    write_json(EXPORTS / "trade_simulation.json",
-               export(rows, signal_days, cfg, fingerprint, version, started, path.name, full))
+    stem = runlog.report_stem("trade-simulation", started)
+    path, trades_path = REPORTS / f"{stem}.md", EXPORTS / "trades" / f"{stem}.csv"
+    trades_name = trades_path.relative_to(HERE).as_posix()
+    text = report(rows, cfg, fingerprint, version, started, args.draws, full, trades_name)
+    # The record goes first: if it can't be written (a broken chain), no report or export appears without one.
     registry.append(TRIALS, {"kind": "trade_simulation", "run_at": started.isoformat(timespec="seconds"),
-                             "code": version, "data": fingerprint, "seed": args.seed, "draws": args.draws,
-                             "report": path.name,
+                             "code": version, "data": fingerprint, "settings": runlog.settings(cfg),
+                             "seed": args.seed, "draws": args.draws,
+                             "report": path.name, "trade_list": trades_name,
                              "tests": [{"study": f"{r['signal']}+{r['exit']}", "version": f"{r['signal_version']}/{r['exit_version']}",
                                         "symbol": r["symbol"], "mode": r["mode"], "verdict": r["verdict"],
                                         "dev_trades": r["dev"]["trades"], "dev_mean_net": r["dev"].get("mean_net"),
@@ -232,7 +270,15 @@ def main(argv=None) -> int:
                                         "holdout_trades": (r["holdout"] or {}).get("trades"),
                                         "holdout_random_percentile": (r["holdout"] or {}).get("random_percentile")}
                                        for r in rows]})
-    print(f"Wrote {path} and exports/trade_simulation.json ({len(rows)} results; "
+    path.write_text(text, encoding="utf-8")
+    path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
+    trades_path.parent.mkdir(parents=True, exist_ok=True)
+    trades.to_csv(trades_path, index=False, lineterminator="\n")
+    write_json(EXPORTS / "trade_simulation.json",
+               export(rows, signal_days, cfg, fingerprint, version, started, path.name, full,
+                      {"seed": args.seed, "draws": args.draws, "settings": runlog.settings(cfg),
+                       "trade_list": trades_name}))
+    print(f"Wrote {path}, {trades_name} ({len(trades)} trades) and exports/trade_simulation.json ({len(rows)} results; "
           f"{registry.total_tests(TRIALS)} tests recorded in total).")
     for r in rows:
         if r["verdict"] == "Lead":

@@ -10,14 +10,13 @@ test is appended to trials.jsonl, so failed ideas stay on the record.
 from __future__ import annotations
 
 import argparse
-import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from backtester import data, registry
+from backtester import data, registry, runlog
 from backtester.catalog import STUDIES
 from backtester.report_html import render
 from backtester.study import bh_qvalues, evaluate, forward_return, verdict
@@ -33,12 +32,7 @@ def period_mask(index: pd.DatetimeIndex, spec: dict) -> pd.Series:
     return pd.Series((index >= start) & (index <= end), index=index)
 
 
-def code_version() -> str:
-    try:
-        return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=HERE, capture_output=True,
-                              text=True, timeout=10).stdout.strip() or "uncommitted"
-    except OSError:
-        return "unknown"
+code_version = runlog.code_version  # kept under its old name for run_trades.py
 
 
 def run(symbols, horizons, draws, seed, cfg=None, root=None) -> list[dict]:
@@ -126,21 +120,23 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     started = datetime.now(timezone.utc)
     cfg = data.config()
-    root = data.research_root(cfg)
+    root, fingerprint = data.snapshot(data.research_root(cfg))  # the run reads this copy, which stays on disk
+    version = code_version()
     rows = run([s.upper() for s in args.symbols], args.horizons, args.draws, args.seed, cfg, root)
-    fingerprint, version = data.fingerprint(root), code_version()
     REPORTS.mkdir(exist_ok=True)
-    path = REPORTS / f"{started:%Y-%m-%d}-indicator-studies.md"
+    path = REPORTS / f"{runlog.report_stem('indicator-studies', started)}.md"
     text = report(rows, cfg, fingerprint, version, started)
-    path.write_text(text, encoding="utf-8")
-    path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
+    # The record goes first: if it can't be written (a broken chain), no report appears without one.
     registry.append(TRIALS, {"run_at": started.isoformat(timespec="seconds"), "code": version, "data": fingerprint,
+                             "settings": runlog.settings(cfg),
                              "seed": args.seed, "draws": args.draws, "report": path.name,
                              "tests": [{"study": r["study"], "version": r["version"], "symbol": r["symbol"],
                                         "horizon": r["horizon"], "verdict": r["verdict"],
                                         "dev_excess": r["dev"].get("excess"), "dev_p": r["dev"].get("p"),
                                         "q": r.get("q"), "holdout_excess": (r["holdout"] or {}).get("excess"),
                                         "holdout_p": (r["holdout"] or {}).get("p")} for r in rows]})
+    path.write_text(text, encoding="utf-8")
+    path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
     print(f"Wrote {path} ({len(rows)} tests; {registry.total_tests(TRIALS)} recorded in total).")
     for r in rows:
         if r["verdict"] == "Candidate":

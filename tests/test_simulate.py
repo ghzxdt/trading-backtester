@@ -59,7 +59,11 @@ class TradeTests(unittest.TestCase):
         nxt = simulate.price_trades(f, trades, "etf_next_open", CFG).iloc[0]
         self.assertAlmostEqual(close["gross"], f["close"].iloc[35] / f["close"].iloc[30] - 1)
         self.assertAlmostEqual(nxt["gross"], f["close"].iloc[35] / f["open"].iloc[31] - 1)
-        self.assertAlmostEqual(close["net"], close["gross"] - 2e-4)
+        self.assertAlmostEqual(close["net"], (1 + close["gross"]) * (1 - 2e-4) - 1)  # as the equity curve compounds it
+        self.assertEqual(close["entry_day"], f.index[30])
+        self.assertEqual(nxt["entry_day"], f.index[31])
+        self.assertAlmostEqual(nxt["entry_price"], f["open"].iloc[31])
+        self.assertAlmostEqual(close["exit_price"], f["close"].iloc[35])
 
     def test_daily_equity_compounds_to_the_trade_result(self):
         f = frame()
@@ -68,7 +72,7 @@ class TradeTests(unittest.TestCase):
         for mode in ("etf_close", "etf_next_open", "perp_taker"):
             returns, exposure = simulate.daily_returns(f, trades, mode, CFG, mask)
             priced = simulate.price_trades(f, trades, mode, CFG)
-            expected = np.prod((1 + priced["gross"]) * (1 - priced["cost"]))
+            expected = np.prod(1 + priced["net"])  # the trade list and the equity curve agree
             self.assertAlmostEqual(float((1 + returns).prod()), float(expected), places=10)
             self.assertAlmostEqual(exposure, 13 / len(f))
             self.assertEqual(returns.iloc[:31].abs().sum(), 0.0)  # cash before the first trade
@@ -115,6 +119,8 @@ class TradeTests(unittest.TestCase):
         self.assertEqual(flat["max_drawdown"], 0.0)
         r = pd.Series([0.1, -0.5, 0.2], index=DAYS[:3])
         self.assertAlmostEqual(simulate.summary(r)["max_drawdown"], -0.5)
+        early_loss = pd.Series([-0.05, 0.01, 0.01], index=DAYS[:3])  # a loss on day one is a drawdown from the start
+        self.assertAlmostEqual(simulate.summary(early_loss)["max_drawdown"], -0.05)
 
 
 class RunTradesTests(unittest.TestCase):
@@ -132,14 +138,23 @@ class RunTradesTests(unittest.TestCase):
             raw = Path(tmp) / "data" / "raw"
             raw.mkdir(parents=True)
             table.to_csv(raw / "etfs_long.csv", index=False)
-            rows, signal_days, full = run_trades.run(50, 1, cfg, Path(tmp), symbols=("SPY",))
+            rows, signal_days, full, trades = run_trades.run(50, 1, cfg, Path(tmp), symbols=("SPY",))
         self.assertEqual(len(rows), 3 * 2 * 4)
+        self.assertNotIn("priced", rows[0]["dev"])  # the trade list is not left inside a result
+        self.assertEqual(len(trades), sum(r["dev"]["trades"] + r["holdout"]["trades"] for r in rows))
+        self.assertEqual(list(trades.columns), run_trades.TRADE_COLUMNS)
+        one = trades[(trades["pricing"] == "etf_next_open") & (trades["period"] == "development")].iloc[0]
+        self.assertGreater(one["entry_day"], one["signal_day"])  # bought the morning after the signal
+        self.assertAlmostEqual(one["net"], (one["exit_price"] / one["entry_price"]) * (1 - one["cost"]) - 1, places=4)
         text = run_trades.report(rows, cfg, "fp", "abc123", pd.Timestamp("2026-11-08"), 50, full)
         self.assertIn("## Verdicts", text)
         self.assertIn("Return per unit of drawdown", text)
         out = run_trades.export(rows, signal_days, cfg, "fp", "abc123", pd.Timestamp("2026-11-08"), "r.md", full)
         self.assertEqual({s["mode"] for s in out["strategies"]}, {"etf_close", "etf_next_open"})  # no Kalshi in the thesis
         self.assertEqual(len(out["strategies"]), 12)
+        self.assertEqual(out["schema"], 1)  # the research app reads schema 1
+        self.assertEqual(out["data_through"], {"SPY": "2012-12-31"})
+        self.assertIn("Lead", out["verdict_definition"])
         self.assertEqual(signal_days["SPY:rsi2_below_10"]["last_date"], "2012-12-31")
 
 
