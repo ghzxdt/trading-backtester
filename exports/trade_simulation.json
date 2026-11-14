@@ -1,10 +1,10 @@
 {
  "kind": "trade_simulation",
  "schema": 1,
- "generated_at": "2026-11-14T08:40:52+00:00",
- "code": "213f39e",
+ "generated_at": "2026-11-14T23:26:21+00:00",
+ "code": "3878ffd",
  "data_fingerprint": "4e1f98996cd13f8f",
- "report": "2026-11-14-084052-trade-simulation.md",
+ "report": "2026-11-14-232621-trade-simulation.md",
  "verdict_definition": "v2, registered 2026-11-13. Lead: the average trade beats the average of every possible trade of the same length in the period, judged by resampling the rule's own trades by calendar quarter (development p < 0.05 and q < 0.1 across the run's strategy-and-entry tests; 1993-2009 p < 0.1), and CAGR is above buy-and-hold scaled to the same time in the market and the same volatility while in a trade, in both periods. The 1993-2009 period also helped choose these signals, so it is not independent confirmation; a Lead is provisional until trades after 2026-11-08 support it.",
  "verdict_version": "v2",
  "verdict_parameters": {
@@ -48,7 +48,7 @@
   "funding_note": "Mean US500 perp funding per daily record (zeros included), measured 2026-11-07; charged for every calendar day held through a 4 PM funding time.",
   "verdict_cost": "etf"
  },
- "trade_list": "exports/trades/2026-11-14-084052-trade-simulation.csv",
+ "trade_list": "exports/trades/2026-11-14-232621-trade-simulation.csv",
  "periods": {
   "development": {
    "start": "2010-01-01",
@@ -107,7 +107,7 @@
    "verdict": "No edge",
    "verdict_v1": "Lead",
    "q": 0.16478352164783522,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.2262550082488805,
@@ -155,8 +155,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.006850984587282217,
      "baseline": 0.001767523099535737,
+     "mean_excess": 0.006850984587282217,
      "p": 0.000999900009999,
      "quarters": 68,
      "top5_share": 0.3266402111949432
@@ -193,7 +193,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2682931706829317,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.2262550082488805,
@@ -241,8 +241,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.005358069577737672,
      "baseline": 0.0013305683872069372,
+     "mean_excess": 0.005358069577737672,
      "p": 0.005099490050994901,
      "quarters": 68,
      "top5_share": 0.38914124615755036
@@ -279,7 +279,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.21289299641464426,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 188,
     "exposure": 0.1553146358708461,
@@ -327,8 +327,8 @@
     "mean_sessions": 3.589622641509434,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.005832470498311325,
      "baseline": 0.0012745382573155254,
+     "mean_excess": 0.005832470498311325,
      "p": 0.00029997000299970003,
      "quarters": 68,
      "top5_share": 0.2746224349569424
@@ -365,7 +365,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2682931706829317,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 188,
     "exposure": 0.1553146358708461,
@@ -413,8 +413,8 @@
     "mean_sessions": 3.589622641509434,
     "random_percentile": 99.95,
     "v2": {
-     "mean_excess": 0.004433263124968283,
      "baseline": 0.0008368808200941163,
+     "mean_excess": 0.004433263124968283,
      "p": 0.0015998400159984002,
      "quarters": 68,
      "top5_share": 0.33154661171184996
@@ -451,7 +451,7 @@
    "verdict": "Failed holdout",
    "verdict_v1": "Failed holdout",
    "q": 0.03153970317253989,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.028281876031110063,
@@ -499,8 +499,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 77.45,
     "v2": {
-     "mean_excess": 0.003484902485801324,
      "baseline": 0.0017675230995357362,
+     "mean_excess": 0.003484902485801324,
      "p": 0.24567543245675433,
      "quarters": 20,
      "top5_share": 2.062643399544255
@@ -537,7 +537,7 @@
    "verdict": "No edge",
    "verdict_v1": "Failed holdout",
    "q": 0.16006399360063994,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.028281876031110063,
@@ -585,8 +585,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 83.55,
     "v2": {
-     "mean_excess": 0.004676344752688177,
      "baseline": 0.0013305683872069372,
+     "mean_excess": 0.004676344752688177,
      "p": 0.2196780321967803,
      "quarters": 20,
      "top5_share": 2.212027914923823
@@ -623,7 +623,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.3139322431393224,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.019561630921517793,
@@ -671,8 +671,8 @@
     "mean_sessions": 3.75,
     "random_percentile": 97.85000000000001,
     "v2": {
-     "mean_excess": 0.00883937227464863,
      "baseline": 0.0013304822368904593,
+     "mean_excess": 0.00883937227464863,
      "p": 0.09019098090190981,
      "quarters": 20,
      "top5_share": 0.9868497055325766
@@ -709,7 +709,7 @@
    "verdict": "No edge",
    "verdict_v1": "Lead",
    "q": 0.3128829974145443,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.019561630921517793,
@@ -757,8 +757,8 @@
     "mean_sessions": 3.75,
     "random_percentile": 96.25,
     "v2": {
-     "mean_excess": 0.007923031301805779,
      "baseline": 0.0008931043597504083,
+     "mean_excess": 0.007923031301805779,
      "p": 0.12268773122687732,
      "quarters": 20,
      "top5_share": 1.329269936999847
@@ -795,7 +795,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2584241575842416,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 96,
     "exposure": 0.11312750412444025,
@@ -843,8 +843,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 99.7,
     "v2": {
-     "mean_excess": 0.007547072239944474,
      "baseline": 0.001767523099535737,
+     "mean_excess": 0.007547072239944474,
      "p": 0.0047995200479952005,
      "quarters": 52,
      "top5_share": 0.49575281910199276
@@ -881,7 +881,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2682931706829317,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 96,
     "exposure": 0.11312750412444025,
@@ -929,8 +929,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 99.75,
     "v2": {
-     "mean_excess": 0.007055835465730556,
      "baseline": 0.0013305683872069372,
+     "mean_excess": 0.007055835465730556,
      "p": 0.0117988201179882,
      "quarters": 52,
      "top5_share": 0.5659135768174919
@@ -967,7 +967,7 @@
    "verdict": "No edge",
    "verdict_v1": "Lead",
    "q": 0.16478352164783522,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 99,
     "exposure": 0.08296016969125619,
@@ -1015,8 +1015,8 @@
     "mean_sessions": 3.9791666666666665,
     "random_percentile": 99.75,
     "v2": {
-     "mean_excess": 0.005931708417781778,
      "baseline": 0.0014093263970587262,
+     "mean_excess": 0.005931708417781778,
      "p": 0.0082991700829917,
      "quarters": 52,
      "top5_share": 0.44174647963261854
@@ -1053,7 +1053,7 @@
    "verdict": "No edge",
    "verdict_v1": "Lead",
    "q": 0.21289299641464426,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 99,
     "exposure": 0.08296016969125619,
@@ -1101,8 +1101,8 @@
     "mean_sessions": 3.9791666666666665,
     "random_percentile": 98.45,
     "v2": {
-     "mean_excess": 0.004840895027346382,
      "baseline": 0.000972096122756636,
+     "mean_excess": 0.004840895027346382,
      "p": 0.035396460353964605,
      "quarters": 52,
      "top5_share": 0.6263513388174072
@@ -1139,7 +1139,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.6086000095642609,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 193,
     "exposure": 0.22743341975017675,
@@ -1187,8 +1187,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 94.1,
     "v2": {
-     "mean_excess": 0.005685265415287658,
      "baseline": 0.0008333138993917655,
+     "mean_excess": 0.005685265415287658,
      "p": 0.051994800519948,
      "quarters": 44,
      "top5_share": 0.6866608711781633
@@ -1225,7 +1225,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.7531246875312468,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 193,
     "exposure": 0.22743341975017675,
@@ -1273,8 +1273,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 94.3,
     "v2": {
-     "mean_excess": 0.005698714845721378,
      "baseline": 0.00022077201856065648,
+     "mean_excess": 0.005698714845721378,
      "p": 0.05419458054194581,
      "quarters": 44,
      "top5_share": 0.7027070193737932
@@ -1311,7 +1311,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.03153970317253989,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.1652132924817346,
@@ -1359,8 +1359,8 @@
     "mean_sessions": 3.832167832167832,
     "random_percentile": 99.75,
     "v2": {
-     "mean_excess": 0.00892583717795749,
      "baseline": 0.0006494017434898626,
+     "mean_excess": 0.00892583717795749,
      "p": 0.0018998100189981002,
      "quarters": 44,
      "top5_share": 0.396733646322006
@@ -1397,7 +1397,7 @@
    "verdict": "No edge",
    "verdict_v1": "Lead",
    "q": 0.11145552111455521,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.1652132924817346,
@@ -1445,8 +1445,8 @@
     "mean_sessions": 3.832167832167832,
     "random_percentile": 99.7,
     "v2": {
-     "mean_excess": 0.009058488404844944,
      "baseline": 3.5407657311841345e-05,
+     "mean_excess": 0.009058488404844944,
      "p": 0.0014998500149985001,
      "quarters": 44,
      "top5_share": 0.41901534815793445
@@ -1483,7 +1483,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.0005999400059994001,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 25,
     "exposure": 0.029460287532406315,
@@ -1531,8 +1531,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 95.6,
     "v2": {
-     "mean_excess": 0.01494618893256322,
      "baseline": 0.0008333138993917657,
+     "mean_excess": 0.01494618893256322,
      "p": 0.07339266073392661,
      "quarters": 15,
      "top5_share": 1.2611686114258838
@@ -1569,7 +1569,7 @@
    "verdict": "Failed holdout",
    "verdict_v1": "Lead",
    "q": 0.0005999400059994001,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 25,
     "exposure": 0.029460287532406315,
@@ -1617,8 +1617,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 92.10000000000001,
     "v2": {
-     "mean_excess": 0.011760498619227707,
      "baseline": 0.0002207720185606565,
+     "mean_excess": 0.011760498619227707,
      "p": 0.14038596140385962,
      "quarters": 15,
      "top5_share": 1.6139216398827188
@@ -1655,7 +1655,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.0005999400059994001,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 26,
     "exposure": 0.016969125618666037,
@@ -1703,8 +1703,8 @@
     "mean_sessions": 3.608695652173913,
     "random_percentile": 99.9,
     "v2": {
-     "mean_excess": 0.026413630108715665,
      "baseline": 0.0006116253707176084,
+     "mean_excess": 0.026413630108715665,
      "p": 0.017198280171982803,
      "quarters": 14,
      "top5_share": 0.78315160856957
@@ -1741,7 +1741,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.0005999400059994001,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 26,
     "exposure": 0.016969125618666037,
@@ -1789,8 +1789,8 @@
     "mean_sessions": 3.608695652173913,
     "random_percentile": 99.85000000000001,
     "v2": {
-     "mean_excess": 0.02337425444927589,
      "baseline": -2.8579870331081223e-06,
+     "mean_excess": 0.02337425444927589,
      "p": 0.034596540345965404,
      "quarters": 14,
      "top5_share": 0.8913537812524825
@@ -1827,7 +1827,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2584241575842416,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 97,
     "exposure": 0.11430591562573651,
@@ -1875,8 +1875,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 95.19999999999999,
     "v2": {
-     "mean_excess": 0.009174366726560973,
      "baseline": 0.0008333138993917656,
+     "mean_excess": 0.009174366726560973,
      "p": 0.0547945205479452,
      "quarters": 32,
      "top5_share": 0.8459187852394091
@@ -1913,7 +1913,7 @@
    "verdict": "No edge",
    "verdict_v1": "No edge",
    "q": 0.2682931706829317,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 97,
     "exposure": 0.11430591562573651,
@@ -1961,8 +1961,8 @@
     "mean_sessions": 5.0,
     "random_percentile": 96.5,
     "v2": {
-     "mean_excess": 0.009744129121147325,
      "baseline": 0.00022077201856065642,
+     "mean_excess": 0.009744129121147325,
      "p": 0.0392960703929607,
      "quarters": 32,
      "top5_share": 0.7757538949318171
@@ -1999,7 +1999,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.021117888211178885,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 104,
     "exposure": 0.08673108649540419,
@@ -2047,8 +2047,8 @@
     "mean_sessions": 4.015873015873016,
     "random_percentile": 99.75,
     "v2": {
-     "mean_excess": 0.014633278069833788,
      "baseline": 0.0006762263635252201,
+     "mean_excess": 0.014633278069833788,
      "p": 0.000999900009999,
      "quarters": 32,
      "top5_share": 0.46759307668266725
@@ -2085,7 +2085,7 @@
    "verdict": "Lead",
    "verdict_v1": "Lead",
    "q": 0.0323967603239676,
-   "holdout_source": "first look, stored in the ledger",
+   "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 104,
     "exposure": 0.08673108649540419,
@@ -2133,8 +2133,8 @@
     "mean_sessions": 4.015873015873016,
     "random_percentile": 99.9,
     "v2": {
-     "mean_excess": 0.014407217788689239,
      "baseline": 6.243960104743192e-05,
+     "mean_excess": 0.014407217788689239,
      "p": 0.0005999400059994001,
      "quarters": 32,
      "top5_share": 0.49999153924332923
