@@ -117,13 +117,12 @@ def random_percentile(frame: pd.DataFrame, mask: pd.Series, priced: pd.DataFrame
     return float((means < priced["gross"].mean()).mean() * 100)
 
 
-def evaluate(frame, signal, exit_rule, mask, mode, cfg, draws=2000, rng=None) -> dict:
-    trades = find_trades(frame, signal, exit_rule, mask)
-    priced = price_trades(frame, trades, mode, cfg)
+def evaluate(frame, signal, exit_rule, mask, mode, cfg, draws=2000, rng=None, trades=None, priced=None) -> dict:
+    trades = find_trades(frame, signal, exit_rule, mask) if trades is None else trades
+    priced = price_trades(frame, trades, mode, cfg) if priced is None else priced
     returns, exposure = daily_returns(frame, trades, mode, cfg, mask)
     out = {"trades": len(priced), "exposure": exposure, "strategy": summary(returns),
-           "matched": summary(matched_buy_and_hold(frame, mask, exposure, mode, cfg)),
-           "priced": priced}  # the trade list itself; the caller takes it out before anything is saved
+           "matched": summary(matched_buy_and_hold(frame, mask, exposure, mode, cfg))}
     if len(priced):
         wins, losses = priced.loc[priced["net"] > 0, "net"], priced.loc[priced["net"] <= 0, "net"]
         out.update(win_rate=float((priced["net"] > 0).mean()), mean_net=float(priced["net"].mean()),

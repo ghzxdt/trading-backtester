@@ -10,7 +10,8 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import run_studies, run_trades  # noqa: E402
-from backtester import data, registry, runlog  # noqa: E402
+from backtester import catalog, data, lock, registry, runlog  # noqa: E402
+from backtester.ledger import HoldoutLedger, rng_for  # noqa: E402
 
 CFG = {"research_app": "unused", "development": {"start": "2010-01-01", "end": None},
        "holdout": {"start": "1993-01-01", "end": "2009-12-31"},
@@ -96,25 +97,41 @@ class RunRecordTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             tmp = Path(tmp)
             sandbox(stack, tmp, run_trades)
-            self.assertEqual(run_trades.main(["--draws", "50", "--seed", "3"]), 0)
+            self.assertEqual(run_trades.main([]), 0)  # the registered settings
             record = registry.read(tmp / "trials.jsonl")[-1]
             self.assertEqual(record["settings"]["costs_round_trip_bps"]["etf"], 2)
+            self.assertEqual((record["family"], record["method"]), ("registered", 2))
+            self.assertEqual(record["rules"], lock.marks())
             self.assertTrue((tmp / "reports" / record["report"]).exists())
             trades = pd.read_csv(tmp / record["trade_list"])
             self.assertGreater(len(trades), 0)
             self.assertEqual(set(trades["period"]), {"development", "holdout"})
             export = json.loads((tmp / "exports" / "trade_simulation.json").read_text(encoding="utf-8"))
-            self.assertEqual((export["seed"], export["draws"], export["trade_list"]), (3, 50, record["trade_list"]))
+            self.assertEqual((export["seed"], export["draws"], export["trade_list"]), (11, 2000, record["trade_list"]))
             self.assertEqual(export["data_fingerprint"], record["data"])
-            # Rebuild from the kept inputs alone: same numbers as the record.
+            self.assertTrue(all(t["holdout_source"].startswith("first look") for t in record["tests"]))
+            # Rebuild from the kept inputs and the ledger alone: same numbers as the record.
             folder = tmp / "snapshots" / record["data"]
-            rows, *_ = run_trades.run(50, 3, CFG, folder, **self.rebuild_arguments(tmp))
+            rows, *_ = run_trades.run(2000, 11, CFG, folder, ledger=HoldoutLedger(tmp / "holdout_ledger.jsonl"))
             self.assertEqual([r["dev"]["random_percentile"] for r in rows],
                              [t["dev_random_percentile"] for t in record["tests"]])
+            self.assertEqual([r["holdout"]["random_percentile"] for r in rows],
+                             [t["holdout_random_percentile"] for t in record["tests"]])
             self.assertEqual([r["verdict"] for r in rows], [t["verdict"] for t in record["tests"]])
-
-    def rebuild_arguments(self, tmp: Path) -> dict:
-        return {}
+            # A second run reads every holdout result from the ledger and adds nothing to it.
+            self.assertEqual(run_trades.main([]), 0)
+            again = registry.read(tmp / "trials.jsonl")[-1]
+            self.assertTrue(all(t["holdout_source"].startswith("ledger") for t in again["tests"]))
+            self.assertEqual([t["holdout_random_percentile"] for t in again["tests"]],
+                             [t["holdout_random_percentile"] for t in record["tests"]])
+            self.assertEqual(len(registry.read(tmp / "holdout_ledger.jsonl")), 1)
+            # Other settings never look at the holdout: with an empty ledger there is nothing to show.
+            (tmp / "holdout_ledger.jsonl").unlink()
+            self.assertEqual(run_trades.main(["--draws", "50"]), 0)
+            other = registry.read(tmp / "trials.jsonl")[-1]
+            self.assertEqual(other["family"], "unregistered settings")
+            self.assertTrue(all(t["holdout_random_percentile"] is None for t in other["tests"]))
+            self.assertFalse((tmp / "holdout_ledger.jsonl").exists())
 
     def test_no_report_or_export_without_a_record(self):
         for module in (run_trades, run_studies):
@@ -126,6 +143,76 @@ class RunRecordTests(unittest.TestCase):
                     module.main(["--draws", "20"])
                 self.assertFalse((tmp / "reports").exists() and any((tmp / "reports").iterdir()))
                 self.assertFalse((tmp / "exports" / "trade_simulation.json").exists())
+
+
+class SeedAndLedgerTests(unittest.TestCase):
+    def test_each_test_has_its_own_random_stream(self):
+        a, b = rng_for(7, "rsi2_below_10", "v1", "SPY", 5, "development"), rng_for(7, "rsi2_below_10", "v1", "SPY", 5, "development")
+        self.assertEqual(a.integers(0, 10**9, 5).tolist(), b.integers(0, 10**9, 5).tolist())
+        other = rng_for(7, "rsi2_below_10", "v1", "SPY", 5, "holdout")
+        self.assertNotEqual(rng_for(7, "rsi2_below_10", "v1", "SPY", 5, "development").integers(0, 10**9, 5).tolist(),
+                            other.integers(0, 10**9, 5).tolist())
+
+    def test_p_values_do_not_depend_on_order_or_subset_and_partial_runs_give_no_verdict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            app = research_app(Path(tmp) / "research", symbols=("SPY", "QQQ", "IWM"))
+            def p_values(rows):
+                return {(r["study"], r["symbol"], r["horizon"]): (r["dev"].get("p"), (r["holdout"] or {}).get("p")) for r in rows}
+            full = run_studies.run(list(catalog.SYMBOLS), list(catalog.HORIZONS), 200, catalog.SEED, CFG, app)
+            reverse = run_studies.run(["IWM", "QQQ", "SPY"], [10, 5, 1], 200, catalog.SEED, CFG, app)
+            subset = run_studies.run(["QQQ"], [5], 200, catalog.SEED, CFG, app)
+            self.assertEqual(p_values(full), p_values(reverse))
+            self.assertTrue(all(p_values(full)[k] == v for k, v in p_values(subset).items()))
+            self.assertEqual(len(subset), len(catalog.STUDIES))
+            self.assertTrue(all(r["verdict"] == run_studies.PARTIAL and "q" not in r for r in subset))
+            self.assertIn("**Partial run.**", run_studies.report(subset, CFG, "fp", "abc", datetime(2026, 11, 13)))
+
+    def test_holdout_is_evaluated_once_and_then_read_from_the_ledger(self):
+        with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
+            tmp = Path(tmp)
+            sandbox(stack, tmp, run_studies)
+            calls = []
+            real = run_studies.evaluate
+            def counting(signal, forward, mask, horizon, draws=2000, rng=None):
+                calls.append(str(mask.index[mask.to_numpy()][0].year))  # first year of the period evaluated
+                return real(signal, forward, mask, horizon, draws, rng)
+            stack.enter_context(mock.patch.object(run_studies, "evaluate", counting))
+            self.assertEqual(run_studies.main(["--symbols", "SPY", "--horizons", "5"]), 0)   # partial: no look
+            self.assertNotIn("2004", calls)
+            self.assertFalse((tmp / "holdout_ledger.jsonl").exists())
+            self.assertEqual(run_studies.main([]), 0)                                         # registered: first look
+            first_looks = calls.count("2004")
+            self.assertEqual(first_looks, 90)
+            self.assertEqual(run_studies.main([]), 0)                                         # again: ledger only
+            self.assertEqual(calls.count("2004"), first_looks)
+            one, two = registry.read(tmp / "trials.jsonl")[-2:]
+            self.assertTrue(all(t["holdout_source"].startswith("first look") for t in one["tests"]))
+            self.assertTrue(all(t["holdout_source"].startswith("ledger") for t in two["tests"]))
+            self.assertEqual([(t["holdout_p"], t["verdict"]) for t in one["tests"]],
+                             [(t["holdout_p"], t["verdict"]) for t in two["tests"]])
+            self.assertEqual((one["family"], registry.read(tmp / "trials.jsonl")[0]["family"]), ("registered", "partial"))
+            text = (tmp / "reports" / two["report"]).read_text(encoding="utf-8")
+            self.assertIn("90 results read from `holdout_ledger.jsonl`", text)
+
+    def test_a_rule_changed_under_its_version_stops_the_run(self):
+        self.assertEqual(lock.check(), lock.marks())  # the code matches rule_lock.json
+        changed = [catalog.Study("rsi2_below_10", "v1", "edited in place", lambda d: lock.ind.rsi(d["close"], 2) < 12)
+                   if s.name == "rsi2_below_10" else s for s in catalog.STUDIES]
+        with mock.patch.object(catalog, "STUDIES", changed):
+            with self.assertRaisesRegex(ValueError, "changed under a recorded version.*rsi2_below_10@v1"):
+                lock.check()
+        added = catalog.STUDIES + [catalog.Study("rsi2_below_10", "v2", "a new version", lambda d: lock.ind.rsi(d["close"], 2) < 12)]
+        with mock.patch.object(catalog, "STUDIES", added), tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, "not registered yet.*rsi2_below_10@v2"):
+                lock.check()
+            copy = Path(tmp) / "rule_lock.json"
+            copy.write_text(lock.LOCK.read_text(encoding="utf-8"), encoding="utf-8")
+            self.assertEqual(lock.add(copy), ["study:rsi2_below_10@v2"])
+            self.assertEqual(lock.add(copy), [])  # never replaces what is recorded
+            lock.check(copy)
+        with mock.patch.object(catalog, "STUDIES", catalog.STUDIES[1:]):
+            with self.assertRaisesRegex(ValueError, "no longer in the code"):
+                lock.check()
 
 
 if __name__ == "__main__":

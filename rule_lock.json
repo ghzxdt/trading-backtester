@@ -1,0 +1,14 @@
+{
+ "exit:close_above_sma5@v1": "00840d3f1ae108cc",
+ "exit:hold_5@v1": "ee09c8449c050018",
+ "study:above_sma200@v1": "5290427750812c63",
+ "study:bollinger_lower_close@v1": "d5b6270b862a844d",
+ "study:ema21_touch_uptrend@v1": "9dc3df2d4f53d51e",
+ "study:ema50_touch_uptrend@v1": "9a288c5403924c95",
+ "study:macd_cross_up@v1": "35bfe522f87cf326",
+ "study:macd_cross_up_below_zero@v1": "5c21266c4b93b0a4",
+ "study:new_20d_high@v1": "4ea07def7eae4141",
+ "study:rsi14_below_30@v1": "2e31ac404effc303",
+ "study:rsi2_below_10@v1": "f533944da0b22d19",
+ "study:volume_spike_down_day@v1": "4975fa907ebd13cf"
+}

@@ -18,15 +18,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from backtester import data, registry, runlog, simulate
+from backtester import data, lock, registry, runlog, simulate, strategies
+from backtester.ledger import HoldoutLedger, holdout_result, rng_for
 from backtester.report_html import render
 from backtester.strategies import EXITS, MODES, SIGNALS, SYMBOLS, signal_rule
-from run_studies import code_version, period_mask
+from run_studies import METHOD, code_version, period_mask
 
 HERE = Path(__file__).resolve().parent
 REPORTS = HERE / "reports"
 EXPORTS = HERE / "exports"
 TRIALS = HERE / "trials.jsonl"
+LEDGER = HERE / "holdout_ledger.jsonl"
 MODE_LABELS = {"etf_close": "ETF at close", "etf_next_open": "ETF next open",
                "perp_maker": "Perp, maker", "perp_taker": "Perp, taker"}
 THESIS_MODES = ("etf_close", "etf_next_open")  # user, 2026-11-08: the thesis shows ETFs only, no Kalshi
@@ -36,9 +38,16 @@ def buy_and_hold(frame, mask) -> dict:
     return simulate.summary(frame["close"].pct_change().fillna(0.0)[mask.to_numpy(bool)])
 
 
-def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS) -> tuple[list[dict], dict, dict, pd.DataFrame]:
+def is_registered(symbols, draws, seed) -> bool:
+    return (tuple(symbols), draws, seed) == (SYMBOLS, strategies.DRAWS, strategies.SEED)
+
+
+def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
+        ledger: HoldoutLedger | None = None) -> tuple[list[dict], dict, dict, pd.DataFrame]:
+    """`ledger=None` computes the holdout in memory and stores nothing (tests and rebuild checks)."""
     cfg = cfg or data.config()
     root = root or data.research_root(cfg)
+    registered = is_registered(symbols, draws, seed)
     rows, signal_days, full, lists = [], {}, {}, []
     for symbol in symbols:
         frame = data.load(symbol, root)
@@ -54,20 +63,35 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS) -> tuple[li
                                                "dates": [f"{d:%Y-%m-%d}" for d in frame.index[signal.to_numpy()]]}
             for ex in EXITS:
                 for mode in MODES:
-                    # one fresh generator per strategy: the three close-entry modes then share their random draws
-                    dev_result = simulate.evaluate(frame, signal, ex.rule, dev, mode, cfg, draws,
-                                                   np.random.default_rng(seed))
-                    hold_result = (simulate.evaluate(frame, signal, ex.rule, hold, mode, cfg, draws,
-                                                     np.random.default_rng(seed + 1)) if hold.any() else None)
-                    for period, result in (("development", dev_result), ("holdout", hold_result)):
-                        if result is not None:
-                            lists.append(result.pop("priced").assign(
-                                symbol=symbol, signal=name, signal_version=study.version, exit=ex.name,
-                                exit_version=ex.version, pricing=mode, period=period))
+                    # One random stream per test. The three close-entry modes are the same test of the same
+                    # gross trades, so they share a stream; the next-open entry has its own.
+                    entry = "next_open" if mode == "etf_next_open" else "close"
+                    who = (name, study.version, ex.name, ex.version, symbol, entry)
+                    result, source = {}, None
+                    for period, mask in (("development", dev), ("holdout", hold)):
+                        if not mask.any():
+                            result[period] = None
+                            continue
+                        # The trade list is rebuilt every run (it involves no test); only the holdout's
+                        # statistics are read from the ledger.
+                        trades = simulate.find_trades(frame, signal, ex.rule, mask)
+                        priced = simulate.price_trades(frame, trades, mode, cfg)
+                        lists.append(priced.assign(symbol=symbol, signal=name, signal_version=study.version,
+                                                   exit=ex.name, exit_version=ex.version, pricing=mode, period=period))
+
+                        def compute(mask=mask, period=period, trades=trades, priced=priced):
+                            return simulate.evaluate(frame, signal, ex.rule, mask, mode, cfg, draws,
+                                                     rng_for(seed, *who, period), trades, priced)
+                        if period == "development":
+                            result[period] = compute()
+                        else:
+                            key = f"trade|{name}@{study.version}+{ex.name}@{ex.version}|{symbol}|{mode}"
+                            result[period], source = holdout_result(ledger, registered, key, True, compute)
+                    dev_result, hold_result = result["development"], result["holdout"]
                     rows.append({"symbol": symbol, "signal": name, "signal_version": study.version,
                                  "signal_description": study.description, "exit": ex.name,
                                  "exit_version": ex.version, "exit_description": ex.description, "mode": mode,
-                                 "dev": dev_result, "holdout": hold_result,
+                                 "dev": dev_result, "holdout": hold_result, "holdout_source": source,
                                  "verdict": simulate.verdict(dev_result, hold_result)})
     return rows, signal_days, full, trade_list(lists)
 
@@ -244,14 +268,17 @@ def write_json(path: Path, payload: dict):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--draws", type=int, default=2000)
-    ap.add_argument("--seed", type=int, default=11)
+    ap.add_argument("--draws", type=int, default=strategies.DRAWS)
+    ap.add_argument("--seed", type=int, default=strategies.SEED)
     args = ap.parse_args(argv)
     started = datetime.now(timezone.utc)
     cfg = data.config()
+    registry.read(TRIALS)  # refuse to start on a broken record
+    rules = lock.check()   # ... or on a rule changed under a recorded version
+    ledger = HoldoutLedger(LEDGER)
     root, fingerprint = data.snapshot(data.research_root(cfg))  # the run reads this copy, which stays on disk
     version = code_version()
-    rows, signal_days, full, trades = run(args.draws, args.seed, cfg, root)
+    rows, signal_days, full, trades = run(args.draws, args.seed, cfg, root, ledger=ledger)
     REPORTS.mkdir(exist_ok=True)
     stem = runlog.report_stem("trade-simulation", started)
     path, trades_path = REPORTS / f"{stem}.md", EXPORTS / "trades" / f"{stem}.csv"
@@ -260,16 +287,20 @@ def main(argv=None) -> int:
     # The record goes first: if it can't be written (a broken chain), no report or export appears without one.
     registry.append(TRIALS, {"kind": "trade_simulation", "run_at": started.isoformat(timespec="seconds"),
                              "code": version, "data": fingerprint, "settings": runlog.settings(cfg),
+                             "method": METHOD, "rules": rules,
+                             "family": "registered" if is_registered(SYMBOLS, args.draws, args.seed) else "unregistered settings",
                              "seed": args.seed, "draws": args.draws,
                              "report": path.name, "trade_list": trades_name,
                              "tests": [{"study": f"{r['signal']}+{r['exit']}", "version": f"{r['signal_version']}/{r['exit_version']}",
                                         "symbol": r["symbol"], "mode": r["mode"], "verdict": r["verdict"],
+                                        "holdout_source": r.get("holdout_source"),
                                         "dev_trades": r["dev"]["trades"], "dev_mean_net": r["dev"].get("mean_net"),
                                         "dev_random_percentile": r["dev"].get("random_percentile"),
                                         "dev_cagr": r["dev"]["strategy"]["cagr"], "dev_matched_cagr": r["dev"]["matched"]["cagr"],
                                         "holdout_trades": (r["holdout"] or {}).get("trades"),
                                         "holdout_random_percentile": (r["holdout"] or {}).get("random_percentile")}
                                        for r in rows]})
+    ledger.commit(started.isoformat(timespec="seconds"), version, fingerprint, args.seed, args.draws)
     path.write_text(text, encoding="utf-8")
     path.with_suffix(".html").write_text(render(text, path.stem), encoding="utf-8")
     trades_path.parent.mkdir(parents=True, exist_ok=True)

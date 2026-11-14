@@ -24,6 +24,7 @@ from .catalog import STUDIES
 SIGNALS = ("rsi2_below_10", "rsi14_below_30", "bollinger_lower_close")
 SYMBOLS = ("SPY", "QQQ")
 MODES = ("etf_close", "etf_next_open", "perp_maker", "perp_taker")
+DRAWS, SEED = 2000, 11  # the registered run; other settings get no holdout look
 
 
 @dataclass(frozen=True)

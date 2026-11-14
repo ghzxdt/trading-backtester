@@ -13,6 +13,13 @@ import pandas as pd
 from . import indicators as ind
 
 
+# The registered run: these symbols and horizons form the family the multiple-testing correction covers, with
+# this seed and number of draws. A run with anything else is partial: it gets no verdicts and no holdout look.
+SYMBOLS = ("SPY", "QQQ", "IWM")
+HORIZONS = (1, 5, 10)
+DRAWS, SEED = 2000, 7
+
+
 @dataclass(frozen=True)
 class Study:
     name: str
