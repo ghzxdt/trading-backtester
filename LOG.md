@@ -2,20 +2,51 @@
 
 ## Pick up here (next session)
 
-**Trade simulator done (2026-11-08).** `run_trades.py` (or the app's "Run trade simulation" button) prices the
-registered rules four ways and writes `reports/<date>-trade-simulation.md/.html`, `exports/trade_simulation.json`
-(ETF pricing only, read by the research app's Daily thesis tab; the user decided on 2026-11-08 that the thesis
-shows no Kalshi) and a `trials.jsonl` record.
+**Where it stands (2026-11-14).** A review on 2026-11-13 found the trade simulator's Lead verdict claimed more
+than its evidence. Three fixes are in and pushed: every run keeps its inputs and can be rebuilt, the 1993-2009
+period is looked at once and stored, and the verdict is now Lead v2 (`backtester/lead_v2.py`).
 
-First run (code 0fb0521, 48 results): 24 Leads under the registered verdict, all but one on the
-`close_above_sma5` exit or on QQQ. But the descriptive return-per-drawdown table matters more for the user's goal:
-in development (2010 on) every strategy had a lower CAGR per unit of max drawdown than buy-and-hold at the same
-time in the market (for example SPY RSI(2) hold 5: 0.20 vs 0.39). In the 1993-2009 holdout, which had two crashes,
-most strategies beat it (SPY RSI(2) hold 5: 0.52 vs 0.13). So these are timing edges whose value depends on the
-regime, not a free lunch. Trades fully invested during a crash produce the -20% to -30% drawdowns at 1x.
+Latest trade simulation (code 213f39e, data 4e1f98996cd13f8f, report `2026-11-14-084052-trade-simulation`):
+14 Leads of 48 under v2, against 24 under v1. All 14 are on QQQ; SPY has none. In the export the research app
+reads (ETF pricing): 6 Leads of 24, and only 2 at the next-open entry, QQQ RSI(14) < 30 and QQQ close below the
+lower Bollinger band, both with the `close_above_sma5` exit. QQQ RSI(14) rests on 25-26 trades, so its p-value
+is rougher than it looks.
 
-Next ideas (each a new registered version, never an edit): a trend or volatility filter (registered before
-testing), stops once intraday bars exist, and leverage scaling for the risk view.
+Open items:
+- The research app's Daily thesis will now show fewer long setups (no SPY rule is a Lead; QQQ RSI(2) is a Lead
+  only at the close). Its idea ledger still quotes the v1 result ("6 of 12 next-open pricings rated Lead"). That
+  wording is the research chat's to update; a hand-over note is in the shared notes folder.
+- Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
+- `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
+
+Next ideas (each a new registered version, never an edit): score trades after 2026-11-08 as the only untouched
+evidence, a trend or volatility filter, stops once intraday bars exist, and leverage scaling for the risk view.
+
+## 2026-11-13 and 2026-11-14
+- Review of the whole app at 80c4f2a (in this project's chat). Main findings: the simulator re-tested signals on
+  the two periods that had selected them; its random-entry percentile was too lenient for rules that trade in
+  sell-offs; some Leads existed only at the closing price; the time-matched benchmark carried about a third of the
+  rule's risk; the holdout "once" rule and rule versions were not enforced; inputs were not kept.
+- Provenance (2c79930): runs read from `snapshots/<fingerprint>/`; the trial record is written before the report
+  and export; records carry the settings and "+dirty"; reports are named by UTC date and time; the export states
+  the verdict definition, seed, draws and data-through date. New: `exports/trades/<run>.csv` lists every simulated
+  trade, with an "Open trade list" button in the app.
+- Arithmetic fixes in the simulator: a trade's net return now compounds its cost like the equity curve (it was
+  gross minus cost; at most 0.24 bp different for ETFs), and a first-day loss counts as a drawdown.
+- Seeds, ledger, lock (2e4c9b0): one random stream per test (method 2), `holdout_ledger.jsonl`, `rule_lock.json`,
+  partial runs get no verdicts. First method-2 study run (2a30d23): the same 10 Candidates, 78 No evidence and
+  2 Failed holdout as before; 60 holdout results stored. Before the ledger existed, 1993-2009 had been evaluated
+  in six recorded runs of the unchanged v1 rules.
+- Lead v2 registered (25350c7) before running: excess over every possible same-length trade, p from resampling the
+  rule's own trades by calendar quarter, Benjamini-Hochberg across the 24 strategy-and-entry tests, and a
+  buy-and-hold benchmark scaled to time in the market x in-trade volatility (the user chose this benchmark on
+  2026-11-13 over a whole-strategy Sharpe comparison and over keeping v1's). On made-up prices a zero-edge rule
+  that trades only in volatile stretches passes v1's percentile 19% of the time and v2's test 6%.
+- v2 was designed after seeing development-period diagnostics for these 12 strategies (not 1993-2009 results for
+  the new statistic), and the signals were selected on both periods, so a v2 Lead is still provisional.
+- First v2 run (213f39e): v2 14 Lead, 30 No edge, 4 Failed holdout; v1 on the same run 24 Lead, 20 No edge,
+  4 Failed holdout. The benchmark step removed nothing (no "Timing edge only"). 48 trade holdout results stored.
+  Both new records rebuild exactly from the snapshot and the ledger. 36 tests pass.
 
 ## 2026-11-12
 - Laptop reset: the project moved to `C:\Claude\trading-backtester`, and `config.json` now points to
