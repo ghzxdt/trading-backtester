@@ -34,4 +34,7 @@ charts with indicators; this app measures which indicators actually carried info
 - Trade simulation: `..\trading-research\.venv\Scripts\python.exe -B run_trades.py`; about 30 seconds. Also writes
   the list of every simulated trade to `exports/trades/<run>.csv` (the app's "Open trade list" button).
 - Commit code before a real run, so the record names a clean commit (otherwise it says "+dirty").
+- Weekly: the Windows scheduled task **Trading Backtester Weekly Run** (Saturdays 10:00 AM, or at the next sign-in
+  if missed) runs `run_weekly.ps1`: the trade simulation, then a commit of only the files it writes and a push.
+  Log: `work\weekly_run.log`. It keeps the export fresh for the research app (caution after 10 days, unused after 45).
 - Tests: `..\trading-research\.venv\Scripts\python.exe -B -m unittest discover -s tests`.

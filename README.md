@@ -23,6 +23,9 @@ simulation") writes `reports/<date-time>-trade-simulation.md`, `exports/trade_si
 app's Daily thesis tab reads if it exists (ETF pricing only), and `exports/trades/<date-time>-trade-simulation.csv`,
 a list of every simulated trade with its entry and exit day and price (the app's "Open trade list" button).
 
+The trade simulation also runs by itself every Saturday at 10:00 AM (Windows scheduled task **Trading Backtester
+Weekly Run**, script `run_weekly.ps1`), then commits and pushes its results; its log is `work\weekly_run.log`.
+
 A run with other symbols, horizons, seed or draws than the registered ones is a partial run: it reports the numbers
 but gives no verdicts and does not look at 1993-2009.
 

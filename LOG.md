@@ -16,8 +16,10 @@ Open items:
 - The research app reads the v2 export as of 2026-11-14 (its commit b615284; idea ledger and page wording
   updated). Its paper book reads `verdict_v1` and the page reads `risk_matched`: keep both in every export, or
   tell the research chat before dropping either (a test checks they are there).
-- The research page cautions when the export is over 10 days old and stops using it after 45. Nothing re-runs
-  the trade simulation automatically yet; run it at least every few weeks, or set up a scheduled run.
+- The research page cautions when the export is over 10 days old and stops using it after 45. Since 2026-11-14
+  the scheduled task "Trading Backtester Weekly Run" re-runs the trade simulation every Saturday at 10:00 AM and
+  commits and pushes the results (`run_weekly.ps1`, log in `work\weekly_run.log`). If the export ever goes stale,
+  check that log first.
 - Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
 - `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
 
