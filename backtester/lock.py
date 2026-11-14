@@ -67,6 +67,8 @@ def marks() -> dict[str, str]:
     positions = np.arange(30, DAYS - 15)
     for ex in EXITS:
         out[f"exit:{ex.name}@{ex.version}"] = _mark(ex.rule(frame, positions))
+    from . import lead_v2  # a verdict's thresholds are registered too (its code is covered by the tests)
+    out[f"verdict:lead@{lead_v2.VERSION}"] = hashlib.sha256(json.dumps(lead_v2.PARAMS, sort_keys=True).encode()).hexdigest()[:16]
     return out
 
 

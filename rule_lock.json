@@ -10,5 +10,6 @@
  "study:new_20d_high@v1": "4ea07def7eae4141",
  "study:rsi14_below_30@v1": "2e31ac404effc303",
  "study:rsi2_below_10@v1": "f533944da0b22d19",
- "study:volume_spike_down_day@v1": "4975fa907ebd13cf"
+ "study:volume_spike_down_day@v1": "4975fa907ebd13cf",
+ "verdict:lead@v2": "9b8878c646eb8dbc"
 }
