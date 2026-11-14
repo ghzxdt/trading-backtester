@@ -160,6 +160,8 @@ class RunTradesTests(unittest.TestCase):
         self.assertIn("**Partial run.**", text)
         self.assertIn("v2", out["strategies"][0]["development"])
         self.assertIn("matched", out["strategies"][0]["development"])  # the research app still reads these
+        # The research app's paper book reads verdict_v1 for stance records logged before 2026-11-13.
+        self.assertTrue(all("verdict_v1" in s and "risk_matched" in s["development"] for s in out["strategies"]))
         self.assertEqual(signal_days["SPY:rsi2_below_10"]["last_date"], "2012-12-31")
 
 
