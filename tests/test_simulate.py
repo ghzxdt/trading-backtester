@@ -155,6 +155,11 @@ class RunTradesTests(unittest.TestCase):
         self.assertEqual(out["schema"], 1)  # the research app reads schema 1
         self.assertEqual(out["data_through"], {"SPY": "2012-12-31"})
         self.assertIn("Lead", out["verdict_definition"])
+        self.assertEqual(out["verdict_version"], "v2")
+        self.assertTrue(all(row["verdict"] == "Partial run (no verdict)" for row in rows))  # one symbol, 50 draws
+        self.assertIn("**Partial run.**", text)
+        self.assertIn("v2", out["strategies"][0]["development"])
+        self.assertIn("matched", out["strategies"][0]["development"])  # the research app still reads these
         self.assertEqual(signal_days["SPY:rsi2_below_10"]["last_date"], "2012-12-31")
 
 

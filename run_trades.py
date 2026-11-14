@@ -18,11 +18,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from backtester import data, lock, registry, runlog, simulate, strategies
+from backtester import data, lead_v2, lock, registry, runlog, simulate, strategies
 from backtester.ledger import HoldoutLedger, holdout_result, rng_for
 from backtester.report_html import render
 from backtester.strategies import EXITS, MODES, SIGNALS, SYMBOLS, signal_rule
-from run_studies import METHOD, code_version, period_mask
+from backtester.study import bh_qvalues
+from run_studies import METHOD, PARTIAL, code_version, period_mask
 
 HERE = Path(__file__).resolve().parent
 REPORTS = HERE / "reports"
@@ -80,8 +81,11 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
                                                    exit=ex.name, exit_version=ex.version, pricing=mode, period=period))
 
                         def compute(mask=mask, period=period, trades=trades, priced=priced):
-                            return simulate.evaluate(frame, signal, ex.rule, mask, mode, cfg, draws,
-                                                     rng_for(seed, *who, period), trades, priced)
+                            out = simulate.evaluate(frame, signal, ex.rule, mask, mode, cfg, draws,
+                                                    rng_for(seed, *who, period), trades, priced)
+                            out.update(lead_v2.evaluate(frame, trades, priced, mask, mode, cfg,
+                                                        rng_for(seed, *who, period, "v2")))
+                            return out
                         if period == "development":
                             result[period] = compute()
                         else:
@@ -92,8 +96,25 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
                                  "signal_description": study.description, "exit": ex.name,
                                  "exit_version": ex.version, "exit_description": ex.description, "mode": mode,
                                  "dev": dev_result, "holdout": hold_result, "holdout_source": source,
-                                 "verdict": simulate.verdict(dev_result, hold_result)})
+                                 "entry": entry, "verdict_v1": simulate.verdict(dev_result, hold_result)})
+    judge(rows, registered)
     return rows, signal_days, full, trade_list(lists)
+
+
+def judge(rows: list[dict], registered: bool) -> None:
+    """Set each row's v2 verdict. The correction covers every strategy x entry price of a registered run once:
+    the close-entry pricings are one test, so the perp rows take their ETF-at-close row's q."""
+    if not registered:
+        for row in rows:
+            row["q"], row["verdict"] = None, PARTIAL
+        return
+    def test_of(row):
+        return (row["symbol"], row["signal"], row["exit"], row["entry"])
+    family = [r for r in rows if r["mode"] in ("etf_close", "etf_next_open") and lead_v2.judged(r["dev"])]
+    q_by_test = dict(zip(map(test_of, family), bh_qvalues([r["dev"]["v2"]["p"] for r in family])))
+    for row in rows:
+        row["q"] = q_by_test.get(test_of(row))
+        row["verdict"] = lead_v2.verdict(row["dev"], row["holdout"], row["q"])
 
 
 TRADE_COLUMNS = ["symbol", "signal", "signal_version", "exit", "exit_version", "pricing", "period", "signal_day",
@@ -143,13 +164,25 @@ def period_lines(label: str, results: list[dict | None]) -> list[str]:
         ("Win rate (after costs)", lambda r: pct(r.get("win_rate"), 0)),
         ("Mean per trade, gross / net bp", lambda r: f"{bp(r.get('mean_gross'))} / {bp(r.get('mean_net'))}"),
         ("Average win / loss", lambda r: f"{pct(r.get('avg_win'), 2, True)} / {pct(r.get('avg_loss'), 2, True)}"),
-        ("Random-entry percentile", lambda r: "–" if r.get("random_percentile") is None else f"{r['random_percentile']:.0f}"),
-        ("CAGR: strategy / matched buy-and-hold", lambda r: f"{pct(r['strategy']['cagr'], 2, True)} / {pct(r['matched']['cagr'], 2, True)}"),
+        ("Excess over same-length trades, bp (p)", lambda r: "–" if not r.get("v2") else f"{bp(r['v2']['mean_excess'])} ({r['v2']['p']:.3f})"),
+        ("Quarters with trades", lambda r: "–" if not r.get("v2") else str(r["v2"]["quarters"])),
+        ("Share of gross profit from the best 5 trades", lambda r: "–" if not r.get("v2") else pct(r["v2"]["top5_share"], 0)),
+        ("CAGR: strategy / risk-matched buy-and-hold", lambda r: f"{pct(r['strategy']['cagr'], 2, True)} / {pct((r.get('risk_matched') or {}).get('cagr'), 2, True)}"),
+        ("Return per unit of volatility: strategy / index", lambda r: f"{ratio(r.get('per_volatility'))} / {ratio(r.get('index_per_volatility'))}"),
+        ("v1 random-entry percentile", lambda r: "–" if r.get("random_percentile") is None else f"{r['random_percentile']:.0f}"),
+        ("CAGR: strategy / time-matched buy-and-hold", lambda r: f"{pct(r['strategy']['cagr'], 2, True)} / {pct(r['matched']['cagr'], 2, True)}"),
         ("Max drawdown: strategy / matched", lambda r: f"{pct(r['strategy']['max_drawdown'], 1)} / {pct(r['matched']['max_drawdown'], 1)}"),
         ("CAGR per unit of drawdown: strategy / matched", lambda r: f"{ratio(r['strategy']['return_per_drawdown'])} / {ratio(r['matched']['return_per_drawdown'])}"),
     ]
     return [f"| **{label}** |" + " |" * len(results)] + [
         f"| {name} | " + " | ".join(cell(r, fn) for r in results) + " |" for name, fn in rows]
+
+
+def partial_note(rows) -> list[str]:
+    if rows and rows[0].get("verdict") == PARTIAL:
+        return ["**Partial run.** These are not the registered symbols, seed and draws, so there are no q-values or "
+                "verdicts and the 1993-2009 period was not evaluated (stored results are shown where they exist).", ""]
+    return []
 
 
 def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: str | None = None) -> str:
@@ -166,14 +199,26 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
              f"bought just after the close: {fees['kalshi_maker']} bp (maker) or {fees['kalshi_taker']} bp (taker) per "
              f"round trip plus {cfg['funding_bps_per_day']} bp of funding for every calendar day held through a 4 PM "
              "funding time. The perp columns use the ETF's adjusted price as a stand-in for the perp's price.", "",
-             "**Benchmarks.** *Matched buy-and-hold* holds the same instrument every day at a fraction equal to the "
-             "strategy's time in the market, so the comparison isn't flattered by holding less risk. *Random-entry "
-             "percentile*: the strategy's average gross trade against 2,000 sets of random entry days with the same "
-             "number of trades and the same holding lengths (95 means it beat 95% of them).", "",
-             "**Verdicts** (registered 2026-11-08): *Lead* = random-entry percentile at least 95 in development and "
-             "90 in the holdout, and a higher CAGR than matched buy-and-hold in both. *Timing edge only* = beats "
-             "random entries in both periods, but not matched buy-and-hold. *Failed holdout* = passes development "
-             "only. *No edge* = fails the random-entry test in development. *Too few trades* = under 20.", ""]
+             "**The test (verdict v2, registered 2026-11-13).** *Excess* is the average trade minus the average of every "
+             "possible trade of the same length in the period. Its p-value comes from resampling the rule's own trades "
+             f"by calendar quarter {lead_v2.RESAMPLES:,} times, so the spread is the rule's own and trades from one "
+             "sell-off stay together. q corrects the development p-values for every strategy and entry price in the "
+             "run (the three close-entry pricings are one test).", "",
+             "**Benchmarks.** *Risk-matched buy-and-hold* holds the same instrument every day at a fraction equal to "
+             "the strategy's time in the market times (its volatility while in a trade / the instrument's on all "
+             "days). Beating it means more return per unit of risk while in a trade than the instrument usually "
+             "gives. *Return per unit of volatility* compares the whole strategy, idle days included, with simply "
+             "owning the instrument; it is shown for information and is not part of the verdict.", "",
+             f"**Verdicts.** *Lead* = positive excess with p < {lead_v2.DEV_P} and q < {lead_v2.DEV_Q} in development, "
+             f"positive excess with p < {lead_v2.HOLDOUT_P} in 1993-2009, and a higher CAGR than risk-matched "
+             "buy-and-hold in both. *Timing edge only* = passes the tests but not the benchmark. *Failed holdout* = "
+             f"passes development only. *No edge* = fails in development. *Too few trades* = under {lead_v2.MIN_TRADES} "
+             f"trades or under {lead_v2.MIN_QUARTERS} quarters with trades.", "",
+             "**1993-2009 is a reused period.** The three signals were chosen on 2026-11-08 partly because they "
+             "passed it in the indicator studies, so it can remove a Lead but cannot confirm one. Its statistics are "
+             "computed once and then read from `holdout_ledger.jsonl`. A Lead is provisional until trades after "
+             "2026-11-08 support it.", "",
+             *partial_note(rows)]
     order = list(MODES)
     lines += ["## Verdicts", "", "| Strategy | " + " | ".join(MODE_LABELS[m] for m in order) + " |",
               "|---|" + "---|" * len(order)]
@@ -182,6 +227,17 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
     for key in keys:
         lines.append(f"| {key[0]} {key[1]}, {key[2]} | " +
                      " | ".join(by_key[(*key, m)]["verdict"] for m in order) + " |")
+    lines += ["", "### Development test behind each verdict (ETF pricings)", "",
+              "| Strategy | Entry | Trades | Excess bp | p | q | 1993-2009 excess bp | p | v1 verdict (superseded) |",
+              "|---|---|---|---|---|---|---|---|---|"]
+    for key in keys:
+        for mode in THESIS_MODES:
+            r = by_key[(*key, mode)]
+            d, h = r["dev"].get("v2") or {}, (r["holdout"] or {}).get("v2") or {}
+            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {r['dev']['trades']} | {bp(d.get('mean_excess'))} | "
+                         + ("–" if d.get("p") is None else f"{d['p']:.3f}") + " | "
+                         + ("–" if r.get("q") is None else f"{r['q']:.3f}") + f" | {bp(h.get('mean_excess'))} | "
+                         + ("–" if h.get("p") is None else f"{h['p']:.3f}") + f" | {r['verdict_v1']} |")
     lines += ["", "## Return per unit of drawdown (descriptive, not part of the verdict)", "",
               "CAGR divided by the worst peak-to-trough loss, for the strategy versus exposure-matched buy-and-hold, "
               "ETF at the close. A strategy that is fully invested during its trades can earn more per year than the "
@@ -225,14 +281,11 @@ def compact(result: dict | None) -> dict | None:
     if result is None:
         return None
     keep = ("trades", "exposure", "win_rate", "mean_gross", "mean_net", "avg_win", "avg_loss", "mean_sessions",
-            "random_percentile")
+            "random_percentile", "v2", "risk_matched", "risk_fraction", "per_volatility", "index_per_volatility")
     return {**{k: result.get(k) for k in keep}, "strategy": result["strategy"], "matched": result["matched"]}
 
 
-VERDICT_DEFINITION = ("v1, registered 2026-11-08. Lead: the mean gross trade beats at least 95% of random same-length "
-                      "entries in development and 90% in the 1993-2009 period, and CAGR is above buy-and-hold held at "
-                      "the strategy's time in the market in both. The 1993-2009 period also helped choose these "
-                      "signals, so it is not independent confirmation.")
+VERDICT_DEFINITION = lead_v2.DEFINITION
 
 
 def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full, run_info: dict | None = None) -> dict:
@@ -241,7 +294,8 @@ def export(rows, signal_days, cfg, fingerprint, version, started, report_name, f
     Schema 1 is unchanged for the reader; the fields from "verdict_definition" down were added 2026-11-13."""
     return {"kind": "trade_simulation", "schema": 1, "generated_at": started.isoformat(timespec="seconds"),
             "code": version, "data_fingerprint": fingerprint, "report": report_name,
-            "verdict_definition": VERDICT_DEFINITION,
+            "verdict_definition": VERDICT_DEFINITION, "verdict_version": lead_v2.VERSION,
+            "verdict_parameters": lead_v2.PARAMS,
             "data_through": {key.split(":")[0]: value["last_date"] for key, value in signal_days.items()},
             "entry_notes": {"etf_close": "Needs the order in before the close, on an estimate of that close's signal.",
                             "etf_next_open": "Signal known after the close; bought at the next session's open."},
@@ -253,7 +307,9 @@ def export(rows, signal_days, cfg, fingerprint, version, started, report_name, f
             "strategies": [{"symbol": r["symbol"], "signal": r["signal"], "signal_version": r["signal_version"],
                             "signal_description": r["signal_description"], "exit": r["exit"],
                             "exit_version": r["exit_version"], "exit_description": r["exit_description"],
-                            "mode": r["mode"], "verdict": r["verdict"], "development": compact(r["dev"]),
+                            "mode": r["mode"], "verdict": r["verdict"], "verdict_v1": r["verdict_v1"],
+                            "q": r.get("q"), "holdout_source": r.get("holdout_source"),
+                            "development": compact(r["dev"]),
                             "holdout": compact(r["holdout"])} for r in rows if r["mode"] in THESIS_MODES],
             "signal_days": signal_days}
 
@@ -287,12 +343,18 @@ def main(argv=None) -> int:
     # The record goes first: if it can't be written (a broken chain), no report or export appears without one.
     registry.append(TRIALS, {"kind": "trade_simulation", "run_at": started.isoformat(timespec="seconds"),
                              "code": version, "data": fingerprint, "settings": runlog.settings(cfg),
-                             "method": METHOD, "rules": rules,
+                             "method": METHOD, "rules": rules, "verdict_version": lead_v2.VERSION,
                              "family": "registered" if is_registered(SYMBOLS, args.draws, args.seed) else "unregistered settings",
                              "seed": args.seed, "draws": args.draws,
                              "report": path.name, "trade_list": trades_name,
                              "tests": [{"study": f"{r['signal']}+{r['exit']}", "version": f"{r['signal_version']}/{r['exit_version']}",
                                         "symbol": r["symbol"], "mode": r["mode"], "verdict": r["verdict"],
+                                        "verdict_v1": r["verdict_v1"], "q": r.get("q"),
+                                        "dev_excess": (r["dev"].get("v2") or {}).get("mean_excess"),
+                                        "dev_p": (r["dev"].get("v2") or {}).get("p"),
+                                        "dev_risk_matched_cagr": (r["dev"].get("risk_matched") or {}).get("cagr"),
+                                        "holdout_excess": ((r["holdout"] or {}).get("v2") or {}).get("mean_excess"),
+                                        "holdout_p": ((r["holdout"] or {}).get("v2") or {}).get("p"),
                                         "holdout_source": r.get("holdout_source"),
                                         "dev_trades": r["dev"]["trades"], "dev_mean_net": r["dev"].get("mean_net"),
                                         "dev_random_percentile": r["dev"].get("random_percentile"),

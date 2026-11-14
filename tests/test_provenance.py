@@ -118,6 +118,14 @@ class RunRecordTests(unittest.TestCase):
             self.assertEqual([r["holdout"]["random_percentile"] for r in rows],
                              [t["holdout_random_percentile"] for t in record["tests"]])
             self.assertEqual([r["verdict"] for r in rows], [t["verdict"] for t in record["tests"]])
+            self.assertEqual([(r["dev"]["v2"]["p"], r["q"]) for r in rows], [(t["dev_p"], t["q"]) for t in record["tests"]])
+            by_test = {}
+            for t in record["tests"]:  # the close-entry pricings are one test: same p and q
+                if t["mode"] != "etf_next_open":
+                    by_test.setdefault((t["symbol"], t["study"]), set()).add((t["dev_p"], t["q"]))
+            self.assertTrue(all(len(v) == 1 for v in by_test.values()))
+            self.assertEqual(export["verdict_version"], "v2")
+            self.assertNotIn("Partial", " ".join(t["verdict"] for t in record["tests"]))
             # A second run reads every holdout result from the ledger and adds nothing to it.
             self.assertEqual(run_trades.main([]), 0)
             again = registry.read(tmp / "trials.jsonl")[-1]
