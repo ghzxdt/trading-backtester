@@ -36,5 +36,6 @@ charts with indicators; this app measures which indicators actually carried info
 - Commit code before a real run, so the record names a clean commit (otherwise it says "+dirty").
 - Weekly: the Windows scheduled task **Trading Backtester Weekly Run** (Saturdays 10:00 AM, or at the next sign-in
   if missed) runs `run_weekly.ps1`: the trade simulation, then a commit of only the files it writes and a push.
-  Log: `work\weekly_run.log`. It keeps the export fresh for the research app (caution after 10 days, unused after 45).
+  Log: `work\weekly_run.log`. Since 2026-11-15 it wakes the laptop from sleep to run (wake timers are allowed on
+  mains and battery); it cannot wake it from a shutdown, and runs only while the user is signed in. It keeps the export fresh for the research app (caution after 10 days, unused after 45).
 - Tests: `..\trading-research\.venv\Scripts\python.exe -B -m unittest discover -s tests`.

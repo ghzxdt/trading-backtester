@@ -25,6 +25,7 @@ a list of every simulated trade with its entry and exit day and price (the app's
 
 The trade simulation also runs by itself every Saturday at 10:00 AM (Windows scheduled task **Trading Backtester
 Weekly Run**, script `run_weekly.ps1`), then commits and pushes its results; its log is `work\weekly_run.log`.
+The task wakes the laptop from sleep to run, but not from a shutdown: leave it asleep or on, signed in.
 
 A run with other symbols, horizons, seed or draws than the registered ones is a partial run: it reports the numbers
 but gives no verdicts and does not look at 1993-2009.

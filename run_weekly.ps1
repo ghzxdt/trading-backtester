@@ -1,6 +1,7 @@
 # Weekly trade simulation, run by the Windows scheduled task "Trading Backtester Weekly Run" (Saturdays 10:00 AM,
-# or at the next sign-in if the laptop was off). It keeps exports/trade_simulation.json fresh for the research
-# app, which cautions after 10 days and stops using the evidence after 45.
+# or at the next sign-in if the laptop was off). The task wakes the laptop from sleep to run (since 2026-11-15; the
+# power plan's "Allow wake timers" is enabled), not from a shutdown. It keeps exports/trade_simulation.json fresh
+# for the research app, which cautions after 10 days and stops using the evidence after 45.
 #
 # Runs run_trades.py with the registered settings, then commits only the files a run writes (trial record,
 # holdout ledger, report, export, trade list) and pushes main. Code changes in progress are never committed; if

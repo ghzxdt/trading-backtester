@@ -19,7 +19,8 @@ Open items:
 - The research page cautions when the export is over 10 days old and stops using it after 45. Since 2026-11-14
   the scheduled task "Trading Backtester Weekly Run" re-runs the trade simulation every Saturday at 10:00 AM and
   commits and pushes the results (`run_weekly.ps1`, log in `work\weekly_run.log`). If the export ever goes stale,
-  check that log first.
+  check that log first. Since 2026-11-15 the task wakes the laptop from sleep (not from a shutdown); a timer wake
+  has not yet been seen on this laptop (the System log showed only power-button and USB wakes).
 - Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
 - `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
 
