@@ -1,10 +1,10 @@
 {
  "kind": "trade_simulation",
  "schema": 1,
- "generated_at": "2026-11-14T23:26:21+00:00",
- "code": "3878ffd",
- "data_fingerprint": "4e1f98996cd13f8f",
- "report": "2026-11-14-232621-trade-simulation.md",
+ "generated_at": "2026-11-18T00:27:51+00:00",
+ "code": "407cd65",
+ "data_fingerprint": "c4713b15d633ad4c",
+ "report": "2026-11-18-002751-trade-simulation.md",
  "verdict_definition": "v2, registered 2026-11-13. Lead: the average trade beats the average of every possible trade of the same length in the period, judged by resampling the rule's own trades by calendar quarter (development p < 0.05 and q < 0.1 across the run's strategy-and-entry tests; 1993-2009 p < 0.1), and CAGR is above buy-and-hold scaled to the same time in the market and the same volatility while in a trade, in both periods. The 1993-2009 period also helped choose these signals, so it is not independent confirmation; a Lead is provisional until trades after 2026-11-08 support it.",
  "verdict_version": "v2",
  "verdict_parameters": {
@@ -48,7 +48,7 @@
   "funding_note": "Mean US500 perp funding per daily record (zeros included), measured 2026-11-07; charged for every calendar day held through a 4 PM funding time.",
   "verdict_cost": "etf"
  },
- "trade_list": "exports/trades/2026-11-14-232621-trade-simulation.csv",
+ "trade_list": "exports/trades/2026-11-18-002751-trade-simulation.csv",
  "periods": {
   "development": {
    "start": "2010-01-01",
@@ -62,27 +62,27 @@
  "buy_and_hold": {
   "SPY": {
    "development": {
-    "cagr": 0.14009062234461833,
-    "max_drawdown": -0.33717270361192975,
-    "return_per_drawdown": 0.4154862503515593
+    "cagr": 0.14009064102558133,
+    "max_drawdown": -0.33717252250853647,
+    "return_per_drawdown": 0.4154865289238821
    },
    "holdout": {
-    "cagr": 0.07591452923213438,
-    "max_drawdown": -0.5518945309225862,
-    "return_per_drawdown": 0.13755260285915544
+    "cagr": 0.07591453185799413,
+    "max_drawdown": -0.5518943145315163,
+    "return_per_drawdown": 0.13755266154976667
    },
    "holdout_start": "1993-01-29"
   },
   "QQQ": {
    "development": {
-    "cagr": 0.18390795476911626,
-    "max_drawdown": -0.35118740509939417,
-    "return_per_drawdown": 0.523674687926425
+    "cagr": 0.18390794799982602,
+    "max_drawdown": -0.3511873777660449,
+    "return_per_drawdown": 0.5236747094092384
    },
    "holdout": {
-    "cagr": -0.00750237431685874,
-    "max_drawdown": -0.8296390868372562,
-    "return_per_drawdown": -0.009042937387942068
+    "cagr": -0.0075023817805852655,
+    "max_drawdown": -0.8296391069337358,
+    "return_per_drawdown": -0.009042946165246871
    },
    "holdout_start": "1999-03-10"
   }
@@ -112,36 +112,36 @@
     "trades": 192,
     "exposure": 0.2262550082488805,
     "win_rate": 0.6354166666666666,
-    "mean_gross": 0.005857402885349893,
-    "mean_net": 0.005656231404772838,
-    "avg_win": 0.02081283133462732,
-    "avg_loss": -0.02075955704440212,
+    "mean_gross": 0.0058573929407765395,
+    "mean_net": 0.005656221462188413,
+    "avg_win": 0.020812807481395794,
+    "avg_loss": -0.020759542742715877,
     "mean_sessions": 5.0,
     "random_percentile": 96.85000000000001,
     "v2": {
-     "mean_excess": 0.0030253938986603605,
-     "baseline": 0.002832008986689532,
+     "mean_excess": 0.003025383938097325,
+     "baseline": 0.002832009002679214,
      "p": 0.07739226077392261,
      "quarters": 67,
-     "top5_share": 0.4143701967417889
+     "top5_share": 0.4143710446651719
     },
     "risk_matched": {
-     "cagr": 0.044454505678887424,
-     "max_drawdown": -0.11332703033692904,
-     "return_per_drawdown": 0.3922674541697698
+     "cagr": 0.04445451365897046,
+     "max_drawdown": -0.11332695765627943,
+     "return_per_drawdown": 0.3922677761614405
     },
-    "risk_fraction": 0.3079624333428942,
-    "per_volatility": 0.591252003479608,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.30796245867865807,
+    "per_volatility": 0.5912510243955855,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.06110949597956861,
-     "max_drawdown": -0.30653916469861464,
-     "return_per_drawdown": 0.19935298003323873
+     "cagr": 0.06110937532543104,
+     "max_drawdown": -0.3065390067001511,
+     "return_per_drawdown": 0.19935268918388163
     },
     "matched": {
-     "cagr": 0.03274969036129871,
-     "max_drawdown": -0.08408077319334484,
-     "return_per_drawdown": 0.38950272597981905
+     "cagr": 0.032749693442928995,
+     "max_drawdown": -0.08408071068247491,
+     "return_per_drawdown": 0.38950305221141607
     }
    },
    "holdout": {
@@ -198,36 +198,36 @@
     "trades": 192,
     "exposure": 0.2262550082488805,
     "win_rate": 0.5833333333333334,
-    "mean_gross": 0.003946613324527972,
-    "mean_net": 0.003745824001863088,
-    "avg_win": 0.020077984856133553,
-    "avg_loss": -0.019119201194115563,
+    "mean_gross": 0.003946593449716392,
+    "mean_net": 0.003745804131026471,
+    "avg_win": 0.020077961933714472,
+    "avg_loss": -0.019119216792736732,
     "mean_sessions": 5.0,
     "random_percentile": 83.5,
     "v2": {
-     "mean_excess": 0.001477259140457021,
-     "baseline": 0.00246935418407095,
+     "mean_excess": 0.0014772392639654205,
+     "baseline": 0.0024693541857509697,
      "p": 0.22357764223577642,
      "quarters": 67,
-     "top5_share": 0.5277975019154701
+     "top5_share": 0.5278008058750137
     },
     "risk_matched": {
-     "cagr": 0.04305327453955754,
-     "max_drawdown": -0.10984785549364173,
-     "return_per_drawdown": 0.39193550339314154
+     "cagr": 0.04305328957702437,
+     "max_drawdown": -0.10984780296614816,
+     "return_per_drawdown": 0.39193582770419283
     },
-    "risk_fraction": 0.29815458215405866,
-    "per_volatility": 0.4089192279981034,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.29815465795798934,
+    "per_volatility": 0.4089170851441001,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.03875067918806896,
-     "max_drawdown": -0.3410383763234339,
-     "return_per_drawdown": 0.11362556790769669
+     "cagr": 0.0387504430500607,
+     "max_drawdown": -0.3410389830043271,
+     "return_per_drawdown": 0.11362467336928762
     },
     "matched": {
-     "cagr": 0.03274969036129871,
-     "max_drawdown": -0.08408077319334484,
-     "return_per_drawdown": 0.38950272597981905
+     "cagr": 0.032749693442928995,
+     "max_drawdown": -0.08408071068247491,
+     "return_per_drawdown": 0.38950305221141607
     }
    },
    "holdout": {
@@ -284,36 +284,36 @@
     "trades": 188,
     "exposure": 0.1553146358708461,
     "win_rate": 0.723404255319149,
-    "mean_gross": 0.004150459440842689,
-    "mean_net": 0.003949629348954546,
-    "avg_win": 0.013006740524210516,
-    "avg_loss": -0.019738199878637994,
+    "mean_gross": 0.004150475414941273,
+    "mean_net": 0.003949645319858304,
+    "avg_win": 0.013006754800486547,
+    "avg_loss": -0.01973817947563095,
     "mean_sessions": 3.50531914893617,
     "random_percentile": 94.55,
     "v2": {
-     "mean_excess": 0.0021629034784460075,
-     "baseline": 0.0019875559623966817,
+     "mean_excess": 0.002162919463655945,
+     "baseline": 0.0019875559512853268,
      "p": 0.12098790120987901,
      "quarters": 67,
-     "top5_share": 0.24941077051869887
+     "top5_share": 0.2494093995767316
     },
     "risk_matched": {
-     "cagr": 0.03323394312336592,
-     "max_drawdown": -0.0852990638185418,
-     "return_per_drawdown": 0.3896167394529097
+     "cagr": 0.03323395171679544,
+     "max_drawdown": -0.08529901421714758,
+     "return_per_drawdown": 0.3896170667598929
     },
-    "risk_fraction": 0.2296257705927623,
-    "per_volatility": 0.45932612504198267,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.2296258086081736,
+    "per_volatility": 0.45932790818780683,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.04161272270955907,
-     "max_drawdown": -0.27091850900186176,
-     "return_per_drawdown": 0.153598670178984
+     "cagr": 0.04161290796898931,
+     "max_drawdown": -0.27091657142252545,
+     "return_per_drawdown": 0.15360045253226393
     },
     "matched": {
-     "cagr": 0.022531962419179097,
-     "max_drawdown": -0.05820639525322746,
-     "return_per_drawdown": 0.38710458397489805
+     "cagr": 0.022531964461360632,
+     "max_drawdown": -0.05820635080885528,
+     "return_per_drawdown": 0.38710491463987656
     }
    },
    "holdout": {
@@ -370,36 +370,36 @@
     "trades": 188,
     "exposure": 0.1553146358708461,
     "win_rate": 0.723404255319149,
-    "mean_gross": 0.00302711913381931,
-    "mean_net": 0.002826513709992574,
-    "avg_win": 0.011646338760439176,
-    "avg_loss": -0.02024072103732931,
+    "mean_gross": 0.003027122042112736,
+    "mean_net": 0.0028265166177043376,
+    "avg_win": 0.011646355824832786,
+    "avg_loss": -0.020240755154785454,
     "mean_sessions": 3.50531914893617,
     "random_percentile": 86.4,
     "v2": {
-     "mean_excess": 0.0014009304031054471,
-     "baseline": 0.0016261887307138618,
+     "mean_excess": 0.0014009333528660016,
+     "baseline": 0.0016261886892467345,
      "p": 0.21537846215378462,
      "quarters": 67,
-     "top5_share": 0.39235546809139926
+     "top5_share": 0.39235382679942
     },
     "risk_matched": {
-     "cagr": 0.032176435013087756,
-     "max_drawdown": -0.08263763744215213,
-     "return_per_drawdown": 0.3893677990928994
+     "cagr": 0.032176450932961176,
+     "max_drawdown": -0.08263760839364953,
+     "return_per_drawdown": 0.38936812860902986
     },
-    "risk_fraction": 0.22226576135312226,
-    "per_volatility": 0.3379340001780511,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.22226585110008745,
+    "per_volatility": 0.33793426798476206,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.028283071408347293,
-     "max_drawdown": -0.300973126627773,
-     "return_per_drawdown": 0.09397208224283174
+     "cagr": 0.028283103320544623,
+     "max_drawdown": -0.3009722613493564,
+     "return_per_drawdown": 0.09397245843767224
     },
     "matched": {
-     "cagr": 0.022531962419179097,
-     "max_drawdown": -0.05820639525322746,
-     "return_per_drawdown": 0.38710458397489805
+     "cagr": 0.022531964461360632,
+     "max_drawdown": -0.05820635080885528,
+     "return_per_drawdown": 0.38710491463987656
     }
    },
    "holdout": {
@@ -456,36 +456,36 @@
     "trades": 24,
     "exposure": 0.028281876031110063,
     "win_rate": 0.75,
-    "mean_gross": 0.014515346723404182,
-    "mean_net": 0.014312443654059518,
-    "avg_win": 0.03287175531282671,
-    "avg_loss": -0.041365491322242064,
+    "mean_gross": 0.014515351260270828,
+    "mean_net": 0.014312448190018803,
+    "avg_win": 0.03287173197151778,
+    "avg_loss": -0.04136540315447812,
     "mean_sessions": 5.0,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.01168333773671465,
-     "baseline": 0.0028320089866895313,
+     "mean_excess": 0.011683342257591614,
+     "baseline": 0.002832009002679213,
      "p": 0.0091990800919908,
      "quarters": 17,
-     "top5_share": 1.0532806149315723
+     "top5_share": 1.0532786434244603
     },
     "risk_matched": {
-     "cagr": 0.010933677246002693,
-     "max_drawdown": -0.028443480584599,
-     "return_per_drawdown": 0.3844001163459172
+     "cagr": 0.010933681154939645,
+     "max_drawdown": -0.02844346586419244,
+     "return_per_drawdown": 0.38440045271360856
     },
-    "risk_fraction": 0.07518610412162717,
-    "per_volatility": 0.2802047537298819,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.07518612452306171,
+    "per_volatility": 0.28020485844071547,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.018719649452855647,
-     "max_drawdown": -0.17645626267527525,
-     "return_per_drawdown": 0.10608662548466528
+     "cagr": 0.01871965905181394,
+     "max_drawdown": -0.17645603619522898,
+     "return_per_drawdown": 0.10608681604466463
     },
     "matched": {
-     "cagr": 0.004118286383033576,
-     "max_drawdown": -0.010757766274067881,
-     "return_per_drawdown": 0.38281984178824424
+     "cagr": 0.004118286731063847,
+     "max_drawdown": -0.010757757667548606,
+     "return_per_drawdown": 0.3828201804068236
     }
    },
    "holdout": {
@@ -542,36 +542,36 @@
     "trades": 24,
     "exposure": 0.028281876031110063,
     "win_rate": 0.7083333333333334,
-    "mean_gross": 0.013950293798352312,
-    "mean_net": 0.01374750373959265,
-    "avg_win": 0.03676085170649602,
-    "avg_loss": -0.042142055608601243,
+    "mean_gross": 0.013950192667128367,
+    "mean_net": 0.013747402628594951,
+    "avg_win": 0.03676071698911077,
+    "avg_loss": -0.04214207510408633,
     "mean_sessions": 5.0,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.011480939614281363,
-     "baseline": 0.0024693541840709503,
+     "mean_excess": 0.011480838481377398,
+     "baseline": 0.0024693541857509697,
      "p": 0.06669333066693331,
      "quarters": 17,
-     "top5_share": 1.1177188597847805
+     "top5_share": 1.1177202418683236
     },
     "risk_matched": {
-     "cagr": 0.010430425234745355,
-     "max_drawdown": -0.027142548045541393,
-     "return_per_drawdown": 0.384283200576621
+     "cagr": 0.010430429594525004,
+     "max_drawdown": -0.027142535609108176,
+     "return_per_drawdown": 0.3842835372766309
     },
-    "risk_fraction": 0.07171825709701819,
-    "per_volatility": 0.27692602967728003,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.0717182809134271,
+    "per_volatility": 0.2769241418706135,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.01772156895249699,
-     "max_drawdown": -0.21043918272371454,
-     "return_per_drawdown": 0.08421230648744549
+     "cagr": 0.017721429534929056,
+     "max_drawdown": -0.2104392198677859,
+     "return_per_drawdown": 0.08421162911582271
     },
     "matched": {
-     "cagr": 0.004118286383033576,
-     "max_drawdown": -0.010757766274067881,
-     "return_per_drawdown": 0.38281984178824424
+     "cagr": 0.004118286731063847,
+     "max_drawdown": -0.010757757667548606,
+     "return_per_drawdown": 0.3828201804068236
     }
    },
    "holdout": {
@@ -628,36 +628,36 @@
     "trades": 24,
     "exposure": 0.019561630921517793,
     "win_rate": 0.7916666666666666,
-    "mean_gross": 0.006450820746353017,
-    "mean_net": 0.006249530582203788,
-    "avg_win": 0.020176409618713448,
-    "avg_loss": -0.04667260975653291,
+    "mean_gross": 0.006450832223601701,
+    "mean_net": 0.006249542057157016,
+    "avg_win": 0.02017648896503856,
+    "avg_loss": -0.04667285619279284,
     "mean_sessions": 3.4583333333333335,
     "random_percentile": 88.4,
     "v2": {
-     "mean_excess": 0.004487497745225216,
-     "baseline": 0.0019633230011278017,
+     "mean_excess": 0.004487509215351122,
+     "baseline": 0.001963323008250579,
      "p": 0.28777122287771223,
      "quarters": 17,
-     "top5_share": 1.3090413523519056
+     "top5_share": 1.3090411025470856
     },
     "risk_matched": {
-     "cagr": 0.008555291560607747,
-     "max_drawdown": -0.02228823408248881,
-     "return_per_drawdown": 0.38384788713832557
+     "cagr": 0.00855529975788194,
+     "max_drawdown": -0.022288235786556476,
+     "return_per_drawdown": 0.383848225575674
     },
-    "risk_fraction": 0.0588032257222244,
-    "per_volatility": 0.13857945041087827,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.05880327709572271,
+    "per_volatility": 0.13857961985803968,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.007387390449078213,
-     "max_drawdown": -0.2345686530237322,
-     "return_per_drawdown": 0.03149351097791742
+     "cagr": 0.007387405865836527,
+     "max_drawdown": -0.23456842527619082,
+     "return_per_drawdown": 0.031493607279574315
     },
     "matched": {
-     "cagr": 0.0028491722743813064,
-     "max_drawdown": -0.007448304040262532,
-     "return_per_drawdown": 0.38252631189326164
+     "cagr": 0.00284917251397232,
+     "max_drawdown": -0.007448298062603054,
+     "return_per_drawdown": 0.38252665105840067
     }
    },
    "holdout": {
@@ -714,36 +714,36 @@
     "trades": 24,
     "exposure": 0.019561630921517793,
     "win_rate": 0.7916666666666666,
-    "mean_gross": 0.00793294841308658,
-    "mean_net": 0.007731361823403986,
-    "avg_win": 0.0245144403469958,
-    "avg_loss": -0.0560443365662449,
+    "mean_gross": 0.007932858766278278,
+    "mean_net": 0.0077312721945250506,
+    "avg_win": 0.02451439805883457,
+    "avg_loss": -0.05604460608985111,
     "mean_sessions": 3.4583333333333335,
     "random_percentile": 96.65,
     "v2": {
-     "mean_excess": 0.006331158858394386,
-     "baseline": 0.0016017895546921916,
+     "mean_excess": 0.006331069238636979,
+     "baseline": 0.0016017895276412997,
      "p": 0.27377262273772623,
      "quarters": 17,
-     "top5_share": 1.4114124037789804
+     "top5_share": 1.4114265667279204
     },
     "risk_matched": {
-     "cagr": 0.008422357673327774,
-     "max_drawdown": -0.021943678038733316,
-     "return_per_drawdown": 0.38381704555003343
+     "cagr": 0.008422366381767521,
+     "max_drawdown": -0.021943681368345125,
+     "return_per_drawdown": 0.383817384165868
     },
-    "risk_fraction": 0.057888013281510414,
-    "per_volatility": 0.15873461220205518,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.057888068252619405,
+    "per_volatility": 0.1587327669942211,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.008752628550975583,
-     "max_drawdown": -0.22661478391559908,
-     "return_per_drawdown": 0.03862337840339416
+     "cagr": 0.008752501036251248,
+     "max_drawdown": -0.22661523347306411,
+     "return_per_drawdown": 0.03862273909000732
     },
     "matched": {
-     "cagr": 0.0028491722743813064,
-     "max_drawdown": -0.007448304040262532,
-     "return_per_drawdown": 0.38252631189326164
+     "cagr": 0.00284917251397232,
+     "max_drawdown": -0.007448298062603054,
+     "return_per_drawdown": 0.38252665105840067
     }
    },
    "holdout": {
@@ -800,36 +800,36 @@
     "trades": 96,
     "exposure": 0.11312750412444025,
     "win_rate": 0.59375,
-    "mean_gross": 0.005635973238407493,
-    "mean_net": 0.005434846043759833,
-    "avg_win": 0.024364565334605404,
-    "avg_loss": -0.02223166676593754,
+    "mean_gross": 0.005636008785939257,
+    "mean_net": 0.005434881584182084,
+    "avg_win": 0.024364598190338763,
+    "avg_loss": -0.022231627301739214,
     "mean_sessions": 5.0,
     "random_percentile": 90.0,
     "v2": {
-     "mean_excess": 0.00280396425171796,
-     "baseline": 0.002832008986689532,
+     "mean_excess": 0.002803999783260043,
+     "baseline": 0.002832009002679214,
      "p": 0.1718828117188281,
      "quarters": 57,
-     "top5_share": 0.584234844361628
+     "top5_share": 0.5842324908117108
     },
     "risk_matched": {
-     "cagr": 0.025978033431180547,
-     "max_drawdown": -0.0669689222734211,
-     "return_per_drawdown": 0.38791177383917397
+     "cagr": 0.025978052502757976,
+     "max_drawdown": -0.06696891393467086,
+     "return_per_drawdown": 0.38791210692322026
     },
-    "risk_fraction": 0.17920206962606983,
-    "per_volatility": 0.3552326567029644,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.17920218538818158,
+    "per_volatility": 0.3552346948737266,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.028580108313996933,
-     "max_drawdown": -0.19885019723361774,
-     "return_per_drawdown": 0.14372682909848863
+     "cagr": 0.028580311366875666,
+     "max_drawdown": -0.19884849496602008,
+     "return_per_drawdown": 0.14372908063377382
     },
     "matched": {
-     "cagr": 0.01643280275501291,
-     "max_drawdown": -0.042607347399170825,
-     "return_per_drawdown": 0.3856800237071953
+     "cagr": 0.016432804210791296,
+     "max_drawdown": -0.042607314352538395,
+     "return_per_drawdown": 0.3856803570115723
     }
    },
    "holdout": {
@@ -886,36 +886,36 @@
     "trades": 96,
     "exposure": 0.11312750412444025,
     "win_rate": 0.59375,
-    "mean_gross": 0.004951311326671486,
-    "mean_net": 0.004750321064406173,
-    "avg_win": 0.02348623627549671,
-    "avg_loss": -0.02263293962872615,
+    "mean_gross": 0.004951340283688204,
+    "mean_net": 0.00475035001563149,
+    "avg_win": 0.023486245361801286,
+    "avg_loss": -0.022632881644155136,
     "mean_sessions": 5.0,
     "random_percentile": 87.64999999999999,
     "v2": {
-     "mean_excess": 0.002481957142600535,
-     "baseline": 0.00246935418407095,
+     "mean_excess": 0.0024819860979372345,
+     "baseline": 0.0024693541857509697,
      "p": 0.21557844215578442,
      "quarters": 57,
-     "top5_share": 0.6993068907214416
+     "top5_share": 0.6993013756652541
     },
     "risk_matched": {
-     "cagr": 0.02552903241765314,
-     "max_drawdown": -0.06582930368334994,
-     "return_per_drawdown": 0.3878065084882577
+     "cagr": 0.025529059222229478,
+     "max_drawdown": -0.06582931591911201,
+     "return_per_drawdown": 0.38780684358923606
     },
-    "risk_fraction": 0.17608753208340702,
-    "per_volatility": 0.3122593896182156,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.17608770176906824,
+    "per_volatility": 0.3122610409632404,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.024197411906527133,
-     "max_drawdown": -0.23404973714212718,
-     "return_per_drawdown": 0.10338576834988371
+     "cagr": 0.024197579552910797,
+     "max_drawdown": -0.23404832415870624,
+     "return_per_drawdown": 0.10338710879426173
     },
     "matched": {
-     "cagr": 0.01643280275501291,
-     "max_drawdown": -0.042607347399170825,
-     "return_per_drawdown": 0.3856800237071953
+     "cagr": 0.016432804210791296,
+     "max_drawdown": -0.042607314352538395,
+     "return_per_drawdown": 0.3856803570115723
     }
    },
    "holdout": {
@@ -972,36 +972,36 @@
     "trades": 99,
     "exposure": 0.08296016969125619,
     "win_rate": 0.7272727272727273,
-    "mean_gross": 0.005807984145385569,
-    "mean_net": 0.005606822548556515,
-    "avg_win": 0.014985335462695364,
-    "avg_loss": -0.019402545222480416,
+    "mean_gross": 0.005807977081424735,
+    "mean_net": 0.005606815486008469,
+    "avg_win": 0.014985339795456624,
+    "avg_loss": -0.019402582672519948,
     "mean_sessions": 3.5555555555555554,
     "random_percentile": 98.15,
     "v2": {
-     "mean_excess": 0.003792148771246868,
-     "baseline": 0.0020158353741387015,
+     "mean_excess": 0.003792141711734339,
+     "baseline": 0.002015835369690396,
      "p": 0.08239176082391761,
      "quarters": 57,
-     "top5_share": 0.31233178679578655
+     "top5_share": 0.31233251624090913
     },
     "risk_matched": {
-     "cagr": 0.021718876518538766,
-     "max_drawdown": -0.05613354803547288,
-     "return_per_drawdown": 0.3869143725747355
+     "cagr": 0.021718894627072327,
+     "max_drawdown": -0.05613354626607636,
+     "return_per_drawdown": 0.38691470736809447
     },
-    "risk_fraction": 0.1496839893846624,
-    "per_volatility": 0.39196075593426827,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.14968410117557387,
+    "per_volatility": 0.39196010581626134,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.03137107327860189,
-     "max_drawdown": -0.2228910191062502,
-     "return_per_drawdown": 0.14074624183779955
+     "cagr": 0.031371029146898266,
+     "max_drawdown": -0.22289080349546087,
+     "return_per_drawdown": 0.1407461799900467
     },
     "matched": {
-     "cagr": 0.012061465278815797,
-     "max_drawdown": -0.03135598852481869,
-     "return_per_drawdown": 0.38466225580064184
+     "cagr": 0.012061466329776671,
+     "max_drawdown": -0.03135596393353335,
+     "return_per_drawdown": 0.3846625909936593
     }
    },
    "holdout": {
@@ -1058,36 +1058,36 @@
     "trades": 99,
     "exposure": 0.08296016969125619,
     "win_rate": 0.696969696969697,
-    "mean_gross": 0.004967547985303993,
-    "mean_net": 0.004766554475706953,
-    "avg_win": 0.01501313325639812,
-    "avg_loss": -0.01880057671988273,
+    "mean_gross": 0.004967547411452111,
+    "mean_net": 0.0047665539019698475,
+    "avg_win": 0.015013146221715928,
+    "avg_loss": -0.01880060843344614,
     "mean_sessions": 3.5555555555555554,
     "random_percentile": 96.8,
     "v2": {
-     "mean_excess": 0.0033127339270129304,
-     "baseline": 0.0016548140582910615,
+     "mean_excess": 0.0033127333926030547,
+     "baseline": 0.0016548140188490552,
      "p": 0.12418758124187582,
      "quarters": 57,
-     "top5_share": 0.5199911050066554
+     "top5_share": 0.5199907843927145
     },
     "risk_matched": {
-     "cagr": 0.021399877302837877,
-     "max_drawdown": -0.05531974439093479,
-     "return_per_drawdown": 0.38683977191956553
+     "cagr": 0.02139990134627734,
+     "max_drawdown": -0.05531975844836978,
+     "return_per_drawdown": 0.3868401082454107
     },
-    "risk_fraction": 0.14747547465621608,
-    "per_volatility": 0.33386690773629546,
-    "index_per_volatility": 0.8542274465490182,
+    "risk_fraction": 0.14747562773242887,
+    "per_volatility": 0.33386664230479884,
+    "index_per_volatility": 0.854227660214595,
     "strategy": {
-     "cagr": 0.025708902693399205,
-     "max_drawdown": -0.2267512051302265,
-     "return_per_drawdown": 0.11337934313793044
+     "cagr": 0.025708897766390404,
+     "max_drawdown": -0.22675089698482198,
+     "return_per_drawdown": 0.11337947548719633
     },
     "matched": {
-     "cagr": 0.012061465278815797,
-     "max_drawdown": -0.03135598852481869,
-     "return_per_drawdown": 0.38466225580064184
+     "cagr": 0.012061466329776671,
+     "max_drawdown": -0.03135596393353335,
+     "return_per_drawdown": 0.3846625909936593
     }
    },
    "holdout": {
@@ -1144,36 +1144,36 @@
     "trades": 193,
     "exposure": 0.22743341975017675,
     "win_rate": 0.5854922279792746,
-    "mean_gross": 0.0032283635664551343,
-    "mean_net": 0.0030277178937418675,
-    "avg_win": 0.02246527648662884,
-    "avg_loss": -0.02442783361871098,
+    "mean_gross": 0.0032283611954029485,
+    "mean_net": 0.003027715523163887,
+    "avg_win": 0.022465277413627447,
+    "avg_loss": -0.02442784064711589,
     "mean_sessions": 5.0,
     "random_percentile": 41.699999999999996,
     "v2": {
-     "mean_excess": -0.0004868158962189265,
-     "baseline": 0.0037151794626740626,
+     "mean_excess": -0.0004868182816717652,
+     "baseline": 0.003715179477074713,
      "p": 0.5832416758324167,
      "quarters": 67,
-     "top5_share": 0.5802449694031526
+     "top5_share": 0.5802449633651507
     },
     "risk_matched": {
-     "cagr": 0.05357100558032113,
-     "max_drawdown": -0.10753317884870561,
-     "return_per_drawdown": 0.49818117676678325
+     "cagr": 0.053570979921555795,
+     "max_drawdown": -0.10753313469034509,
+     "return_per_drawdown": 0.4981811427316802
     },
-    "risk_fraction": 0.28317033049037604,
-    "per_volatility": 0.29640108062423065,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.28317020782411967,
+    "per_volatility": 0.29640094740840217,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.02930233542931182,
-     "max_drawdown": -0.30376789518201963,
-     "return_per_drawdown": 0.09646291097271381
+     "cagr": 0.029302306519609633,
+     "max_drawdown": -0.30376961135853286,
+     "return_per_drawdown": 0.09646227082611215
     },
     "matched": {
-     "cagr": 0.043089312877023556,
-     "max_drawdown": -0.08684266479431202,
-     "return_per_drawdown": 0.49617676955308954
+     "cagr": 0.04308931072581523,
+     "max_drawdown": -0.0868426654848854,
+     "return_per_drawdown": 0.49617674083615904
     }
    },
    "holdout": {
@@ -1230,36 +1230,36 @@
     "trades": 193,
     "exposure": 0.22743341975017675,
     "win_rate": 0.5803108808290155,
-    "mean_gross": 0.0017167138900927173,
-    "mean_net": 0.0015163705473147206,
-    "avg_win": 0.019962990274877114,
-    "avg_loss": -0.023990066606845627,
+    "mean_gross": 0.0017166915861727386,
+    "mean_net": 0.0015163482478555243,
+    "avg_win": 0.019962975005123212,
+    "avg_loss": -0.02399009862639116,
     "mean_sessions": 5.0,
     "random_percentile": 20.8,
     "v2": {
-     "mean_excess": -0.0014960604632384081,
-     "baseline": 0.003212774353331125,
+     "mean_excess": -0.0014960826760683805,
+     "baseline": 0.0032127742622411167,
      "p": 0.7531246875312468,
      "quarters": 67,
-     "top5_share": 0.9280513130410433
+     "top5_share": 0.9280605289848088
     },
     "risk_matched": {
-     "cagr": 0.05194795581255507,
-     "max_drawdown": -0.1043405093990536,
-     "return_per_drawdown": 0.4978694862786079
+     "cagr": 0.0519479325339387,
+     "max_drawdown": -0.10434046965294053,
+     "return_per_drawdown": 0.49786945282812134
     },
-    "risk_fraction": 0.27452715212023826,
-    "per_volatility": 0.1597671746434282,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.2745270418040569,
+    "per_volatility": 0.15976508567637376,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.011978615406843751,
-     "max_drawdown": -0.4034999212854239,
-     "return_per_drawdown": 0.029686784990400117
+     "cagr": 0.011978360449784953,
+     "max_drawdown": -0.4035001293675182,
+     "return_per_drawdown": 0.02968613781750428
     },
     "matched": {
-     "cagr": 0.043089312877023556,
-     "max_drawdown": -0.08684266479431202,
-     "return_per_drawdown": 0.49617676955308954
+     "cagr": 0.04308931072581523,
+     "max_drawdown": -0.0868426654848854,
+     "return_per_drawdown": 0.49617674083615904
     }
    },
    "holdout": {
@@ -1314,38 +1314,38 @@
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
-    "exposure": 0.1652132924817346,
+    "exposure": 0.16497761018147536,
     "win_rate": 0.703125,
-    "mean_gross": 0.006086451143613773,
-    "mean_net": 0.005885233853385077,
-    "avg_win": 0.015357522199382483,
-    "avg_loss": -0.01654913328187194,
-    "mean_sessions": 3.6510416666666665,
+    "mean_gross": 0.0060968466743746745,
+    "mean_net": 0.005895627305039823,
+    "avg_win": 0.015372334209650293,
+    "avg_loss": -0.01654920483745866,
+    "mean_sessions": 3.6458333333333335,
     "random_percentile": 97.7,
     "v2": {
-     "mean_excess": 0.00337093245989762,
-     "baseline": 0.0027155186837161532,
-     "p": 0.008399160083991601,
+     "mean_excess": 0.003385231345873757,
+     "baseline": 0.002711615328500918,
+     "p": 0.008099190080991902,
      "quarters": 67,
-     "top5_share": 0.1639049868434375
+     "top5_share": 0.16362499181000756
     },
     "risk_matched": {
-     "cagr": 0.04323708603615284,
-     "max_drawdown": -0.08713555050433486,
-     "return_per_drawdown": 0.4962048875103149
+     "cagr": 0.043204821223667755,
+     "max_drawdown": -0.08707160965907712,
+     "return_per_drawdown": 0.4961987195692517
     },
-    "risk_fraction": 0.22821791603888358,
-    "per_volatility": 0.6115890200247878,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.22804663740227626,
+    "per_volatility": 0.6126098646271151,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.06672913363046429,
-     "max_drawdown": -0.18881171335258573,
-     "return_per_drawdown": 0.3534162814668958
+     "cagr": 0.06685518526856304,
+     "max_drawdown": -0.18881179961650063,
+     "return_per_drawdown": 0.35408372466315097
     },
     "matched": {
-     "cagr": 0.03134837500135501,
-     "max_drawdown": -0.06346392983498794,
-     "return_per_drawdown": 0.4939557805963745
+     "cagr": 0.031303825186945744,
+     "max_drawdown": -0.06337481834200742,
+     "return_per_drawdown": 0.4939473754072489
     }
    },
    "holdout": {
@@ -1396,42 +1396,42 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "Lead",
-   "q": 0.11145552111455521,
+   "q": 0.11012232110122322,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
-    "exposure": 0.1652132924817346,
+    "exposure": 0.16497761018147536,
     "win_rate": 0.6979166666666666,
-    "mean_gross": 0.004848710649198365,
-    "mean_net": 0.004647740907068548,
-    "avg_win": 0.013782105589593948,
-    "avg_loss": -0.016455791290490136,
-    "mean_sessions": 3.6510416666666665,
+    "mean_gross": 0.004859037194784063,
+    "mean_net": 0.004658065387345131,
+    "avg_win": 0.01378204472664783,
+    "avg_loss": -0.01642147308621628,
+    "mean_sessions": 3.6458333333333335,
     "random_percentile": 95.8,
     "v2": {
-     "mean_excess": 0.002635555467090957,
-     "baseline": 0.002213155182107409,
-     "p": 0.04179582041795821,
+     "mean_excess": 0.002649745163118774,
+     "baseline": 0.0022092920316652887,
+     "p": 0.04129587041295871,
      "quarters": 67,
-     "top5_share": 0.23120226993506557
+     "top5_share": 0.2307108807063754
     },
     "risk_matched": {
-     "cagr": 0.0415126618364452,
-     "max_drawdown": -0.08371563944475302,
-     "return_per_drawdown": 0.49587702025307834
+     "cagr": 0.04148178939747238,
+     "max_drawdown": -0.0836543753300909,
+     "return_per_drawdown": 0.4958711272876025
     },
-    "risk_fraction": 0.21906553078868118,
-    "per_volatility": 0.5058028499416385,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.2189017302066957,
+    "per_volatility": 0.5068637848233674,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.05165095600515346,
-     "max_drawdown": -0.22231312444848983,
-     "return_per_drawdown": 0.23233426336518892
+     "cagr": 0.05177499159130239,
+     "max_drawdown": -0.22231233825252816,
+     "return_per_drawdown": 0.23289301888629474
     },
     "matched": {
-     "cagr": 0.03134837500135501,
-     "max_drawdown": -0.06346392983498794,
-     "return_per_drawdown": 0.4939557805963745
+     "cagr": 0.031303825186945744,
+     "max_drawdown": -0.06337481834200742,
+     "return_per_drawdown": 0.4939473754072489
     }
    },
    "holdout": {
@@ -1488,36 +1488,36 @@
     "trades": 25,
     "exposure": 0.029460287532406315,
     "win_rate": 0.88,
-    "mean_gross": 0.031378808055158414,
-    "mean_net": 0.031172532293547387,
-    "avg_win": 0.0367495215478731,
-    "avg_loss": -0.009725388904841203,
+    "mean_gross": 0.03137882653680482,
+    "mean_net": 0.031172550771497477,
+    "avg_win": 0.03674950610852546,
+    "avg_loss": -0.009725121700041103,
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.02766362859248435,
-     "baseline": 0.0037151794626740613,
+     "mean_excess": 0.02766364705973012,
+     "baseline": 0.0037151794770747125,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.4385448751601779
+     "top5_share": 0.43854403647355783
     },
     "risk_matched": {
-     "cagr": 0.011444365565039805,
-     "max_drawdown": -0.023343901398993894,
-     "return_per_drawdown": 0.49025076697475467
+     "cagr": 0.011444374462821205,
+     "max_drawdown": -0.023343920690612197,
+     "return_per_drawdown": 0.4902507429878128
     },
-    "risk_fraction": 0.060178243671216436,
-    "per_volatility": 0.6409729106642857,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.06017829366442153,
+    "per_volatility": 0.6409728925608557,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.04614829251209662,
-     "max_drawdown": -0.11978765705046235,
-     "return_per_drawdown": 0.38525081505397474
+     "cagr": 0.04614832317772044,
+     "max_drawdown": -0.11978781215916545,
+     "return_per_drawdown": 0.38525057220681064
     },
     "matched": {
-     "cagr": 0.005605928357635959,
-     "max_drawdown": -0.01145987874746801,
-     "return_per_drawdown": 0.4891786799118231
+     "cagr": 0.005605928062255572,
+     "max_drawdown": -0.011459878732565043,
+     "return_per_drawdown": 0.4891786547727986
     }
    },
    "holdout": {
@@ -1574,36 +1574,36 @@
     "trades": 25,
     "exposure": 0.029460287532406315,
     "win_rate": 0.8,
-    "mean_gross": 0.029935661458215277,
-    "mean_net": 0.02972967432592365,
-    "avg_win": 0.04268755456339043,
-    "avg_loss": -0.022101846623943454,
+    "mean_gross": 0.029935619889740122,
+    "mean_net": 0.029729632765762216,
+    "avg_win": 0.042687499478022375,
+    "avg_loss": -0.022101834083278416,
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.026722887104884147,
-     "baseline": 0.0032127743533311255,
+     "mean_excess": 0.026722845627499003,
+     "baseline": 0.003212774262241117,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.5724783522553447
+     "top5_share": 0.5724783369138405
     },
     "risk_matched": {
-     "cagr": 0.010807048937814479,
-     "max_drawdown": -0.022049198646523327,
-     "return_per_drawdown": 0.49013341079035144
+     "cagr": 0.010807055078622785,
+     "max_drawdown": -0.022049212274709573,
+     "return_per_drawdown": 0.4901333863531473
     },
-    "risk_fraction": 0.05682324824029828,
-    "per_volatility": 0.6370711094635357,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.05682328354134928,
+    "per_volatility": 0.6370700548851678,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.04336132220422728,
-     "max_drawdown": -0.12266275631131063,
-     "return_per_drawdown": 0.3535003085547734
+     "cagr": 0.04336126220248704,
+     "max_drawdown": -0.12266284712070097,
+     "return_per_drawdown": 0.3534995576926345
     },
     "matched": {
-     "cagr": 0.005605928357635959,
-     "max_drawdown": -0.01145987874746801,
-     "return_per_drawdown": 0.4891786799118231
+     "cagr": 0.005605928062255572,
+     "max_drawdown": -0.011459878732565043,
+     "return_per_drawdown": 0.4891786547727986
     }
    },
    "holdout": {
@@ -1660,36 +1660,36 @@
     "trades": 26,
     "exposure": 0.016969125618666037,
     "win_rate": 1.0,
-    "mean_gross": 0.029843885294990397,
-    "mean_net": 0.029637916517931438,
-    "avg_win": 0.029637916517931438,
+    "mean_gross": 0.029843895127502032,
+    "mean_net": 0.029637926348476548,
+    "avg_win": 0.029637926348476548,
     "avg_loss": null,
     "mean_sessions": 2.769230769230769,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.027781085315744088,
-     "baseline": 0.0020627999792463083,
+     "mean_excess": 0.027781095116422936,
+     "baseline": 0.0020628000110790934,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.39492748875464717
+     "top5_share": 0.3949273478302747
     },
     "risk_matched": {
-     "cagr": 0.008162565731447913,
-     "max_drawdown": -0.016670296234351012,
-     "return_per_drawdown": 0.48964731140338297
+     "cagr": 0.008162579611446175,
+     "max_drawdown": -0.0166703253567011,
+     "return_per_drawdown": 0.4896472886274532
     },
-    "risk_fraction": 0.04290694793041048,
-    "per_volatility": 0.6581436781129105,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.04290702320677451,
+    "per_volatility": 0.658142970531107,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.04581234406851431,
-     "max_drawdown": -0.11978765705046235,
-     "return_per_drawdown": 0.3824462820006169
+     "cagr": 0.045812358409854204,
+     "max_drawdown": -0.11978781215916545,
+     "return_per_drawdown": 0.3824459065082684
     },
     "matched": {
-     "cagr": 0.0032297683560660317,
-     "max_drawdown": -0.006608298779494648,
-     "return_per_drawdown": 0.48874429922689117
+     "cagr": 0.0032297681853517,
+     "max_drawdown": -0.0066082987667615,
+     "return_per_drawdown": 0.48874427433529893
     }
    },
    "holdout": {
@@ -1746,36 +1746,36 @@
     "trades": 26,
     "exposure": 0.016969125618666037,
     "win_rate": 0.9230769230769231,
-    "mean_gross": 0.02835238983124166,
-    "mean_net": 0.028146719353275444,
-    "avg_win": 0.03121663691866756,
-    "avg_loss": -0.008692291431429966,
+    "mean_gross": 0.028352327440991025,
+    "mean_net": 0.028146656975502855,
+    "avg_win": 0.031216599410232426,
+    "avg_loss": -0.008692652241251986,
     "mean_sessions": 2.769230769230769,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.026791673127249414,
-     "baseline": 0.0015607167039922455,
+     "mean_excess": 0.02679161075114006,
+     "baseline": 0.0015607166898509682,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.5468776152109589
+     "top5_share": 0.5468792379456929
     },
     "risk_matched": {
-     "cagr": 0.007670526921872423,
-     "max_drawdown": -0.015668301370438842,
-     "return_per_drawdown": 0.48955701964887494
+     "cagr": 0.007670539294170053,
+     "max_drawdown": -0.0156683273792515,
+     "return_per_drawdown": 0.489556996640728
     },
-    "risk_fraction": 0.04031851008529156,
-    "per_volatility": 0.6569160162082697,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.04031857728831804,
+    "per_volatility": 0.6569139112019804,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.043037930702474414,
-     "max_drawdown": -0.11978765705046235,
-     "return_per_drawdown": 0.35928518648915586
+     "cagr": 0.04303783249355164,
+     "max_drawdown": -0.11978781215916545,
+     "return_per_drawdown": 0.3592839014069817
     },
     "matched": {
-     "cagr": 0.0032297683560660317,
-     "max_drawdown": -0.006608298779494648,
-     "return_per_drawdown": 0.48874429922689117
+     "cagr": 0.0032297681853517,
+     "max_drawdown": -0.0066082987667615,
+     "return_per_drawdown": 0.48874427433529893
     }
    },
    "holdout": {
@@ -1832,36 +1832,36 @@
     "trades": 97,
     "exposure": 0.11430591562573651,
     "win_rate": 0.5670103092783505,
-    "mean_gross": 0.006463647962949847,
-    "mean_net": 0.006262355233357289,
-    "avg_win": 0.02880556048007687,
-    "avg_loss": -0.023258508780204072,
+    "mean_gross": 0.006463618158729051,
+    "mean_net": 0.006262325435097333,
+    "avg_win": 0.028805500994567086,
+    "avg_loss": -0.023258499702303533,
     "mean_sessions": 5.0,
     "random_percentile": 83.75,
     "v2": {
-     "mean_excess": 0.002748468500275784,
-     "baseline": 0.0037151794626740626,
+     "mean_excess": 0.0027484386816543365,
+     "baseline": 0.003715179477074713,
      "p": 0.17228277172282772,
      "quarters": 49,
-     "top5_share": 0.5821035192465984
+     "top5_share": 0.5821064871759675
     },
     "risk_matched": {
-     "cagr": 0.03336949508996878,
-     "max_drawdown": -0.06750363638761225,
-     "return_per_drawdown": 0.4943362591365892
+     "cagr": 0.03336949324690841,
+     "max_drawdown": -0.0675036364658349,
+     "return_per_drawdown": 0.49433623126062926
     },
-    "risk_fraction": 0.17590907845006606,
-    "per_volatility": 0.357263762883854,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.17590907764402908,
+    "per_volatility": 0.35726221043482026,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.033289449764819956,
-     "max_drawdown": -0.1923355608087165,
-     "return_per_drawdown": 0.1730800566720333
+     "cagr": 0.033289272979340145,
+     "max_drawdown": -0.1923373071389579,
+     "return_per_drawdown": 0.1730775660454144
     },
     "matched": {
-     "cagr": 0.021713706694574064,
-     "max_drawdown": -0.044119851249537434,
-     "return_per_drawdown": 0.49215276297654603
+     "cagr": 0.021713705575530762,
+     "max_drawdown": -0.04411985137388352,
+     "return_per_drawdown": 0.49215273622576294
     }
    },
    "holdout": {
@@ -1918,36 +1918,36 @@
     "trades": 97,
     "exposure": 0.11430591562573651,
     "win_rate": 0.5876288659793815,
-    "mean_gross": 0.005801857177058554,
-    "mean_net": 0.005600696805623166,
-    "avg_win": 0.02810904528283371,
-    "avg_loss": -0.02647369977440186,
+    "mean_gross": 0.005801812452832729,
+    "mean_net": 0.005600652090342185,
+    "avg_win": 0.028108974527700413,
+    "avg_loss": -0.026473707382893293,
     "mean_sessions": 5.0,
     "random_percentile": 84.3,
     "v2": {
-     "mean_excess": 0.0025890828237274304,
-     "baseline": 0.003212774353331125,
+     "mean_excess": 0.0025890381905916094,
+     "baseline": 0.0032127742622411167,
      "p": 0.20737926207379262,
      "quarters": 49,
-     "top5_share": 0.7038460199502682
+     "top5_share": 0.7038508562057524
     },
     "risk_matched": {
-     "cagr": 0.03271450257772046,
-     "max_drawdown": -0.06619516505904866,
-     "return_per_drawdown": 0.4942128711143458
+     "cagr": 0.03271448835463597,
+     "max_drawdown": -0.06619514031851603,
+     "return_per_drawdown": 0.49421284096115303
     },
-    "risk_fraction": 0.17244219436812644,
-    "per_volatility": 0.3221860887161551,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.17244212787350827,
+    "per_volatility": 0.32218380301019306,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.028909167648497158,
-     "max_drawdown": -0.23659025793715815,
-     "return_per_drawdown": 0.12219086238189848
+     "cagr": 0.028908906591864847,
+     "max_drawdown": -0.23659077748464818,
+     "return_per_drawdown": 0.12218949064377913
     },
     "matched": {
-     "cagr": 0.021713706694574064,
-     "max_drawdown": -0.044119851249537434,
-     "return_per_drawdown": 0.49215276297654603
+     "cagr": 0.021713705575530762,
+     "max_drawdown": -0.04411985137388352,
+     "return_per_drawdown": 0.49215273622576294
     }
    },
    "holdout": {
@@ -2004,36 +2004,36 @@
     "trades": 104,
     "exposure": 0.08673108649540419,
     "win_rate": 0.7980769230769231,
-    "mean_gross": 0.008571880149124045,
-    "mean_net": 0.008370165773094245,
-    "avg_win": 0.01629549686210974,
-    "avg_loss": -0.02295376186444319,
+    "mean_gross": 0.008571876101834493,
+    "mean_net": 0.008370161726614147,
+    "avg_win": 0.016295494827349575,
+    "avg_loss": -0.02295377386200683,
     "mean_sessions": 3.5384615384615383,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.00593843946991543,
-     "baseline": 0.0026334406792086155,
+     "mean_excess": 0.005938435405347179,
+     "baseline": 0.002633440696487315,
      "p": 0.004399560043995601,
      "quarters": 49,
-     "top5_share": 0.20681394658215116
+     "top5_share": 0.2068131828115619
     },
     "risk_matched": {
-     "cagr": 0.02751512330969552,
-     "max_drawdown": -0.055784870853248125,
-     "return_per_drawdown": 0.4932363002520679
+     "cagr": 0.02751513143386619,
+     "max_drawdown": -0.0557848902105359,
+     "return_per_drawdown": 0.4932362747335748
     },
-    "risk_fraction": 0.1449438841443463,
-    "per_volatility": 0.5386197222444887,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.14494393451328727,
+    "per_volatility": 0.538619368821433,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.05127192825339533,
-     "max_drawdown": -0.17054514316853997,
-     "return_per_drawdown": 0.30063552265880844
+     "cagr": 0.05127190129500536,
+     "max_drawdown": -0.170545156426417,
+     "return_per_drawdown": 0.30063534121607854
     },
     "matched": {
-     "cagr": 0.016485161089556444,
-     "max_drawdown": -0.033562239131177396,
-     "return_per_drawdown": 0.4911818018197324
+     "cagr": 0.01648516023370261,
+     "max_drawdown": -0.03356223918170076,
+     "return_per_drawdown": 0.4911817755798268
     }
    },
    "holdout": {
@@ -2090,36 +2090,36 @@
     "trades": 104,
     "exposure": 0.08673108649540419,
     "win_rate": 0.7403846153846154,
-    "mean_gross": 0.008090392761073175,
-    "mean_net": 0.007888774682520978,
-    "avg_win": 0.01732221557144929,
-    "avg_loss": -0.019014001185904197,
+    "mean_gross": 0.008090365601582576,
+    "mean_net": 0.007888747528462293,
+    "avg_win": 0.01732217451706728,
+    "avg_loss": -0.01901398869830008,
     "mean_sessions": 3.5384615384615383,
     "random_percentile": 99.7,
     "v2": {
-     "mean_excess": 0.005959431419891107,
-     "baseline": 0.002130961341182067,
+     "mean_excess": 0.005959404297940147,
+     "baseline": 0.00213096130364243,
      "p": 0.010798920107989201,
      "quarters": 49,
-     "top5_share": 0.32488109723134767
+     "top5_share": 0.3248811138310833
     },
     "risk_matched": {
-     "cagr": 0.027118144579604486,
-     "max_drawdown": -0.054988314863674614,
-     "return_per_drawdown": 0.49316194989490003
+     "cagr": 0.02711814678975122,
+     "max_drawdown": -0.05498832231040984,
+     "return_per_drawdown": 0.4931619233019859
     },
-    "risk_fraction": 0.14284593114938224,
-    "per_volatility": 0.5115577156077842,
-    "index_per_volatility": 0.918675762836715,
+    "risk_fraction": 0.1428459501572785,
+    "per_volatility": 0.51155609862056,
+    "index_per_volatility": 0.918675812466268,
     "strategy": {
-     "cagr": 0.04770348397372581,
-     "max_drawdown": -0.1743449525380456,
-     "return_per_drawdown": 0.27361551498496034
+     "cagr": 0.047703312577193735,
+     "max_drawdown": -0.17434519512140112,
+     "return_per_drawdown": 0.2736141511899807
     },
     "matched": {
-     "cagr": 0.016485161089556444,
-     "max_drawdown": -0.033562239131177396,
-     "return_per_drawdown": 0.4911818018197324
+     "cagr": 0.01648516023370261,
+     "max_drawdown": -0.03356223918170076,
+     "return_per_drawdown": 0.4911817755798268
     }
    },
    "holdout": {
