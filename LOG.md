@@ -41,6 +41,21 @@ Open items:
 Next ideas (each a new registered version, never an edit): watch the forward record and the gap-up effect forward;
 a credit-spread split; a leveraged-ETF verdict once a loss limit is set; stops once intraday bars exist.
 
+## 2026-11-18 (afternoon): IWM history from 2000 in the research app's data
+- The research chat (5fc6bec) added IWM to `data/raw/etfs_long.csv` from 2000-05-26 (6,659 sessions). Checked here:
+  `data.load("IWM")` now starts 2000-05-26, SPY and QQQ are unchanged apart from the usual 1e-6 re-download drift,
+  53 tests pass, the rule lock is fine; the data fingerprint changes (was d09e16aa32e780ea).
+- Effect: only the indicator studies use IWM. The next registered study run takes IWM's first and only 1993-2009
+  look (2000-05-26 to 2009-12-31) and stores it; IWM's 2010-on numbers shift slightly (indicators now warm up before
+  2010, and the 200-day average exists from January 2010); every q moves a little with them. The trade simulation,
+  filter tests and the weekly run use SPY and QQQ only and are unaffected.
+- Opportunity: IWM 2000-2009 played no part in choosing the oversold rules (they were chosen on SPY and QQQ). Testing
+  the two QQQ next-open Leads on it, registered before running, is the one untouched historical check these rules
+  can still get. Not done yet.
+- The research chat's other changes the same day: evidence cards from `exports/evidence.json` beside fired or
+  near-trigger rules (it checks same_run against trade_simulation.json), a daily archive, stances scored to the
+  rule's own exit, and a date cross-check that tolerates a flip within 10 ppm of the day's close.
+
 ## 2026-11-18 (later): review built on the Codex review of 2026-11-14
 - User asked for another app review based on the Codex package in
   `C:\Users\timothy\Documents\Codex\2026-11-14\https-github-com-ghzxdt-trading-backtester-3\outputs\`. Result:

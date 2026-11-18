@@ -56,8 +56,9 @@ sessions) it reports:
   as an edge.
 - **p**: how often a randomly shifted copy of the same signal pattern does as well (keeps its count and clustering).
 - **q**: p corrected for every test in the run (Benjamini-Hochberg).
-- **Holdout**: the same rule on 1993-2009 data that played no part in choosing it (SPY and QQQ only; IWM's saved
-  history starts in 2010). Looked at once per rule version.
+- **Holdout**: the same rule on 1993-2009 data that played no part in choosing it (SPY and QQQ; IWM from 2000-05-26
+  once the research app saved its longer history on 2026-11-18; its first look comes with the next registered run).
+  Looked at once per rule version.
 - **Next-open**: the excess if you buy at the next morning's open rather than the close (perps trade at ~4:05 PM).
 - **Verdict**: *Candidate* only if the development result survives q < 0.10, beats the ETF round-trip cost, and the
   holdout agrees (same direction, p < 0.10). Otherwise *No evidence*, *Failed holdout*, *Development only*,
@@ -104,7 +105,7 @@ trade verdict.
 
 ## Data (read-only, from the research app)
 
-- `data/raw/etfs_long.csv`: SPY since 1993, QQQ since 1999 (adjusted daily OHLCV)
+- `data/raw/etfs_long.csv`: SPY since 1993, QQQ since 1999, IWM since 2000 (added 2026-11-18) (adjusted daily OHLCV)
 - `data/raw/etfs.csv`: SPY, QQQ, IWM, DIA, RSP, TQQQ, SQQQ, UPRO, SPXU since 2010
 - `data/raw/VIX.csv`: Cboe VIX
 - `data/raw/VIX3M.csv`: Cboe three-month VIX (since 2009), and `data/events/events.csv`: the CPI, jobs and Fed
