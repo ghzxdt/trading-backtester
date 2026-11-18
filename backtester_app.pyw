@@ -77,6 +77,7 @@ class App:
         bar.pack(fill="x", pady=(0, 10))
         self.buttons = []
         for label, action in (("Run indicator studies", self.run_studies), ("Run trade simulation", self.run_trades),
+                              ("Run filter tests", self.run_splits),
                               ("Open latest report", self.open_report),
                               ("Open trade list", self.open_trades),
                               ("Open reports folder", lambda: os.startfile(HERE / "reports")),
@@ -86,7 +87,8 @@ class App:
             self.buttons.append(button)
         self.output = scrolledtext.ScrolledText(frame, height=20, font=("Consolas", 10), wrap="word")
         self.output.pack(fill="both", expand=True)
-        self.write("Ready. 'Run indicator studies' takes about 10 seconds and 'Run trade simulation' about 15; each adds a dated report.\n")
+        self.write("Ready. 'Run indicator studies' takes about 10 seconds, 'Run trade simulation' about 30 and 'Run filter "
+                   "tests' about 20; each adds a dated report and a record in trials.jsonl.\n")
         root.after(150, self.drain)
 
     def write(self, text: str):
@@ -142,6 +144,9 @@ class App:
 
     def run_trades(self):
         self.run(["run_trades.py"], "Trade simulation", after=self.open_report)
+
+    def run_splits(self):
+        self.run(["run_splits.py"], "Filter tests", after=self.open_report)
 
     def run_tests(self):
         self.run(["-m", "unittest", "discover", "-s", "tests"], "Tests")

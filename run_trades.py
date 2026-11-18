@@ -3,10 +3,13 @@
     ..\\trading-research\\.venv\\Scripts\\python.exe -B run_trades.py
 
 12 strategies (SPY/QQQ x 3 oversold signals x 2 exits), each priced four ways (ETF at the close, ETF at the next
-open, Kalshi perp as maker or taker using the ETF as the price proxy), on the development period (2010 on) and the
-1993-2009 holdout. Writes reports/<date-time>-trade-simulation.md and .html, exports/trade_simulation.json
-(read by the research app's Daily thesis tab; ETF modes only), the list of every simulated trade
-(exports/trades/<date-time>-trade-simulation.csv), and appends the run to trials.jsonl.
+open, Kalshi perp as maker or taker using the ETF as the price proxy). The verdict is Lead v3 (backtester/lead_v3.py):
+v2's tests on a development window fixed at 2010-01-01 to 2026-11-13, a separate forward record of trades signalled
+after it, and the 1993-2009 holdout read from the ledger. v1 and v2 are computed beside it on v2's window (2010 to the
+latest data). Writes reports/<date-time>-trade-simulation.md and .html, exports/trade_simulation.json (read by the
+research app's Daily thesis tab; ETF modes only; schema 1), exports/evidence.json (one evidence card per strategy and
+ETF entry), the list of every simulated trade (exports/trades/<date-time>-trade-simulation.csv), and appends the run to
+trials.jsonl.
 """
 from __future__ import annotations
 
@@ -18,7 +21,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from backtester import data, lead_v2, lock, registry, runlog, simulate, strategies
+from backtester import data, evidence, lead_v2, lead_v3, lock, registry, runlog, simulate, strategies
 from backtester.ledger import HoldoutLedger, holdout_result, rng_for
 from backtester.report_html import render
 from backtester.strategies import EXITS, MODES, SIGNALS, SYMBOLS, signal_rule
@@ -33,6 +36,7 @@ LEDGER = HERE / "holdout_ledger.jsonl"
 MODE_LABELS = {"etf_close": "ETF at close", "etf_next_open": "ETF next open",
                "perp_maker": "Perp, maker", "perp_taker": "Perp, taker"}
 THESIS_MODES = ("etf_close", "etf_next_open")  # user, 2026-11-08: the thesis shows ETFs only, no Kalshi
+LEVERAGED = {"QQQ": "TQQQ", "SPY": "UPRO"}  # descriptive repricing of the same trades (added 2026-11-18)
 
 
 def buy_and_hold(frame, mask) -> dict:
@@ -43,17 +47,63 @@ def is_registered(symbols, draws, seed) -> bool:
     return (tuple(symbols), draws, seed) == (SYMBOLS, strategies.DRAWS, strategies.SEED)
 
 
+def leveraged_pricing(frame: pd.DataFrame, lev: pd.DataFrame | None, name: str | None, trades, mode: str,
+                      cfg: dict) -> dict | None:
+    """The same trades (signal and exit days from the 1x ETF) priced in its 3x ETF's own prices, with the same 2 bp cost.
+    Descriptive (added 2026-11-18): no test, no verdict, 2010 on only. TQQQ and UPRO reset daily, so a trade's result
+    is not exactly 3x the 1x result, and the worst point inside a trade is roughly 3x deeper."""
+    if lev is None or not trades or mode not in THESIS_MODES:
+        return None
+    index = lev.index
+    lo, ll, lc = (lev[k].to_numpy(float) for k in ("open", "low", "close"))
+    close, open_ = frame["close"].to_numpy(float), frame["open"].to_numpy(float)
+    cost = cfg["costs_round_trip_bps"]["etf"] / 1e4
+    rows = []
+    for p, e in trades:
+        entry_day, first_day, exit_day = frame.index[p + 1 if mode == "etf_next_open" else p], frame.index[p + 1], frame.index[e]
+        if not (entry_day in index and first_day in index and exit_day in index):
+            continue
+        i, f, j = index.get_loc(entry_day), index.get_loc(first_day), index.get_loc(exit_day)
+        entry = lo[i] if mode == "etf_next_open" else lc[i]
+        one_x = close[e] / (open_[p + 1] if mode == "etf_next_open" else close[p]) - 1
+        rows.append((lc[j] / entry - 1, ll[f:j + 1].min() / entry - 1, one_x))
+    if not rows:
+        return None
+    gross, mae, one_x = (np.asarray(x, float) for x in zip(*rows))
+    net = (1 + gross) * (1 - cost) - 1
+    return {"instrument": name, "trades": len(rows), "mean_net": float(net.mean()), "median_net": float(np.median(net)),
+            "win_rate": float((net > 0).mean()), "worst_net": float(net.min()), "mae_median": float(np.median(mae)),
+            "mae_worst": float(mae.min()), "mean_gross": float(gross.mean()), "mean_gross_1x": float(one_x.mean()),
+            "ratio_to_1x": float(gross.mean() / one_x.mean()) if one_x.mean() else None}
+
+
+def _evaluate(frame, signal, exit_rule, mask, mode, cfg, draws, seed, who, period, trades, priced) -> dict:
+    out = simulate.evaluate(frame, signal, exit_rule, mask, mode, cfg, draws, rng_for(seed, *who, period), trades, priced)
+    out.update(lead_v2.evaluate(frame, trades, priced, mask, mode, cfg, rng_for(seed, *who, period, "v2")))
+    return out
+
+
 def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
         ledger: HoldoutLedger | None = None) -> tuple[list[dict], dict, dict, pd.DataFrame]:
-    """`ledger=None` computes the holdout in memory and stores nothing (tests and rebuild checks)."""
+    """`ledger=None` computes the holdout in memory and stores nothing (tests and rebuild checks).
+
+    Development (v3) runs to lead_v3.DEV_END; "to date" (v2's window, for v1 and v2) runs to the latest data. Both use
+    the same random stream, so while the data end at DEV_END they give identical results."""
     cfg = cfg or data.config()
     root = root or data.research_root(cfg)
     registered = is_registered(symbols, draws, seed)
     rows, signal_days, full, lists = [], {}, {}, []
     for symbol in symbols:
         frame = data.load(symbol, root)
-        dev, hold = period_mask(frame.index, cfg["development"]), period_mask(frame.index, cfg["holdout"])
-        full[symbol] = {"development": buy_and_hold(frame, dev),
+        dev, to_date = lead_v3.development_mask(frame.index, cfg), period_mask(frame.index, cfg["development"])
+        hold = period_mask(frame.index, cfg["holdout"])
+        same_window = bool((dev.to_numpy() == to_date.to_numpy()).all())
+        lev_name = LEVERAGED.get(symbol)
+        try:
+            lev = data.load(lev_name, root) if lev_name else None
+        except ValueError:
+            lev = None
+        full[symbol] = {"development": buy_and_hold(frame, dev), "development_to_date": buy_and_hold(frame, to_date),
                         "holdout": buy_and_hold(frame, hold) if hold.any() else None,
                         "holdout_start": f"{frame.index[hold.to_numpy()][0]:%Y-%m-%d}" if hold.any() else None}
         for name in SIGNALS:
@@ -68,68 +118,106 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
                     # gross trades, so they share a stream; the next-open entry has its own.
                     entry = "next_open" if mode == "etf_next_open" else "close"
                     who = (name, study.version, ex.name, ex.version, symbol, entry)
-                    result, source = {}, None
-                    for period, mask in (("development", dev), ("holdout", hold)):
-                        if not mask.any():
-                            result[period] = None
-                            continue
-                        # The trade list is rebuilt every run (it involves no test); only the holdout's
-                        # statistics are read from the ledger.
-                        trades = simulate.find_trades(frame, signal, ex.rule, mask)
-                        priced = simulate.price_trades(frame, trades, mode, cfg)
-                        lists.append(priced.assign(symbol=symbol, signal=name, signal_version=study.version,
-                                                   exit=ex.name, exit_version=ex.version, pricing=mode, period=period))
-
-                        def compute(mask=mask, period=period, trades=trades, priced=priced):
-                            out = simulate.evaluate(frame, signal, ex.rule, mask, mode, cfg, draws,
-                                                    rng_for(seed, *who, period), trades, priced)
-                            out.update(lead_v2.evaluate(frame, trades, priced, mask, mode, cfg,
-                                                        rng_for(seed, *who, period, "v2")))
-                            return out
-                        if period == "development":
-                            result[period] = compute()
-                        else:
-                            key = f"trade|{name}@{study.version}+{ex.name}@{ex.version}|{symbol}|{mode}"
-                            result[period], source = holdout_result(ledger, registered, key, True, compute)
-                    dev_result, hold_result = result["development"], result["holdout"]
+                    tag = dict(symbol=symbol, signal=name, signal_version=study.version, exit=ex.name,
+                               exit_version=ex.version, pricing=mode)
+                    trades = simulate.find_trades(frame, signal, ex.rule, dev)
+                    priced = simulate.price_trades(frame, trades, mode, cfg)
+                    dev_result = _evaluate(frame, signal, ex.rule, dev, mode, cfg, draws, seed, who, "development", trades, priced)
+                    if same_window:
+                        to_date_result = dev_result
+                    else:
+                        trades_td = simulate.find_trades(frame, signal, ex.rule, to_date)
+                        to_date_result = _evaluate(frame, signal, ex.rule, to_date, mode, cfg, draws, seed, who, "development",
+                                                   trades_td, simulate.price_trades(frame, trades_td, mode, cfg))
+                    forward, forward_priced = lead_v3.forward_record(
+                        frame, signal, ex.rule, mode, cfg, dev, lead_v3.development_excess(frame, dev, priced, mode))
+                    lists += [priced.assign(**tag, period="development"), forward_priced.assign(**tag, period="forward")]
+                    hold_result, source = None, None
+                    if hold.any():
+                        # The trade list is rebuilt every run (it involves no test); only the holdout's statistics
+                        # are read from the ledger.
+                        hold_trades = simulate.find_trades(frame, signal, ex.rule, hold)
+                        hold_priced = simulate.price_trades(frame, hold_trades, mode, cfg)
+                        lists.append(hold_priced.assign(**tag, period="holdout"))
+                        key = f"trade|{name}@{study.version}+{ex.name}@{ex.version}|{symbol}|{mode}"
+                        hold_result, source = holdout_result(
+                            ledger, registered, key, True,
+                            lambda t=hold_trades, pr=hold_priced: _evaluate(frame, signal, ex.rule, hold, mode, cfg, draws,
+                                                                           seed, who, "holdout", t, pr))
                     rows.append({"symbol": symbol, "signal": name, "signal_version": study.version,
                                  "signal_description": study.description, "exit": ex.name,
                                  "exit_version": ex.version, "exit_description": ex.description, "mode": mode,
-                                 "dev": dev_result, "holdout": hold_result, "holdout_source": source,
-                                 "entry": entry, "verdict_v1": simulate.verdict(dev_result, hold_result)})
+                                 "dev": dev_result, "dev_to_date": to_date_result, "holdout": hold_result,
+                                 "holdout_source": source, "forward": forward, "entry": entry,
+                                 "leveraged": leveraged_pricing(frame, lev, lev_name, trades, mode, cfg),
+                                 "verdict_v1": simulate.verdict(to_date_result, hold_result)})
     judge(rows, registered)
     return rows, signal_days, full, trade_list(lists)
 
 
 def judge(rows: list[dict], registered: bool) -> None:
-    """Set each row's v2 verdict. The correction covers every strategy x entry price of a registered run once:
-    the close-entry pricings are one test, so the perp rows take their ETF-at-close row's q."""
+    """Set each row's verdicts. A correction covers every strategy x entry price of a registered run once: the
+    close-entry pricings are one test, so the perp rows take their ETF-at-close row's q. v3 (the verdict) uses v3's
+    development window; v2 (reported beside it) uses v2's window to date."""
     if not registered:
         for row in rows:
-            row["q"], row["verdict"] = None, PARTIAL
+            row.update(q=None, q_v2=None, verdict=PARTIAL, verdict_v2=PARTIAL)
         return
+
     def test_of(row):
         return (row["symbol"], row["signal"], row["exit"], row["entry"])
-    family = [r for r in rows if r["mode"] in ("etf_close", "etf_next_open") and lead_v2.judged(r["dev"])]
-    q_by_test = dict(zip(map(test_of, family), bh_qvalues([r["dev"]["v2"]["p"] for r in family])))
+
+    def corrected(key):
+        family = [r for r in rows if r["mode"] in THESIS_MODES and lead_v2.judged(r[key])]
+        return dict(zip(map(test_of, family), bh_qvalues([r[key]["v2"]["p"] for r in family])))
+
+    q_v3, q_v2 = corrected("dev"), corrected("dev_to_date")
     for row in rows:
-        row["q"] = q_by_test.get(test_of(row))
-        row["verdict"] = lead_v2.verdict(row["dev"], row["holdout"], row["q"])
+        row["q"], row["q_v2"] = q_v3.get(test_of(row)), q_v2.get(test_of(row))
+        row["verdict_v2"] = lead_v2.verdict(row["dev_to_date"], row["holdout"], row["q_v2"])
+        row["verdict"] = lead_v3.verdict(row["dev"], row["holdout"], row["q"], row["forward"])
+
+
+def previous_record(path: Path) -> dict | None:
+    """The last registered trade-simulation record, to compare verdicts with."""
+    for record in reversed(registry.read(path)):
+        if record.get("kind") == "trade_simulation" and record.get("family") == "registered":
+            return record
+    return None
+
+
+def verdict_changes(previous: dict | None, rows: list[dict]) -> list[dict] | None:
+    """Every strategy-pricing whose verdict differs from the last registered run. None for a partial run or when there
+    is no earlier run."""
+    if previous is None or not rows or rows[0].get("verdict") == PARTIAL:
+        return None
+    before = {(t["symbol"], t["study"], t["mode"]): t["verdict"] for t in previous.get("tests", [])}
+    out = []
+    for r in rows:
+        key = (r["symbol"], f"{r['signal']}+{r['exit']}", r["mode"])
+        if key in before and before[key] != r["verdict"]:
+            out.append({"symbol": r["symbol"], "strategy": key[1], "mode": r["mode"], "from": before[key], "to": r["verdict"]})
+    return out
 
 
 TRADE_COLUMNS = ["symbol", "signal", "signal_version", "exit", "exit_version", "pricing", "period", "signal_day",
-                 "entry_day", "entry_price", "exit_day", "exit_price", "sessions", "gross", "cost", "net"]
+                 "entry_day", "entry_price", "exit_day", "exit_price", "sessions", "gross", "cost", "net",
+                 "mae", "mfe", "exit_next_open"]
 
 
 def trade_list(lists: list[pd.DataFrame]) -> pd.DataFrame:
     """Every simulated trade, one row each. Prices are the adjusted prices the simulation used (dividends
-    included), so they differ from the prices quoted on the day; returns are fractions (0.01 = 1%)."""
+    included), so they differ from the prices quoted on the day; returns are fractions (0.01 = 1%). Periods:
+    development (to 2026-11-13), forward (signalled after it), holdout (1993-2009). mae and mfe are the worst and best
+    points inside the trade from daily lows and highs; exit_next_open is the open after the exit day."""
+    lists = [x for x in lists if len(x)]
     if not lists:
         return pd.DataFrame(columns=TRADE_COLUMNS)
     table = pd.concat(lists, ignore_index=True)[TRADE_COLUMNS]
     for column in ("signal_day", "entry_day", "exit_day"):
         table[column] = pd.to_datetime(table[column]).dt.strftime("%Y-%m-%d")
-    return table.round({"entry_price": 4, "exit_price": 4, "gross": 6, "cost": 6, "net": 6})
+    return table.round({"entry_price": 4, "exit_price": 4, "gross": 6, "cost": 6, "net": 6, "mae": 6, "mfe": 6,
+                        "exit_next_open": 4})
 
 
 def per_drawdown_note(result: dict | None) -> str:
@@ -151,6 +239,10 @@ def bp(x):
     return "–" if not simulate.finite(x) else f"{x * 1e4:+.1f}"
 
 
+def bp_range(pair) -> str:
+    return "–" if not pair or not all(simulate.finite(x) for x in pair) else f"{pair[0] * 1e4:+.0f} to {pair[1] * 1e4:+.0f}"
+
+
 def ratio(x):
     return "–" if not simulate.finite(x) else f"{x:.2f}"
 
@@ -158,13 +250,19 @@ def ratio(x):
 def period_lines(label: str, results: list[dict | None]) -> list[str]:
     def cell(r, fn):
         return "no data" if r is None else fn(r)
+
+    def risk(r, key):
+        return (r.get("risk") or {}).get(key)
     rows = [
         ("Trades", lambda r: str(r["trades"])),
         ("Time in market", lambda r: pct(r["exposure"], 0)),
         ("Win rate (after costs)", lambda r: pct(r.get("win_rate"), 0)),
         ("Mean per trade, gross / net bp", lambda r: f"{bp(r.get('mean_gross'))} / {bp(r.get('mean_net'))}"),
+        ("Median / worst trade, net", lambda r: f"{pct(risk(r, 'median_net'), 2, True)} / {pct(risk(r, 'worst_net'), 2, True)}"),
         ("Average win / loss", lambda r: f"{pct(r.get('avg_win'), 2, True)} / {pct(r.get('avg_loss'), 2, True)}"),
+        ("Worst point inside a trade (MAE): median / worst", lambda r: f"{pct(risk(r, 'mae_median'), 1, True)} / {pct(risk(r, 'mae_worst'), 1, True)}"),
         ("Excess over same-length trades, bp (p)", lambda r: "–" if not r.get("v2") else f"{bp(r['v2']['mean_excess'])} ({r['v2']['p']:.3f})"),
+        ("Excess, 90% interval, bp", lambda r: bp_range((r.get("v2") or {}).get("ci90"))),
         ("Quarters with trades", lambda r: "–" if not r.get("v2") else str(r["v2"]["quarters"])),
         ("Share of gross profit from the best 5 trades", lambda r: "–" if not r.get("v2") else pct(r["v2"]["top5_share"], 0)),
         ("CAGR: strategy / risk-matched buy-and-hold", lambda r: f"{pct(r['strategy']['cagr'], 2, True)} / {pct((r.get('risk_matched') or {}).get('cagr'), 2, True)}"),
@@ -185,8 +283,22 @@ def partial_note(rows) -> list[str]:
     return []
 
 
-def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: str | None = None) -> str:
+def change_lines(changes: list[dict] | None, against: str | None) -> list[str]:
+    lines = ["## Changed since the last registered run", ""]
+    if changes is None:
+        return lines + ["No comparison (a partial run, or no earlier registered run).", ""]
+    note = f" (that run used verdict {against}; this one uses {lead_v3.VERSION})" if against and against != lead_v3.VERSION else ""
+    if not changes:
+        return lines + [f"No verdict changed{note}.", ""]
+    return lines + [f"{len(changes)} verdicts changed{note}. Read why before acting on any of them.", "",
+                    "| Strategy | Pricing | Before | Now |", "|---|---|---|---|"] + [
+        f"| {c['symbol']} {c['strategy']} | {MODE_LABELS[c['mode']]} | {c['from']} | {c['to']} |" for c in changes] + [""]
+
+
+def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: str | None = None,
+           changes: list[dict] | None = None, against: str | None = None) -> str:
     fees = cfg["costs_round_trip_bps"]
+    start, end = cfg["development"]["start"], lead_v3.DEV_END
     lines = [f"# Trade simulation, {started:%Y-%m-%d}", "",
              f"Code {version}; research-app data fingerprint {fingerprint}; {len(rows)} strategy x pricing results; "
              f"{draws} random-entry draws each.", "",
@@ -199,28 +311,37 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
              f"bought just after the close: {fees['kalshi_maker']} bp (maker) or {fees['kalshi_taker']} bp (taker) per "
              f"round trip plus {cfg['funding_bps_per_day']} bp of funding for every calendar day held through a 4 PM "
              "funding time. The perp columns use the ETF's adjusted price as a stand-in for the perp's price.", "",
-             "**The test (verdict v2, registered 2026-11-13).** *Excess* is the average trade minus the average of every "
-             "possible trade of the same length in the period. Its p-value comes from resampling the rule's own trades "
-             f"by calendar quarter {lead_v2.RESAMPLES:,} times, so the spread is the rule's own and trades from one "
-             "sell-off stay together. q corrects the development p-values for every strategy and entry price in the "
-             "run (the three close-entry pricings are one test).", "",
+             f"**The test (verdict v3, registered 2026-11-18).** v2's test, unchanged, on a development window fixed at "
+             f"{start} to {end}, so a verdict no longer moves as data is added. *Excess* is the average trade minus the "
+             "average of every possible trade of the same length in the period, with a 90% interval. Its p-value comes "
+             f"from resampling the rule's own trades by calendar quarter {lead_v2.RESAMPLES:,} times, so the spread is the "
+             "rule's own and trades from one sell-off stay together. q corrects the development p-values for every "
+             "strategy and entry price in the run (the three close-entry pricings are one test).", "",
+             f"**Forward record.** Trades signalled after {end} are untouched evidence, kept apart and compared with the "
+             "development result: each trade's excess uses the development mean of trades of its length. From "
+             f"{lead_v3.MIN_FORWARD} forward trades, a forward mean below the development mean minus {lead_v3.BAND_SE:g} "
+             "standard errors is *below band*, and a Lead becomes *Forward below band*. The band is wide: it catches a "
+             "large break, it cannot confirm an edge.", "",
              "**Benchmarks.** *Risk-matched buy-and-hold* holds the same instrument every day at a fraction equal to "
              "the strategy's time in the market times (its volatility while in a trade / the instrument's on all "
              "days). Beating it means more return per unit of risk while in a trade than the instrument usually "
              "gives. *Return per unit of volatility* compares the whole strategy, idle days included, with simply "
              "owning the instrument; it is shown for information and is not part of the verdict.", "",
              f"**Verdicts.** *Lead* = positive excess with p < {lead_v2.DEV_P} and q < {lead_v2.DEV_Q} in development, "
-             f"positive excess with p < {lead_v2.HOLDOUT_P} in 1993-2009, and a higher CAGR than risk-matched "
-             "buy-and-hold in both. *Timing edge only* = passes the tests but not the benchmark. *Failed holdout* = "
-             f"passes development only. *No edge* = fails in development. *Too few trades* = under {lead_v2.MIN_TRADES} "
-             f"trades or under {lead_v2.MIN_QUARTERS} quarters with trades.", "",
+             f"positive excess with p < {lead_v2.HOLDOUT_P} in 1993-2009, a higher CAGR than risk-matched buy-and-hold in "
+             f"both, and no forward record below its band. *{lead_v3.DEMOTED}* = a Lead whose forward record fell below "
+             "its band. *Timing edge only* = passes the tests but not the benchmark. *Failed holdout* = passes "
+             f"development only. *No edge* = fails in development. *Too few trades* = under {lead_v2.MIN_TRADES} trades or "
+             f"under {lead_v2.MIN_QUARTERS} quarters with trades.", "",
              "**1993-2009 is a reused period.** The three signals were chosen on 2026-11-08 partly because they "
              "passed it in the indicator studies, so it can remove a Lead but cannot confirm one. Its statistics are "
-             "computed once and then read from `holdout_ledger.jsonl`. A Lead is provisional until trades after "
-             "2026-11-08 support it.", "",
-             *partial_note(rows)]
+             "computed once and then read from `holdout_ledger.jsonl`; measures added later (the interval, the risk "
+             "inside trades) are not computed for it.", "",
+             f"**v1 and v2 beside v3.** v1 (2026-11-08) and v2 (2026-11-13) are still computed, on v2's development "
+             f"window, which runs from {start} to the latest data.", "",
+             *partial_note(rows), *change_lines(changes, against)]
     order = list(MODES)
-    lines += ["## Verdicts", "", "| Strategy | " + " | ".join(MODE_LABELS[m] for m in order) + " |",
+    lines += ["## Verdicts (v3)", "", "| Strategy | " + " | ".join(MODE_LABELS[m] for m in order) + " |",
               "|---|" + "---|" * len(order)]
     keys = list(dict.fromkeys((r["symbol"], r["signal"], r["exit"]) for r in rows))
     by_key = {(r["symbol"], r["signal"], r["exit"], r["mode"]): r for r in rows}
@@ -228,16 +349,60 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
         lines.append(f"| {key[0]} {key[1]}, {key[2]} | " +
                      " | ".join(by_key[(*key, m)]["verdict"] for m in order) + " |")
     lines += ["", "### Development test behind each verdict (ETF pricings)", "",
-              "| Strategy | Entry | Trades | Excess bp | p | q | 1993-2009 excess bp | p | v1 verdict (superseded) |",
-              "|---|---|---|---|---|---|---|---|---|"]
+              f"Development {start} to {end}. v2 and v1 are on v2's window to date and are superseded.", "",
+              "| Strategy | Entry | Trades | Excess bp (90% interval) | p | q | 1993-2009 excess bp | p | v2 (to date) | v1 |",
+              "|---|---|---|---|---|---|---|---|---|---|"]
     for key in keys:
         for mode in THESIS_MODES:
             r = by_key[(*key, mode)]
             d, h = r["dev"].get("v2") or {}, (r["holdout"] or {}).get("v2") or {}
-            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {r['dev']['trades']} | {bp(d.get('mean_excess'))} | "
+            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {r['dev']['trades']} | "
+                         f"{bp(d.get('mean_excess'))} ({bp_range(d.get('ci90'))}) | "
                          + ("–" if d.get("p") is None else f"{d['p']:.3f}") + " | "
                          + ("–" if r.get("q") is None else f"{r['q']:.3f}") + f" | {bp(h.get('mean_excess'))} | "
-                         + ("–" if h.get("p") is None else f"{h['p']:.3f}") + f" | {r['verdict_v1']} |")
+                         + ("–" if h.get("p") is None else f"{h['p']:.3f}") + f" | {r['verdict_v2']} | {r['verdict_v1']} |")
+    lines += ["", f"## Forward record (signals after {end})", "",
+              "Each forward trade's excess is its gross return minus the development mean of trades of its length. The band "
+              f"applies from {lead_v3.MIN_FORWARD} trades.", "",
+              "| Strategy | Entry | Forward trades | Mean excess bp | Band lower edge bp | Status |", "|---|---|---|---|---|---|"]
+    for key in keys:
+        for mode in THESIS_MODES:
+            f = by_key[(*key, mode)]["forward"]
+            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {f['trades']} | {bp(f['mean_excess'])} | "
+                         f"{bp(f['band_lower'])} | {f['status']} |")
+    lines += ["", "## Risk inside trades (development, ETF pricings)", "",
+              "What win rates and averages hide. *MAE* is the worst point a trade reached from its entry, from daily lows "
+              "(the day's high and low are not ordered). *Without best 3*: the mean net trade if the three best trades are "
+              "removed. *Costs*: the mean net trade at 2 / 5 / 10 / 20 bp round trip. *Sold next open*: the mean gross trade "
+              "if the exit is taken at the next morning's open instead of at the close the exit rule looks at.", "",
+              "| Strategy | Entry | Median / worst trade | MAE median / 10th pct / worst | Trades with MAE below -5% / -10% | "
+              "Without best 3 | Costs 2 / 5 / 10 / 20 bp | Sold next open |", "|---|---|---|---|---|---|---|---|"]
+    for key in keys:
+        for mode in THESIS_MODES:
+            r = by_key[(*key, mode)]
+            k = r["dev"].get("risk") or {}
+            costs = k.get("mean_net_at_cost_bp") or {}
+            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {pct(k.get('median_net'), 2, True)} / "
+                         f"{pct(k.get('worst_net'), 1, True)} | {pct(k.get('mae_median'), 1, True)} / {pct(k.get('mae_p10'), 1, True)} / "
+                         f"{pct(k.get('mae_worst'), 1, True)} | {k.get('trades_mae_below_5pct', '–')} / {k.get('trades_mae_below_10pct', '–')} | "
+                         f"{bp(k.get('mean_net_without_best3'))} | " + " / ".join(bp(costs.get(c)) for c in ("2", "5", "10", "20"))
+                         + f" | {bp(k.get('mean_gross_exit_next_open'))} |")
+    lines += ["", "## Leveraged-ETF version of the same trades (development, descriptive)", "",
+              "The development trades priced in TQQQ (for QQQ) and UPRO (for SPY), using those funds' own prices from 2010 "
+              "on, with the same 2 bp cost. No test and no verdict: it shows what the instrument would have done. "
+              "*x 1x* is the leveraged mean gross trade divided by the 1x mean gross trade on the same trades.", "",
+              "| Strategy | Entry | ETF | Trades | Mean / median net | Win rate | Worst trade | MAE median / worst | x 1x |",
+              "|---|---|---|---|---|---|---|---|---|"]
+    for key in keys:
+        for mode in THESIS_MODES:
+            v = by_key[(*key, mode)].get("leveraged")
+            if not v:
+                lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | – | 0 | – | – | – | – | – |")
+                continue
+            lines.append(f"| {key[0]} {key[1]}, {key[2]} | {MODE_LABELS[mode]} | {v['instrument']} | {v['trades']} | "
+                         f"{pct(v['mean_net'], 2, True)} / {pct(v['median_net'], 2, True)} | {pct(v['win_rate'], 0)} | "
+                         f"{pct(v['worst_net'], 1, True)} | {pct(v['mae_median'], 1, True)} / {pct(v['mae_worst'], 1, True)} | "
+                         f"{ratio(v['ratio_to_1x'])} |")
     lines += ["", "## Return per unit of drawdown (descriptive, not part of the verdict)", "",
               "CAGR divided by the worst peak-to-trough loss, for the strategy versus exposure-matched buy-and-hold, "
               "ETF at the close. A strategy that is fully invested during its trades can earn more per year than the "
@@ -261,16 +426,16 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
         lines += [f"## {key[0]}: {key[1]} ({first['signal_version']}), exit {key[2]} ({first['exit_version']})", "",
                   f"Signal: {first['signal_description']}. Exit: {first['exit_description']}.", "",
                   "| | " + " | ".join(MODE_LABELS[m] for m in order) + " |", "|---|" + "---|" * len(order)]
-        lines += period_lines("Development (2010 on)", [r["dev"] for r in group])
+        lines += period_lines(f"Development ({start} to {end})", [r["dev"] for r in group])
         lines += period_lines("Holdout (1993-2009)", [r["holdout"] for r in group])
-        lines += ["| **Verdict** | " + " | ".join(r["verdict"] for r in group) + " |", ""]
+        lines += ["| **Verdict (v3)** | " + " | ".join(r["verdict"] for r in group) + " |", ""]
     tally = {}
     for r in rows:
         tally[r["verdict"]] = tally.get(r["verdict"], 0) + 1
     lines += ["## Summary", ""] + [f"- {k}: {v}" for k, v in sorted(tally.items(), key=lambda kv: -kv[1])] + [
         "", "Limits: adjusted daily prices (dividends included), no slippage beyond the stated costs, no stops, no "
         "taxes, 1x only. A Lead is a rule worth watching forward, not proof of an edge; results at higher leverage "
-        "scale both the gains and the drawdowns."]
+        "scale both the gains and the drawdowns, and the leveraged-ETF table shows by how much."]
     if trades_file:
         lines += ["", f"Every simulated trade is listed in `{trades_file}` (one row per trade and pricing; adjusted "
                   "prices, returns as fractions)."]
@@ -281,26 +446,31 @@ def compact(result: dict | None) -> dict | None:
     if result is None:
         return None
     keep = ("trades", "exposure", "win_rate", "mean_gross", "mean_net", "avg_win", "avg_loss", "mean_sessions",
-            "random_percentile", "v2", "risk_matched", "risk_fraction", "per_volatility", "index_per_volatility")
+            "random_percentile", "v2", "risk_matched", "risk_fraction", "per_volatility", "index_per_volatility", "risk")
     return {**{k: result.get(k) for k in keep}, "strategy": result["strategy"], "matched": result["matched"]}
 
 
-VERDICT_DEFINITION = lead_v2.DEFINITION
+VERDICT_DEFINITION = lead_v3.DEFINITION
 
 
-def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full, run_info: dict | None = None) -> dict:
+def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full, run_info: dict | None = None,
+           changes: list[dict] | None = None) -> dict:
     """Evidence for the research app's Daily thesis tab: ETF pricing only (no Kalshi in the thesis).
 
-    Schema 1 is unchanged for the reader; the fields from "verdict_definition" down were added 2026-11-13."""
+    Schema 1 is unchanged for the reader; the fields from "verdict_definition" down were added 2026-11-13, and
+    "development_end", "verdict_changes", and per row "verdict_v2", "q_v2", "forward", "leveraged" and
+    development "risk" and "v2.ci90" on 2026-11-18."""
     return {"kind": "trade_simulation", "schema": 1, "generated_at": started.isoformat(timespec="seconds"),
             "code": version, "data_fingerprint": fingerprint, "report": report_name,
-            "verdict_definition": VERDICT_DEFINITION, "verdict_version": lead_v2.VERSION,
-            "verdict_parameters": lead_v2.PARAMS,
+            "verdict_definition": VERDICT_DEFINITION, "verdict_version": lead_v3.VERSION,
+            "verdict_parameters": lead_v3.PARAMS, "development_end": lead_v3.DEV_END, "verdict_changes": changes,
             "data_through": {key.split(":")[0]: value["last_date"] for key, value in signal_days.items()},
             "entry_notes": {"etf_close": "Needs the order in before the close, on an estimate of that close's signal.",
                             "etf_next_open": "Signal known after the close; bought at the next session's open."},
             **(run_info or {}),
-            "periods": {"development": cfg["development"], "holdout": cfg["holdout"]},
+            "periods": {"development": {"start": cfg["development"]["start"], "end": lead_v3.DEV_END},
+                        "development_to_date": cfg["development"], "holdout": cfg["holdout"],
+                        "forward": {"after": lead_v3.DEV_END}},
             "buy_and_hold": full,
             "costs_round_trip_bps": {"etf": cfg["costs_round_trip_bps"]["etf"]},
             "modes": list(THESIS_MODES),
@@ -308,9 +478,10 @@ def export(rows, signal_days, cfg, fingerprint, version, started, report_name, f
                             "signal_description": r["signal_description"], "exit": r["exit"],
                             "exit_version": r["exit_version"], "exit_description": r["exit_description"],
                             "mode": r["mode"], "verdict": r["verdict"], "verdict_v1": r["verdict_v1"],
-                            "q": r.get("q"), "holdout_source": r.get("holdout_source"),
-                            "development": compact(r["dev"]),
-                            "holdout": compact(r["holdout"])} for r in rows if r["mode"] in THESIS_MODES],
+                            "verdict_v2": r["verdict_v2"], "q": r.get("q"), "q_v2": r.get("q_v2"),
+                            "holdout_source": r.get("holdout_source"),
+                            "development": compact(r["dev"]), "holdout": compact(r["holdout"]),
+                            "forward": r["forward"], "leveraged": r["leveraged"]} for r in rows if r["mode"] in THESIS_MODES],
             "signal_days": signal_days}
 
 
@@ -332,35 +503,45 @@ def main(argv=None) -> int:
     registry.read(TRIALS)  # refuse to start on a broken record
     rules = lock.check()   # ... or on a rule changed under a recorded version
     ledger = HoldoutLedger(LEDGER)
+    previous = previous_record(TRIALS)
     root, fingerprint = data.snapshot(data.research_root(cfg))  # the run reads this copy, which stays on disk
     version = code_version()
     rows, signal_days, full, trades = run(args.draws, args.seed, cfg, root, ledger=ledger)
+    changes = verdict_changes(previous, rows)
+    against = previous.get("verdict_version", "v1") if previous else None
     REPORTS.mkdir(exist_ok=True)
     stem = runlog.report_stem("trade-simulation", started)
     path, trades_path = REPORTS / f"{stem}.md", EXPORTS / "trades" / f"{stem}.csv"
     trades_name = trades_path.relative_to(HERE).as_posix()
-    text = report(rows, cfg, fingerprint, version, started, args.draws, full, trades_name)
+    text = report(rows, cfg, fingerprint, version, started, args.draws, full, trades_name, changes, against)
     # The record goes first: if it can't be written (a broken chain), no report or export appears without one.
     registry.append(TRIALS, {"kind": "trade_simulation", "run_at": started.isoformat(timespec="seconds"),
                              "code": version, "data": fingerprint, "settings": runlog.settings(cfg),
-                             "method": METHOD, "rules": rules, "verdict_version": lead_v2.VERSION,
+                             "method": METHOD, "rules": rules, "verdict_version": lead_v3.VERSION,
+                             "development_end": lead_v3.DEV_END, "verdict_changes": changes,
                              "family": "registered" if is_registered(SYMBOLS, args.draws, args.seed) else "unregistered settings",
                              "seed": args.seed, "draws": args.draws,
                              "report": path.name, "trade_list": trades_name,
                              "tests": [{"study": f"{r['signal']}+{r['exit']}", "version": f"{r['signal_version']}/{r['exit_version']}",
                                         "symbol": r["symbol"], "mode": r["mode"], "verdict": r["verdict"],
-                                        "verdict_v1": r["verdict_v1"], "q": r.get("q"),
+                                        "verdict_v2": r["verdict_v2"], "verdict_v1": r["verdict_v1"], "q": r.get("q"),
+                                        "q_v2": r.get("q_v2"),
                                         "dev_excess": (r["dev"].get("v2") or {}).get("mean_excess"),
+                                        "dev_excess_ci90": (r["dev"].get("v2") or {}).get("ci90"),
                                         "dev_p": (r["dev"].get("v2") or {}).get("p"),
+                                        "dev_p_v2": (r["dev_to_date"].get("v2") or {}).get("p"),
                                         "dev_risk_matched_cagr": (r["dev"].get("risk_matched") or {}).get("cagr"),
                                         "holdout_excess": ((r["holdout"] or {}).get("v2") or {}).get("mean_excess"),
                                         "holdout_p": ((r["holdout"] or {}).get("v2") or {}).get("p"),
                                         "holdout_source": r.get("holdout_source"),
                                         "dev_trades": r["dev"]["trades"], "dev_mean_net": r["dev"].get("mean_net"),
+                                        "dev_mae_worst": (r["dev"].get("risk") or {}).get("mae_worst"),
                                         "dev_random_percentile": r["dev"].get("random_percentile"),
                                         "dev_cagr": r["dev"]["strategy"]["cagr"], "dev_matched_cagr": r["dev"]["matched"]["cagr"],
                                         "holdout_trades": (r["holdout"] or {}).get("trades"),
-                                        "holdout_random_percentile": (r["holdout"] or {}).get("random_percentile")}
+                                        "holdout_random_percentile": (r["holdout"] or {}).get("random_percentile"),
+                                        "forward_trades": r["forward"]["trades"], "forward_status": r["forward"]["status"],
+                                        "forward_mean_excess": r["forward"]["mean_excess"]}
                                        for r in rows]})
     ledger.commit(started.isoformat(timespec="seconds"), version, fingerprint, args.seed, args.draws)
     path.write_text(text, encoding="utf-8")
@@ -370,12 +551,21 @@ def main(argv=None) -> int:
     write_json(EXPORTS / "trade_simulation.json",
                export(rows, signal_days, cfg, fingerprint, version, started, path.name, full,
                       {"seed": args.seed, "draws": args.draws, "settings": runlog.settings(cfg),
-                       "trade_list": trades_name}))
-    print(f"Wrote {path}, {trades_name} ({len(trades)} trades) and exports/trade_simulation.json ({len(rows)} results; "
-          f"{registry.total_tests(TRIALS)} tests recorded in total).")
+                       "trade_list": trades_name}, changes))
+    evidence.write(EXPORTS, data.research_root(cfg))
+    print(f"Wrote {path}, {trades_name} ({len(trades)} trades), exports/trade_simulation.json ({len(rows)} results) and "
+          f"exports/evidence.json; {registry.total_tests(TRIALS)} tests recorded in total.")
+    if changes is None:
+        print("  Verdict changes: no comparison (partial run or no earlier registered run).")
+    elif not changes:
+        print(f"  Verdict changes since the last registered run ({against} -> {lead_v3.VERSION}): none.")
+    for c in changes or []:
+        print(f"  Verdict changed: {c['symbol']} {c['strategy']} ({MODE_LABELS[c['mode']]}): {c['from']} -> {c['to']}")
     for r in rows:
         if r["verdict"] == "Lead":
             print(f"  Lead: {r['symbol']} {r['signal']} + {r['exit']} ({MODE_LABELS[r['mode']]})")
+        if r["mode"] in THESIS_MODES and r["forward"]["status"] in ("below band", "failed"):
+            print(f"  Forward {r['forward']['status']}: {r['symbol']} {r['signal']} + {r['exit']} ({MODE_LABELS[r['mode']]})")
     return 0
 
 

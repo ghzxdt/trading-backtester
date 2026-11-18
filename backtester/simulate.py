@@ -45,18 +45,71 @@ def costs_for(mode: str, cfg: dict, entry_day: pd.Timestamp, exit_day: pd.Timest
     return (fees["kalshi_maker" if mode == "perp_maker" else "kalshi_taker"] + cfg["funding_bps_per_day"] * crossings) / 1e4
 
 
-def price_trades(frame: pd.DataFrame, trades, mode: str, cfg: dict) -> pd.DataFrame:
-    close, open_ = frame["close"].to_numpy(), frame["open"].to_numpy()
-    rows = []
+PRICED_COLUMNS = ["signal_day", "entry_day", "entry_price", "exit_day", "exit_price", "sessions", "gross", "cost", "net",
+                  "mae", "mfe", "exit_next_open"]
+COST_LINE_BPS = (2, 5, 10, 20)
+
+
+def excursions(frame: pd.DataFrame, trades, mode: str) -> tuple[np.ndarray, np.ndarray]:
+    """Maximum adverse and favourable excursion of each trade (fractions of the entry price) from daily lows and highs.
+
+    The window starts on the first day the position is held: the entry day for a next-open entry (the day's whole
+    range comes after the open), the day after the signal for a close entry. It ends on the exit day, whose high and
+    low may come before the exit at the close, while the position is still open. Daily bars do not order the high and
+    the low within a day, so this is the worst point reached, not the path."""
+    if not trades or not {"high", "low"} <= set(frame.columns):
+        return np.full(len(trades), np.nan), np.full(len(trades), np.nan)
+    open_, high, low, close = (frame[k].to_numpy(float) for k in ("open", "high", "low", "close"))
+    mae, mfe = [], []
     for p, e in trades:
+        entry = open_[p + 1] if mode == "etf_next_open" else close[p]
+        mae.append(low[p + 1:e + 1].min() / entry - 1)
+        mfe.append(high[p + 1:e + 1].max() / entry - 1)
+    return np.asarray(mae, float), np.asarray(mfe, float)
+
+
+def price_trades(frame: pd.DataFrame, trades, mode: str, cfg: dict) -> pd.DataFrame:
+    """One row per trade. `exit_next_open` is the next session's open after the exit day: what a trader who waits for
+    the exit-signal close to be known would get (descriptive; the registered exit sells at the close)."""
+    close, open_ = frame["close"].to_numpy(), frame["open"].to_numpy()
+    mae, mfe = excursions(frame, trades, mode)
+    rows = []
+    for k, (p, e) in enumerate(trades):
         entry = open_[p + 1] if mode == "etf_next_open" else close[p]
         gross = close[e] / entry - 1
         cost = costs_for(mode, cfg, frame.index[p], frame.index[e])
         rows.append({"signal_day": frame.index[p], "entry_day": frame.index[p + 1 if mode == "etf_next_open" else p],
                      "entry_price": entry, "exit_day": frame.index[e], "exit_price": close[e], "sessions": e - p,
-                     "gross": gross, "cost": cost, "net": (1 + gross) * (1 - cost) - 1})
-    return pd.DataFrame(rows, columns=["signal_day", "entry_day", "entry_price", "exit_day", "exit_price",
-                                       "sessions", "gross", "cost", "net"])
+                     "gross": gross, "cost": cost, "net": (1 + gross) * (1 - cost) - 1, "mae": mae[k], "mfe": mfe[k],
+                     "exit_next_open": open_[e + 1] if e + 1 < len(frame) else np.nan})
+    return pd.DataFrame(rows, columns=PRICED_COLUMNS)
+
+
+def risk_profile(priced: pd.DataFrame) -> dict:
+    """What the averages hide (added 2026-11-18; descriptive, no verdict uses it): the trade distribution, the worst
+    point reached inside trades, profit concentration, cost sensitivity, the exit taken at the next open, by year."""
+    if priced.empty:
+        return {}
+    net, gross = priced["net"].to_numpy(float), priced["gross"].to_numpy(float)
+    gains, losses = net[net > 0].sum(), -net[net <= 0].sum()
+    ordered = np.sort(net)[::-1]
+    out = {"median_net": float(np.median(net)), "net_p10": float(np.percentile(net, 10)),
+           "net_p90": float(np.percentile(net, 90)), "best_net": float(net.max()), "worst_net": float(net.min()),
+           "profit_factor": float(gains / losses) if losses > 0 else None,
+           "mean_net_without_best3": float(ordered[3:].mean()) if len(net) > 3 else None,
+           "mean_net_at_cost_bp": {str(c): float(((1 + gross) * (1 - c / 1e4) - 1).mean()) for c in COST_LINE_BPS}}
+    mae, mfe = priced["mae"].to_numpy(float), priced["mfe"].to_numpy(float)
+    if np.isfinite(mae).any():
+        out.update(mae_median=float(np.nanmedian(mae)), mae_p10=float(np.nanpercentile(mae, 10)),
+                   mae_worst=float(np.nanmin(mae)), mfe_median=float(np.nanmedian(mfe)),
+                   trades_mae_below_5pct=int((mae < -0.05).sum()), trades_mae_below_10pct=int((mae < -0.10).sum()))
+    later = priced["exit_next_open"].to_numpy(float)
+    ok = np.isfinite(later)
+    out["mean_gross_exit_next_open"] = (float((later[ok] / priced["entry_price"].to_numpy(float)[ok] - 1).mean())
+                                        if ok.any() else None)
+    years = pd.DatetimeIndex(priced["signal_day"]).year
+    out["by_year"] = {str(y): [int((years == y).sum()), float(net[years == y].mean())] for y in sorted(set(years))}
+    return out
 
 
 def daily_returns(frame: pd.DataFrame, trades, mode: str, cfg: dict, mask: pd.Series) -> tuple[pd.Series, float]:
@@ -129,7 +182,8 @@ def evaluate(frame, signal, exit_rule, mask, mode, cfg, draws=2000, rng=None, tr
                    mean_gross=float(priced["gross"].mean()), avg_win=float(wins.mean()) if len(wins) else None,
                    avg_loss=float(losses.mean()) if len(losses) else None,
                    mean_sessions=float(priced["sessions"].mean()),
-                   random_percentile=random_percentile(frame, mask, priced, mode, draws, rng))
+                   random_percentile=random_percentile(frame, mask, priced, mode, draws, rng),
+                   risk=risk_profile(priced))
     return out
 
 

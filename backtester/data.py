@@ -8,6 +8,12 @@ Prices are adjusted, so returns include dividends; they are research prices, not
 
 Every recorded run first copies these files into snapshots/<fingerprint>/ and reads from the copy, so the
 inputs behind a result stay on disk after the research app refreshes its data.
+
+Context files (added 2026-11-18 for the registered filter tests in backtester/splits.py), copied the same way when
+the research app has them:
+  data/raw/VIX3M.csv       Cboe three-month VIX (since 2009)
+  data/events/events.csv   the research app's CPI, jobs and Fed calendar (since 2010; typed in, dates known ahead)
+A snapshot made before 2026-11-18 has none of them, and its fingerprint is unchanged.
 """
 from __future__ import annotations
 
@@ -22,7 +28,8 @@ import pandas as pd
 HERE = Path(__file__).resolve().parent.parent
 CONFIG = HERE / "config.json"
 COLUMNS = ["open", "high", "low", "close", "volume"]
-FILES = ("etfs_long.csv", "etfs.csv", "VIX.csv")
+FILES = ("etfs_long.csv", "etfs.csv", "VIX.csv")  # every run reads these (folder data/raw)
+EXTRAS = (("VIX3M.csv", "raw"), ("events.csv", "events"))  # optional context files: (name, folder under data/)
 SNAPSHOTS = HERE / "snapshots"  # kept on this machine only (.gitignore): the inputs behind every recorded run
 
 
@@ -85,9 +92,19 @@ def load(symbol: str, root: Path | None = None) -> pd.DataFrame:
     return frame
 
 
+def _folders() -> dict[str, str]:
+    return {**{name: "raw" for name in FILES}, **dict(EXTRAS)}
+
+
+def _contents(root: Path) -> dict[str, bytes | None]:
+    return {name: _bytes(Path(root) / "data" / sub, name) for name, sub in _folders().items()}
+
+
 def _fingerprint(contents: dict[str, bytes | None]) -> str:
+    """Core files first, then context files; a file that is absent adds nothing, so snapshots made before the
+    context files existed keep their fingerprints."""
     digest = hashlib.sha256()
-    for name in FILES:
+    for name in (*FILES, *(name for name, _ in EXTRAS)):
         if contents.get(name) is not None:
             digest.update(name.encode() + hashlib.sha256(contents[name]).digest())
     return digest.hexdigest()[:16]
@@ -96,7 +113,7 @@ def _fingerprint(contents: dict[str, bytes | None]) -> str:
 def fingerprint(root: Path | None = None) -> str:
     """Hash of the input files, so every recorded result names the exact data it used."""
     root = Path(root) if root else research_root()
-    return _fingerprint({name: _bytes(root / "data" / "raw", name) for name in FILES})
+    return _fingerprint(_contents(root))
 
 
 def snapshot(root: Path | None = None, dest: Path | None = None) -> tuple[Path, str]:
@@ -107,15 +124,16 @@ def snapshot(root: Path | None = None, dest: Path | None = None) -> tuple[Path, 
     The folder has the research app's layout, so `load(symbol, folder)` rebuilds any recorded run.
     """
     root = Path(root) if root else research_root()
-    contents = {name: _bytes(root / "data" / "raw", name) for name in FILES}
+    contents = _contents(root)
     mark = _fingerprint(contents)
     folder = Path(dest or SNAPSHOTS) / mark
-    raw = folder / "data" / "raw"
-    raw.mkdir(parents=True, exist_ok=True)
+    (folder / "data" / "raw").mkdir(parents=True, exist_ok=True)
+    folders = _folders()
     for name, content in contents.items():
-        target = raw / (name + ".gz")
+        target = folder / "data" / folders[name] / (name + ".gz")
         if content is None or target.exists():
             continue
+        target.parent.mkdir(parents=True, exist_ok=True)
         tmp = target.with_suffix(".tmp")
         with tmp.open("wb") as stream, gzip.GzipFile(filename="", mode="wb", fileobj=stream, mtime=0) as packed:
             packed.write(content)
@@ -123,3 +141,24 @@ def snapshot(root: Path | None = None, dest: Path | None = None) -> tuple[Path, 
     if fingerprint(folder) != mark:
         raise ValueError(f"Snapshot {folder} does not match its fingerprint; do not use it")
     return folder, mark
+
+
+def load_context(root: Path | None = None) -> dict:
+    """Context series for the filter tests: Cboe's VIX3M close by date, and the scheduled CPI, jobs and Fed dates.
+    Empty when the research app (or a snapshot made before 2026-11-18) does not have them."""
+    root = Path(root) if root else research_root()
+    out = {"vix3m": pd.Series(dtype=float), "events": pd.DataFrame(columns=["date", "event", "scheduled"])}
+    path = _existing(root / "data" / "raw", "VIX3M.csv")
+    if path is not None:
+        frame = pd.read_csv(path)
+        frame.columns = [c.strip().upper() for c in frame.columns]
+        series = pd.Series(pd.to_numeric(frame["CLOSE"], errors="coerce").to_numpy(),
+                           index=pd.to_datetime(frame["DATE"], format="%m/%d/%Y")).dropna().sort_index()
+        out["vix3m"] = series[~series.index.duplicated(keep="last")]
+    path = _existing(root / "data" / "events", "events.csv")
+    if path is not None:
+        events = pd.read_csv(path, parse_dates=["date"])
+        scheduled = (events["scheduled"].astype(str).str.strip().str.lower().isin(["true", "1", "yes"])
+                     if "scheduled" in events else pd.Series(True, index=events.index))
+        out["events"] = events.assign(scheduled=scheduled)[["date", "event", "scheduled"]]
+    return out

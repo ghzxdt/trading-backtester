@@ -1,6 +1,13 @@
 {
  "exit:close_above_sma5@v1": "00840d3f1ae108cc",
  "exit:hold_5@v1": "ee09c8449c050018",
+ "filters:family@v1": "ec1ec6d2390cfe1f",
+ "split:gap_at_next_open@v1": "1cf6b91831d51067",
+ "split:release_within_5_sessions@v1": "c24640c12e46bc03",
+ "split:spy_200d_trend@v1": "def224711462e131",
+ "split:vix_level@v1": "0c84b48372117cf0",
+ "split:vix_term_structure@v1": "5ada9badfbba6385",
+ "split:volatility_matched_baseline@v1": "3fc716fd2c14b881",
  "study:above_sma200@v1": "5290427750812c63",
  "study:bollinger_lower_close@v1": "d5b6270b862a844d",
  "study:ema21_touch_uptrend@v1": "9dc3df2d4f53d51e",
@@ -11,5 +18,6 @@
  "study:rsi14_below_30@v1": "2e31ac404effc303",
  "study:rsi2_below_10@v1": "f533944da0b22d19",
  "study:volume_spike_down_day@v1": "4975fa907ebd13cf",
- "verdict:lead@v2": "9b8878c646eb8dbc"
+ "verdict:lead@v2": "9b8878c646eb8dbc",
+ "verdict:lead@v3": "0afbbd7f6402c2e7"
 }

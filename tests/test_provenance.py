@@ -124,7 +124,8 @@ class RunRecordTests(unittest.TestCase):
                 if t["mode"] != "etf_next_open":
                     by_test.setdefault((t["symbol"], t["study"]), set()).add((t["dev_p"], t["q"]))
             self.assertTrue(all(len(v) == 1 for v in by_test.values()))
-            self.assertEqual(export["verdict_version"], "v2")
+            self.assertEqual(export["verdict_version"], "v3")  # Lead v3 since 2026-11-18 (v1 and v2 kept beside it)
+            self.assertTrue(all(s["verdict_v2"] == s["verdict"] for s in export["strategies"]))  # same window here
             self.assertNotIn("Partial", " ".join(t["verdict"] for t in record["tests"]))
             # A second run reads every holdout result from the ledger and adds nothing to it.
             self.assertEqual(run_trades.main([]), 0)

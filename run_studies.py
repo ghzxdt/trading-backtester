@@ -21,7 +21,7 @@ from backtester import catalog, data, lock, registry, runlog
 from backtester.catalog import STUDIES
 from backtester.ledger import HoldoutLedger, holdout_result, rng_for
 from backtester.report_html import render
-from backtester.study import bh_qvalues, evaluate, forward_return, verdict
+from backtester.study import bh_qvalues, evaluate, excess_interval, forward_return, verdict
 
 HERE = Path(__file__).resolve().parent
 REPORTS = HERE / "reports"
@@ -64,9 +64,12 @@ def run(symbols, horizons, draws, seed, cfg=None, root=None, ledger: HoldoutLedg
                 holdout, source = holdout_result(
                     ledger, registered, f"study|{study.name}@{study.version}|{symbol}|h{h}", bool(hold_mask.any()),
                     lambda: evaluate(signal, close_fwd, hold_mask, h, draws, rng_for(seed, *who, "holdout")))
+                dev = evaluate(signal, close_fwd, dev_mask, h, draws, rng_for(seed, *who, "development"))
                 rows.append({"study": study.name, "version": study.version, "description": study.description,
-                             "symbol": symbol, "horizon": h,
-                             "dev": evaluate(signal, close_fwd, dev_mask, h, draws, rng_for(seed, *who, "development")),
+                             "symbol": symbol, "horizon": h, "dev": dev,
+                             # 90% interval of the excess (added 2026-11-18): its own random stream, so p is unchanged
+                             "dev_ci90": excess_interval(signal, close_fwd, dev_mask, rng_for(seed, *who, "development", "ci"))
+                             if dev.get("status") == "ok" else None,
                              "holdout": holdout, "holdout_source": source,
                              "next_open": evaluate(signal, forward_return(frame, h, "next_open"), dev_mask, h, 0)})
     if not registered:  # the correction needs the whole registered family, so a partial run gives no verdicts
@@ -83,6 +86,10 @@ def run(symbols, horizons, draws, seed, cfg=None, root=None, ledger: HoldoutLedg
 
 def bp(value) -> str:
     return "–" if value is None or (isinstance(value, float) and np.isnan(value)) else f"{value * 1e4:+.1f}"
+
+
+def interval(pair) -> str:
+    return "–" if not pair else f"{pair[0] * 1e4:+.0f} to {pair[1] * 1e4:+.0f}"
 
 
 def holdout_note(rows) -> list[str]:
@@ -110,7 +117,8 @@ def report(rows, cfg, fingerprint, version, started) -> str:
              *holdout_note(rows),
              "**How to read this.** Each row asks: after the signal (known at that day's close), how did the index do "
              "over the next *h* sessions compared with all days in the same period? *Excess* is that difference in "
-             "basis points (100 bp = 1%). *p* is the chance of an excess this large from a randomly shifted copy of "
+             "basis points (100 bp = 1%), with a 90% interval in brackets (calendar quarters of signals resampled, so "
+             "signals from one sell-off stay together). *p* is the chance of an excess this large from a randomly shifted copy of "
              "the same signal pattern; *q* corrects p for every test in this run. *Holdout* re-checks the same rule on "
              "1993-2009 data that played no part in choosing it. *Next-open* is the excess if you buy at the next "
              "morning's open instead of the close.", "",
@@ -119,7 +127,7 @@ def report(rows, cfg, fingerprint, version, started) -> str:
     for name in dict.fromkeys(r["study"] for r in rows):
         group = [r for r in rows if r["study"] == name]
         lines += [f"## {name} ({group[0]['version']})", "", group[0]["description"] + ".", "",
-                  "| Symbol | h | Signals (trades) | Excess bp | Hit rate vs all days | p | q | Holdout signals | Holdout excess bp | Holdout p | Next-open excess bp | Verdict |",
+                  "| Symbol | h | Signals (trades) | Excess bp (90% interval) | Hit rate vs all days | p | q | Holdout signals | Holdout excess bp | Holdout p | Next-open excess bp | Verdict |",
                   "|---|---|---|---|---|---|---|---|---|---|---|---|"]
         for r in group:
             d, h, n = r["dev"], r["holdout"] or {}, r["next_open"]
@@ -128,7 +136,7 @@ def report(rows, cfg, fingerprint, version, started) -> str:
             lines.append("| " + " | ".join([
                 r["symbol"], str(r["horizon"]),
                 f"{d['signals']} ({d.get('trades', '–')})",
-                bp(d.get("excess")) if ok else "–",
+                (f"{bp(d.get('excess'))} ({interval(r.get('dev_ci90'))})" if r.get("dev_ci90") else bp(d.get("excess"))) if ok else "–",
                 f"{d['hit']:.0%} vs {d['base_hit']:.0%}" if ok else "–",
                 f"{d['p']:.3f}" if ok else "–",
                 f"{r['q']:.3f}" if "q" in r else "–",
@@ -176,6 +184,7 @@ def main(argv=None) -> int:
                                         "holdout_source": r.get("holdout_source"),
                                         "horizon": r["horizon"], "verdict": r["verdict"],
                                         "dev_excess": r["dev"].get("excess"), "dev_p": r["dev"].get("p"),
+                                        "dev_ci90": r.get("dev_ci90"),
                                         "q": r.get("q"), "holdout_excess": (r["holdout"] or {}).get("excess"),
                                         "holdout_p": (r["holdout"] or {}).get("p")} for r in rows]})
     ledger.commit(started.isoformat(timespec="seconds"), version, fingerprint, args.seed, args.draws)

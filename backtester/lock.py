@@ -67,9 +67,21 @@ def marks() -> dict[str, str]:
     positions = np.arange(30, DAYS - 15)
     for ex in EXITS:
         out[f"exit:{ex.name}@{ex.version}"] = _mark(ex.rule(frame, positions))
-    from . import lead_v2  # a verdict's thresholds are registered too (its code is covered by the tests)
-    out[f"verdict:lead@{lead_v2.VERSION}"] = hashlib.sha256(json.dumps(lead_v2.PARAMS, sort_keys=True).encode()).hexdigest()[:16]
+    from . import lead_v2, lead_v3, splits  # a verdict's thresholds are registered too (its code is covered by the tests)
+    for module in (lead_v2, lead_v3):
+        out[f"verdict:lead@{module.VERSION}"] = _params(module.PARAMS)
+    # Filter tests (2026-11-18): what each split does on the reference history with a made-up context, and the
+    # family's settings.
+    ctx = splits.reference_context(frame)
+    for split in splits.SPLITS:
+        out[f"split:{split.name}@{split.version}"] = splits.fingerprint(split, frame, ctx)
+    out[f"split:{splits.VOL_TEST['name']}@{splits.VOL_TEST['version']}"] = splits.volatility_fingerprint(ctx)
+    out[f"filters:family@{splits.VERSION}"] = _params(splits.PARAMS)
     return out
+
+
+def _params(params: dict) -> str:
+    return hashlib.sha256(json.dumps(params, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
 def check(path: Path = LOCK) -> dict[str, str]:

@@ -92,3 +92,24 @@ def verdict(dev: dict, holdout: dict | None, q: float | None, cost: float) -> st
     if dev["excess"] <= cost:
         return "Real but smaller than costs"
     return "Candidate"
+
+
+def excess_interval(signal: pd.Series, forward: pd.Series, mask: pd.Series, rng: np.random.Generator,
+                    resamples: int = 2000) -> list[float] | None:
+    """90% interval of the excess (added 2026-11-18; descriptive). Calendar quarters of signal days are resampled with
+    replacement, so signals from one sell-off stay together; the all-days mean is held fixed. It uses its own random
+    stream, so the p-value and the verdict are unchanged."""
+    valid = mask & forward.notna()
+    flags = signal.reindex(forward.index).fillna(False).astype(bool)[valid].to_numpy()
+    values = forward[valid]
+    if flags.sum() < MIN_SIGNALS:
+        return None
+    base = float(values.mean())
+    chosen = values[flags]
+    _, which = np.unique(pd.PeriodIndex(pd.DatetimeIndex(chosen.index), freq="Q").asi8, return_inverse=True)
+    count = int(which.max()) + 1
+    sums = np.bincount(which, weights=chosen.to_numpy() - base, minlength=count)
+    sizes = np.bincount(which, minlength=count)
+    draw = rng.integers(0, count, size=(resamples, count))
+    means = sums[draw].sum(axis=1) / sizes[draw].sum(axis=1)
+    return [float(np.percentile(means, 5)), float(np.percentile(means, 95))]

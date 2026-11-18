@@ -82,9 +82,12 @@ def excess_test(priced: pd.DataFrame, base: np.ndarray, rng: np.random.Generator
     draw = rng.integers(0, count, size=(resamples, count))
     means = sums[draw].sum(axis=1) / sizes[draw].sum(axis=1)
     best = np.sort(gross)[::-1][:5]
+    # ci90 (added 2026-11-18): the 5th and 95th percentiles of the same resampled means. It reuses the draws that give
+    # p, so p and every verdict are unchanged; it says how large the excess plausibly is, which p alone does not.
     return {"mean_excess": float(excess.mean()), "baseline": float(base.mean()),
             "p": float((np.sum(means <= 0) + 1) / (resamples + 1)), "quarters": count,
-            "top5_share": float(best.sum() / gross.sum()) if gross.sum() > 0 else None}
+            "top5_share": float(best.sum() / gross.sum()) if gross.sum() > 0 else None,
+            "ci90": [float(np.percentile(means, 5)), float(np.percentile(means, 95))]}
 
 
 def risk_fraction(frame: pd.DataFrame, trades, returns: pd.Series, exposure: float, mask: pd.Series) -> float | None:
