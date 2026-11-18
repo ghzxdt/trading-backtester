@@ -1,0 +1,3087 @@
+{
+ "kind": "evidence",
+ "schema": 1,
+ "generated_from": {
+  "trade_simulation": {
+   "generated_at": "2026-11-18T07:08:04+00:00",
+   "report": "2026-11-18-070804-trade-simulation.md",
+   "code": "43f0869",
+   "data_fingerprint": "d09e16aa32e780ea"
+  },
+  "filter_tests": {
+   "generated_at": "2026-11-18T07:08:30+00:00",
+   "report": "2026-11-18-070830-filter-tests.md",
+   "code": "43f0869"
+  }
+ },
+ "data_through": {
+  "SPY": "2026-11-17",
+  "QQQ": "2026-11-17"
+ },
+ "trade_list": "exports/trades/2026-11-18-070804-trade-simulation.csv",
+ "wording": "Historical tendencies with their sample sizes and intervals, not probabilities of success.",
+ "cards": [
+  {
+   "strategy": "SPY:rsi2_below_10+hold_5|etf_close",
+   "symbol": "SPY",
+   "signal": "rsi2_below_10@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 23.42,
+    "trades_per_year": 11.38,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 192,
+   "quarters": 67,
+   "win_rate": 0.6354166666666666,
+   "mean_net": 0.00565622414195512,
+   "excess": 0.0030253866148387196,
+   "excess_ci90": [
+    -0.0004939784009706814,
+    0.0063325567476890405
+   ],
+   "p": 0.07739226077392261,
+   "q": 0.16478352164783522,
+   "best5_share": 0.41437086733073886,
+   "net_distribution": {
+    "net_p10": -0.02442718945208001,
+    "median_net": 0.00541601874860731,
+    "net_p90": 0.03788929253124267,
+    "worst_net": -0.12554429175397408,
+    "best_net": 0.17334664356206564
+   },
+   "inside_trades": {
+    "mae_median": -0.011758400509410849,
+    "mae_p10": -0.044038068289171374,
+    "mae_worst": -0.13444935323876628,
+    "trades_mae_below_5pct": 16,
+    "trades_mae_below_10pct": 3,
+    "mfe_median": 0.015924500843677802
+   },
+   "mean_net_without_best3": 0.003985999979339994,
+   "profit_factor": 1.7473282778169898,
+   "mean_net_at_cost_bp": {
+    "2": 0.00565622414195512,
+    "5": 0.005354466923268825,
+    "10": 0.004851538225458228,
+    "20": 0.0038456808298371523
+   },
+   "mean_gross_if_sold_next_open": 0.007300479689805013,
+   "holdout": {
+    "trades": 218,
+    "excess": 0.006850984587282217,
+    "p": 0.000999900009999,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0030253866148387196,
+    "development_sd": 0.029904300830916743,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 192,
+    "mean_net": 0.015652741281590207,
+    "median_net": 0.01354632809309353,
+    "win_rate": 0.6197916666666666,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.036748621710439244,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.015855912464082998,
+    "mean_gross_1x": 0.0058573956210793135,
+    "ratio_to_1x": 2.706990186392994
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -13.4% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi2_below_10+hold_5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "rsi2_below_10@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 23.42,
+    "trades_per_year": 11.38,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 192,
+   "quarters": 67,
+   "win_rate": 0.5833333333333334,
+   "mean_net": 0.0037458170002996095,
+   "excess": 0.0014772520956859694,
+   "excess_ci90": [
+    -0.0018683502637276265,
+    0.004733199377537284
+   ],
+   "p": 0.22357764223577642,
+   "q": 0.2682931706829317,
+   "best5_share": 0.5277994135201934,
+   "net_distribution": {
+    "net_p10": -0.025711109549827613,
+    "median_net": 0.00532985602542102,
+    "net_p90": 0.03278626842061943,
+    "worst_net": -0.15752523227747905,
+    "best_net": 0.11593580907852874
+   },
+   "inside_trades": {
+    "mae_median": -0.012999889286085309,
+    "mae_p10": -0.04235517055482678,
+    "mae_worst": -0.16610461432646018,
+    "trades_mae_below_5pct": 16,
+    "trades_mae_below_10pct": 2,
+    "mfe_median": 0.014119107343484316
+   },
+   "mean_net_without_best3": 0.0023047234007295236,
+   "profit_factor": 1.4702048973802697,
+   "mean_net_at_cost_bp": {
+    "2": 0.0037458170002996095,
+    "5": 0.0034446330184031725,
+    "10": 0.002942659715242327,
+    "20": 0.0019387131089207688
+   },
+   "mean_gross_if_sold_next_open": 0.005380988184369491,
+   "holdout": {
+    "trades": 218,
+    "excess": 0.005358069577737672,
+    "p": 0.005099490050994901,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0014772520956859694,
+    "development_sd": 0.028392761222423728,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 192,
+    "mean_net": 0.010205073218543815,
+    "median_net": 0.014543865221974706,
+    "win_rate": 0.5833333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.03863431121188621,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.010407154649473687,
+    "mean_gross_1x": 0.003946606321563898,
+    "ratio_to_1x": 2.636988288548047
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -16.6% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "SPY",
+   "signal": "rsi2_below_10@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 23.42,
+    "trades_per_year": 11.15,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 188,
+   "quarters": 67,
+   "win_rate": 0.723404255319149,
+   "mean_net": 0.003949637071600392,
+   "excess": 0.002162911109938389,
+   "excess_ci90": [
+    -0.0010316667508233584,
+    0.005026680640655642
+   ],
+   "p": 0.12098790120987901,
+   "q": 0.21289299641464426,
+   "best5_share": 0.24941084621407483,
+   "net_distribution": {
+    "net_p10": -0.016372482995813377,
+    "median_net": 0.00821949029185165,
+    "net_p90": 0.021053113988219883,
+    "worst_net": -0.18237920049044154,
+    "best_net": 0.04737565368646557
+   },
+   "inside_trades": {
+    "mae_median": -0.010498822194315305,
+    "mae_p10": -0.0445571463794166,
+    "mae_worst": -0.199418651829389,
+    "trades_mae_below_5pct": 16,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.011396536187193052
+   },
+   "mean_net_without_best3": 0.003317000637249635,
+   "profit_factor": 1.7234436674554159,
+   "mean_net_at_cost_bp": {
+    "2": 0.003949637071600392,
+    "5": 0.003648391931450917,
+    "10": 0.0031463166978683453,
+    "20": 0.002142166230703315
+   },
+   "mean_gross_if_sold_next_open": 0.004857698566055634,
+   "holdout": {
+    "trades": 212,
+    "excess": 0.005832470498311325,
+    "p": 0.00029997000299970003,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002162911109938389,
+    "development_sd": 0.024241706386584544,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 188,
+    "mean_net": 0.01020801113342109,
+    "median_net": 0.02352380966778489,
+    "win_rate": 0.7074468085106383,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.03263142479750203,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.010410093152051481,
+    "mean_gross_1x": 0.0041504671650333825,
+    "ratio_to_1x": 2.508173836370478
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -19.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi2_below_10+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "rsi2_below_10@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 23.42,
+    "trades_per_year": 11.15,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 188,
+   "quarters": 67,
+   "win_rate": 0.723404255319149,
+   "mean_net": 0.0028265092911577256,
+   "excess": 0.0014009258857924868,
+   "excess_ci90": [
+    -0.0019118921172847703,
+    0.004235451251796831
+   ],
+   "p": 0.21537846215378462,
+   "q": 0.2682931706829317,
+   "best5_share": 0.3923546607756927,
+   "net_distribution": {
+    "net_p10": -0.014197829451758993,
+    "median_net": 0.006487735556901519,
+    "net_p90": 0.01867621646529708,
+    "worst_net": -0.21228155222000333,
+    "best_net": 0.05732577460066324
+   },
+   "inside_trades": {
+    "mae_median": -0.010607000573618353,
+    "mae_p10": -0.041930067395717675,
+    "mae_worst": -0.2286978299954583,
+    "trades_mae_below_5pct": 15,
+    "trades_mae_below_10pct": 3,
+    "mfe_median": 0.00980313756110962
+   },
+   "mean_net_without_best3": 0.002004389881011305,
+   "profit_factor": 1.504867893637104,
+   "mean_net_at_cost_bp": {
+    "2": 0.0028265092911577256,
+    "5": 0.0025256011567435315,
+    "10": 0.002024087599386421,
+    "20": 0.0010210604846723204
+   },
+   "mean_gross_if_sold_next_open": 0.0037181627740840786,
+   "holdout": {
+    "trades": 212,
+    "excess": 0.004433263124968283,
+    "p": 0.0015998400159984002,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0014009258857924868,
+    "development_sd": 0.02529584460545861,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 188,
+    "mean_net": 0.0075383977293018945,
+    "median_net": 0.018590158194988105,
+    "win_rate": 0.7180851063829787,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.03079995793000656,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.0077399457184455615,
+    "mean_gross_1x": 0.0030271147141005227,
+    "ratio_to_1x": 2.556872285808108
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -22.9% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi14_below_30+hold_5|etf_close",
+   "symbol": "SPY",
+   "signal": "rsi14_below_30@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "Failed holdout",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Failed holdout",
+   "verdict_v1": "Failed holdout",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 3.44,
+    "trades_per_year": 1.42,
+    "last_fired": "2026-03-30"
+   },
+   "trades": 24,
+   "quarters": 17,
+   "win_rate": 0.75,
+   "mean_net": 0.01431234203234738,
+   "excess": 0.011683236075123024,
+   "excess_ci90": [
+    0.003756520040827254,
+    0.020324102138561537
+   ],
+   "p": 0.0091990800919908,
+   "q": 0.03153970317253989,
+   "best5_share": 1.0532855961919871,
+   "net_distribution": {
+    "net_p10": -0.027993094215414335,
+    "median_net": 0.012857431904821581,
+    "net_p90": 0.05124675352821893,
+    "worst_net": -0.12554429175397408,
+    "best_net": 0.17334664356206564
+   },
+   "inside_trades": {
+    "mae_median": -0.019802247715931365,
+    "mae_p10": -0.08154830829060095,
+    "mae_worst": -0.13444935323876628,
+    "trades_mae_below_5pct": 5,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.030823846693501578
+   },
+   "mean_net_without_best3": 0.0026375032478971753,
+   "profit_factor": 2.383985389980263,
+   "mean_net_at_cost_bp": {
+    "2": 0.01431234203234738,
+    "5": 0.014007987458822988,
+    "10": 0.013500729836282241,
+    "20": 0.012486214591200903
+   },
+   "mean_gross_if_sold_next_open": 0.01905333448489931,
+   "holdout": {
+    "trades": 27,
+    "excess": 0.003484902485801324,
+    "p": 0.24567543245675433,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.011683236075123024,
+    "development_sd": 0.05086882173254916,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.03783135688126054,
+    "median_net": 0.03709199994264789,
+    "win_rate": 0.75,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.05857239215546112,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.03803896467419536,
+    "mean_gross_1x": 0.01451524508136362,
+    "ratio_to_1x": 2.6206215920552562
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 24 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -13.4% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi14_below_30+hold_5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "rsi14_below_30@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Failed holdout",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 3.44,
+    "trades_per_year": 1.42,
+    "last_fired": "2026-03-30"
+   },
+   "trades": 24,
+   "quarters": 17,
+   "win_rate": 0.7083333333333334,
+   "mean_net": 0.01374746290015289,
+   "excess": 0.011480898724865069,
+   "excess_ci90": [
+    -0.001059449164031009,
+    0.02525780889754612
+   ],
+   "p": 0.06669333066693331,
+   "q": 0.16006399360063994,
+   "best5_share": 1.117716877324828,
+   "net_distribution": {
+    "net_p10": -0.03374385504560856,
+    "median_net": 0.01626513030447907,
+    "net_p90": 0.05958769485929067,
+    "worst_net": -0.15752523227747905,
+    "best_net": 0.11593580907852874
+   },
+   "inside_trades": {
+    "mae_median": -0.019568166718298197,
+    "mae_p10": -0.08150241581375267,
+    "mae_worst": -0.16610461432646018,
+    "trades_mae_below_5pct": 4,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.02738275015793823
+   },
+   "mean_net_without_best3": 0.0028606410647391187,
+   "profit_factor": 2.1184605737600473,
+   "mean_net_at_cost_bp": {
+    "2": 0.01374746290015289,
+    "5": 0.013443277824267685,
+    "10": 0.012936302697792251,
+    "20": 0.011922352444841513
+   },
+   "mean_gross_if_sold_next_open": 0.018475185476215256,
+   "holdout": {
+    "trades": 27,
+    "excess": 0.004676344752688177,
+    "p": 0.2196780321967803,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.011480898724865069,
+    "development_sd": 0.05218811872626174,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.03895444629816089,
+    "median_net": 0.04517931193789815,
+    "win_rate": 0.7083333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.057701676711544025,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.03916227875391165,
+    "mean_gross_1x": 0.013950252950742995,
+    "ratio_to_1x": 2.807280906818672
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 24 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -16.6% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi14_below_30+close_above_sma5|etf_close",
+   "symbol": "SPY",
+   "signal": "rsi14_below_30@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 3.44,
+    "trades_per_year": 1.42,
+    "last_fired": "2026-03-30"
+   },
+   "trades": 24,
+   "quarters": 17,
+   "win_rate": 0.7916666666666666,
+   "mean_net": 0.006249446821683847,
+   "excess": 0.004487413838738455,
+   "excess_ci90": [
+    -0.013558952017818628,
+    0.018944177493555713
+   ],
+   "p": 0.28777122287771223,
+   "q": 0.3139322431393224,
+   "best5_share": 1.3090576969885865,
+   "net_distribution": {
+    "net_p10": -0.013760853791198468,
+    "median_net": 0.009886322128730862,
+    "net_p90": 0.028524528951917035,
+    "worst_net": -0.18237920049044154,
+    "best_net": 0.08555703193335384
+   },
+   "inside_trades": {
+    "mae_median": -0.0191151517116242,
+    "mae_p10": -0.08154830829060095,
+    "mae_worst": -0.199418651829389,
+    "trades_mae_below_5pct": 5,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.02011844683647923
+   },
+   "mean_net_without_best3": 2.7873697298651046e-05,
+   "profit_factor": 1.6427153780722892,
+   "mean_net_at_cost_bp": {
+    "2": 0.006249446821683847,
+    "5": 0.005947511600593138,
+    "10": 0.0054442862321085654,
+    "20": 0.004437835495139482
+   },
+   "mean_gross_if_sold_next_open": 0.006030147051941108,
+   "holdout": {
+    "trades": 24,
+    "excess": 0.00883937227464863,
+    "p": 0.09019098090190981,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.004487413838738455,
+    "development_sd": 0.046031203940140535,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.012741984843920326,
+    "median_net": 0.029395460632879122,
+    "win_rate": 0.7916666666666666,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.05549090323498651,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.012944573758672051,
+    "mean_gross_1x": 0.006450736969077646,
+    "ratio_to_1x": 2.0066813793095832
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 24 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -19.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "rsi14_below_30@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 3.44,
+    "trades_per_year": 1.42,
+    "last_fired": "2026-03-30"
+   },
+   "trades": 24,
+   "quarters": 17,
+   "win_rate": 0.7916666666666666,
+   "mean_net": 0.007731331358918861,
+   "excess": 0.006331128255029274,
+   "excess_ci90": [
+    -0.014155366356618591,
+    0.024784529099438932
+   ],
+   "p": 0.27377262273772623,
+   "q": 0.3128829974145443,
+   "best5_share": 1.411416266206102,
+   "net_distribution": {
+    "net_p10": -0.014229933551421978,
+    "median_net": 0.015445250341322936,
+    "net_p90": 0.028846491697479635,
+    "worst_net": -0.21228155222000333,
+    "best_net": 0.12126227732804518
+   },
+   "inside_trades": {
+    "mae_median": -0.016019311131837077,
+    "mae_p10": -0.08150241581375267,
+    "mae_worst": -0.2286978299954583,
+    "trades_mae_below_5pct": 4,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.01917171114944638
+   },
+   "mean_net_without_best3": -0.0013178363684423408,
+   "profit_factor": 1.6621615376573813,
+   "mean_net_at_cost_bp": {
+    "2": 0.007731331358918861,
+    "5": 0.007428951483536145,
+    "10": 0.006924985024564831,
+    "20": 0.005917052106622324
+   },
+   "mean_gross_if_sold_next_open": 0.007372241570541578,
+   "holdout": {
+    "trades": 24,
+    "excess": 0.007923031301805779,
+    "p": 0.12268773122687732,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.006331128255029274,
+    "development_sd": 0.055873758505749445,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.022182166739374055,
+    "median_net": 0.04520947433220679,
+    "win_rate": 0.7916666666666666,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.0484653132031469,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.022386644068187637,
+    "mean_gross_1x": 0.007932917942507348,
+    "ratio_to_1x": 2.8219936510665478
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 24 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -22.9% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:bollinger_lower_close+hold_5|etf_close",
+   "symbol": "SPY",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 13.16,
+    "trades_per_year": 5.69,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 96,
+   "quarters": 57,
+   "win_rate": 0.59375,
+   "mean_net": 0.005434830542432848,
+   "excess": 0.0028039487277390263,
+   "excess_ci90": [
+    -0.002313837642594163,
+    0.007530141662549133
+   ],
+   "p": 0.1718828117188281,
+   "q": 0.2584241575842416,
+   "best5_share": 0.5842383366862843,
+   "net_distribution": {
+    "net_p10": -0.02920255187523141,
+    "median_net": 0.0070108823561306766,
+    "net_p90": 0.04342082831415861,
+    "worst_net": -0.12554429175397408,
+    "best_net": 0.08756599716446134
+   },
+   "inside_trades": {
+    "mae_median": -0.013396381897875231,
+    "mae_p10": -0.043482031115599395,
+    "mae_worst": -0.13444935323876628,
+    "trades_mae_below_5pct": 9,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.019402099816720253
+   },
+   "mean_net_without_best3": 0.003368220671940111,
+   "profit_factor": 1.601753866010422,
+   "mean_net_at_cost_bp": {
+    "2": 0.005434830542432848,
+    "5": 0.0051331397551126826,
+    "10": 0.004630321776245643,
+    "20": 0.003624685818511665
+   },
+   "mean_gross_if_sold_next_open": 0.008095259388284275,
+   "holdout": {
+    "trades": 97,
+    "excess": 0.007547072239944474,
+    "p": 0.0047995200479952005,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0028039487277390263,
+    "development_sd": 0.030956582115272722,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 96,
+    "mean_net": 0.014145003402275974,
+    "median_net": 0.018093639046702692,
+    "win_rate": 0.59375,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.0406643308126996,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.01434787297687133,
+    "mean_gross_1x": 0.0056359577339796215,
+    "ratio_to_1x": 2.545773700602278
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -13.4% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:bollinger_lower_close+hold_5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 13.16,
+    "trades_per_year": 5.69,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 96,
+   "quarters": 57,
+   "win_rate": 0.59375,
+   "mean_net": 0.004750332428472986,
+   "excess": 0.0024819684671336362,
+   "excess_ci90": [
+    -0.0031221005739906437,
+    0.007564620361050986
+   ],
+   "p": 0.2156784321567843,
+   "q": 0.2682931706829317,
+   "best5_share": 0.6993040648663704,
+   "net_distribution": {
+    "net_p10": -0.03076107732143063,
+    "median_net": 0.005800059623772502,
+    "net_p90": 0.041913437960256816,
+    "worst_net": -0.15752523227747905,
+    "best_net": 0.1034252431149254
+   },
+   "inside_trades": {
+    "mae_median": -0.011672853321759713,
+    "mae_p10": -0.040507716209296496,
+    "mae_worst": -0.16610461432646018,
+    "trades_mae_below_5pct": 8,
+    "trades_mae_below_10pct": 2,
+    "mfe_median": 0.017847690644999803
+   },
+   "mean_net_without_best3": 0.0024845391418851733,
+   "profit_factor": 1.516642264223823,
+   "mean_net_at_cost_bp": {
+    "2": 0.004750332428472986,
+    "5": 0.004448847031665116,
+    "10": 0.00394637137031855,
+    "20": 0.0029414200476255265
+   },
+   "mean_gross_if_sold_next_open": 0.007399362860924851,
+   "holdout": {
+    "trades": 97,
+    "excess": 0.007055835465730556,
+    "p": 0.0117988201179882,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0024819684671336362,
+    "development_sd": 0.032886965233950335,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 96,
+    "mean_net": 0.013307859277375442,
+    "median_net": 0.016231016274078747,
+    "win_rate": 0.5833333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.035464058806310594,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.013510561389653354,
+    "mean_gross_1x": 0.004951322693011563,
+    "ratio_to_1x": 2.7286772095712
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -16.6% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_close",
+   "symbol": "SPY",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 13.16,
+    "trades_per_year": 5.87,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 99,
+   "quarters": 57,
+   "win_rate": 0.7272727272727273,
+   "mean_net": 0.005606780641365138,
+   "excess": 0.0037921067575450574,
+   "excess_ci90": [
+    -0.0008347710340549376,
+    0.007536525000621319
+   ],
+   "p": 0.08239176082391761,
+   "q": 0.16478352164783522,
+   "best5_share": 0.3123333622840011,
+   "net_distribution": {
+    "net_p10": -0.011956840541767998,
+    "median_net": 0.009464960676611733,
+    "net_p90": 0.02275987952040862,
+    "worst_net": -0.18237920049044154,
+    "best_net": 0.04119911218114569
+   },
+   "inside_trades": {
+    "mae_median": -0.012428665052183319,
+    "mae_p10": -0.05613244945353992,
+    "mae_worst": -0.199418651829389,
+    "trades_mae_below_5pct": 11,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.016001230832090485
+   },
+   "mean_net_without_best3": 0.004541650615235825,
+   "profit_factor": 2.05955866435885,
+   "mean_net_at_cost_bp": {
+    "2": 0.005606780641365138,
+    "5": 0.005305038258696222,
+    "10": 0.004802134287581254,
+    "20": 0.0037963263453514497
+   },
+   "mean_gross_if_sold_next_open": 0.0060019216314384964,
+   "holdout": {
+    "trades": 96,
+    "excess": 0.005931708417781778,
+    "p": 0.0082991700829917,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0037921067575450574,
+    "development_sd": 0.02593290359366329,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 99,
+    "mean_net": 0.014009781448515253,
+    "median_net": 0.02615350824094831,
+    "win_rate": 0.7070707070707071,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.038032040126700806,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.014212623973309893,
+    "mean_gross_1x": 0.005807942229811077,
+    "ratio_to_1x": 2.4471014708719316
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -19.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 13.16,
+    "trades_per_year": 5.87,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 99,
+   "quarters": 57,
+   "win_rate": 0.696969696969697,
+   "mean_net": 0.004766554199141981,
+   "excess": 0.0033127335457062974,
+   "excess_ci90": [
+    -0.0018785268054145928,
+    0.007441427231413617
+   ],
+   "p": 0.12418758124187582,
+   "q": 0.21289299641464426,
+   "best5_share": 0.5199887068411796,
+   "net_distribution": {
+    "net_p10": -0.012145248879023551,
+    "median_net": 0.008130388204361516,
+    "net_p90": 0.025111756535078824,
+    "worst_net": -0.21228155222000333,
+    "best_net": 0.06482047918843037
+   },
+   "inside_trades": {
+    "mae_median": -0.011261018780405085,
+    "mae_p10": -0.04861106974027389,
+    "mae_worst": -0.2286978299954583,
+    "trades_mae_below_5pct": 10,
+    "trades_mae_below_10pct": 2,
+    "mfe_median": 0.011717452467021605
+   },
+   "mean_net_without_best3": 0.0031648181497575824,
+   "profit_factor": 1.8366565649867903,
+   "mean_net_at_cost_bp": {
+    "2": 0.004766554199141981,
+    "5": 0.004465063934829415,
+    "10": 0.003962580160975018,
+    "20": 0.0029576126132663293
+   },
+   "mean_gross_if_sold_next_open": 0.0051196712816263135,
+   "holdout": {
+    "trades": 96,
+    "excess": 0.004840895027346382,
+    "p": 0.035396460353964605,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0033127335457062974,
+    "development_sd": 0.029107590222225026,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 99,
+    "mean_net": 0.012829303278437959,
+    "median_net": 0.024007537029721915,
+    "win_rate": 0.6868686868686869,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.034060003304634656,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.013031909660370012,
+    "mean_gross_1x": 0.004967547708683699,
+    "ratio_to_1x": 2.623409059079416
+   },
+   "filters": [
+    {
+     "test": "gap_at_next_open",
+     "label": "Insufficient evidence",
+     "group_label": "gap up 0.5% or more",
+     "group": 24,
+     "rest": 75,
+     "diff": -0.014278411132381014,
+     "ci90": [
+      -0.03179749619160763,
+      -0.0019841273595247997
+     ],
+     "p": 0.0287971202879712,
+     "q": 0.1084891510848915
+    },
+    {
+     "test": "spy_200d_trend",
+     "label": "Insufficient evidence",
+     "group_label": "SPY below its 200-day average",
+     "group": 29,
+     "rest": 70,
+     "diff": -0.001949643666144681,
+     "ci90": [
+      -0.018511424558701486,
+      0.01132601940009758
+     ],
+     "p": 0.9011098890110989,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "vix_level",
+     "label": "Insufficient evidence",
+     "group_label": "VIX 20 or higher",
+     "group": 62,
+     "rest": 37,
+     "diff": 0.002146303902688914,
+     "ci90": [
+      -0.006246871523897892,
+      0.00924106646606997
+     ],
+     "p": 0.6039396060393961,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "vix_term_structure",
+     "label": "Insufficient evidence",
+     "group_label": "VIX above VIX3M",
+     "group": 41,
+     "rest": 58,
+     "diff": -1.1932834826687902e-06,
+     "ci90": [
+      -0.012262675063922214,
+      0.011165545947979036
+     ],
+     "p": 0.922107789221078,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "release_within_5_sessions",
+     "label": "Insufficient evidence",
+     "group_label": "a release within 5 sessions",
+     "group": 51,
+     "rest": 48,
+     "diff": -0.009329738571917644,
+     "ci90": [
+      -0.018825326736956756,
+      -0.001003440926229924
+     ],
+     "p": 0.06079392060793921,
+     "q": 0.18238176182381763
+    },
+    {
+     "test": "volatility_matched_baseline",
+     "label": "Not shown beyond volatility",
+     "group_label": null,
+     "group": null,
+     "rest": null,
+     "diff": 0.002382846488712756,
+     "ci90": [
+      -0.0030541777942760624,
+      0.006621756706189781
+     ],
+     "p": 0.1987801219878012,
+     "q": 0.4638202846382028
+    }
+   ],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 7,
+     "tests": "filter test gap_at_next_open",
+     "title": "A large overnight gap uses up the bounce",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 8,
+     "tests": "filter tests spy_200d_trend and vix_level",
+     "title": "Oversold rules depend on the regime",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -22.9% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi2_below_10+hold_5|etf_close",
+   "symbol": "QQQ",
+   "signal": "rsi2_below_10@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 24.43,
+    "trades_per_year": 11.44,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 193,
+   "quarters": 67,
+   "win_rate": 0.5854922279792746,
+   "mean_net": 0.0030277144965062666,
+   "excess": -0.0004868194009486001,
+   "excess_ci90": [
+    -0.004256728719444284,
+    0.0032276601800264497
+   ],
+   "p": 0.5832416758324167,
+   "q": 0.6086000095642609,
+   "best5_share": 0.5802447293520627,
+   "net_distribution": {
+    "net_p10": -0.032197346596534726,
+    "median_net": 0.006032819448908544,
+    "net_p90": 0.037001886205104924,
+    "worst_net": -0.1255560381759102,
+    "best_net": 0.09052088517101353
+   },
+   "inside_trades": {
+    "mae_median": -0.014263429922774185,
+    "mae_p10": -0.04912822973145507,
+    "mae_worst": -0.20862887609172043,
+    "trades_mae_below_5pct": 19,
+    "trades_mae_below_10pct": 4,
+    "mfe_median": 0.02016463539116442
+   },
+   "mean_net_without_best3": 0.0018116779629685777,
+   "profit_factor": 1.299017360549704,
+   "mean_net_at_cost_bp": {
+    "2": 0.0030277144965062666,
+    "5": 0.0027267459884557335,
+    "10": 0.0022251318083714106,
+    "20": 0.001221903448202865
+   },
+   "mean_gross_if_sold_next_open": 0.005613093996018882,
+   "holdout": {
+    "trades": 145,
+    "excess": 0.005685265415287658,
+    "p": 0.051994800519948,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": -0.0004868194009486001,
+    "development_sd": 0.03159225117963116,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 192,
+    "mean_net": 0.00783935248618088,
+    "median_net": 0.0158559186506263,
+    "win_rate": 0.5677083333333334,
+    "worst_net": -0.39175979160638874,
+    "mae_median": -0.04426866101266713,
+    "mae_worst": -0.39588437608620597,
+    "mean_gross": 0.008040960678316523,
+    "mean_gross_1x": 0.00340675747460284,
+    "ratio_to_1x": 2.360297361423985
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -20.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi2_below_10+hold_5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "rsi2_below_10@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 24.43,
+    "trades_per_year": 11.44,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 193,
+   "quarters": 67,
+   "win_rate": 0.5803108808290155,
+   "mean_net": 0.0015163220704880675,
+   "excess": -0.001496108818690764,
+   "excess_ci90": [
+    -0.005193846796293534,
+    0.001981928010138046
+   ],
+   "p": 0.7531246875312468,
+   "q": 0.7531246875312468,
+   "best5_share": 0.9280726169823003,
+   "net_distribution": {
+    "net_p10": -0.03253755443331761,
+    "median_net": 0.002646708406317755,
+    "net_p90": 0.03683625706485596,
+    "worst_net": -0.15834071099962066,
+    "best_net": 0.07633084300332804
+   },
+   "inside_trades": {
+    "mae_median": -0.015179377527860693,
+    "mae_p10": -0.047792269848010084,
+    "mae_worst": -0.19730965793625488,
+    "trades_mae_below_5pct": 18,
+    "trades_mae_below_10pct": 4,
+    "mfe_median": 0.017214422444799427
+   },
+   "mean_net_without_best3": 0.0004948175436148964,
+   "profit_factor": 1.150602218906497,
+   "mean_net_at_cost_bp": {
+    "2": 0.0015163220704880675,
+    "5": 0.0012158070708670249,
+    "10": 0.0007149487381651958,
+    "20": -0.0002867679272383892
+   },
+   "mean_gross_if_sold_next_open": 0.004090756761213479,
+   "holdout": {
+    "trades": 145,
+    "excess": 0.005698714845721378,
+    "p": 0.05419458054194581,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": -0.001496108818690764,
+    "development_sd": 0.03053865961719863,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 192,
+    "mean_net": 0.004001041555261617,
+    "median_net": 0.00857543054074894,
+    "win_rate": 0.5416666666666666,
+    "worst_net": -0.4521544404829331,
+    "mae_median": -0.044979570177216655,
+    "mae_worst": -0.4558694781620247,
+    "mean_gross": 0.004201881931647926,
+    "mean_gross_1x": 0.0019178568040196422,
+    "ratio_to_1x": 2.1909257890584883
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -19.7% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "signal": "rsi2_below_10@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 24.43,
+    "trades_per_year": 11.38,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 192,
+   "quarters": 67,
+   "win_rate": 0.703125,
+   "mean_net": 0.005885239833593733,
+   "excess": 0.003370938242032929,
+   "excess_ci90": [
+    0.0011357028647610765,
+    0.00550582064047016
+   ],
+   "p": 0.008399160083991601,
+   "q": 0.03153970317253989,
+   "best5_share": 0.16390476273263316,
+   "net_distribution": {
+    "net_p10": -0.015025900202412389,
+    "median_net": 0.01091924815984191,
+    "net_p90": 0.024166576664310657,
+    "worst_net": -0.11768830414164744,
+    "best_net": 0.04931564880580841
+   },
+   "inside_trades": {
+    "mae_median": -0.011800744626707493,
+    "mae_p10": -0.05161391491032374,
+    "mae_worst": -0.20862887609172043,
+    "trades_mae_below_5pct": 20,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.014918002832198685
+   },
+   "mean_net_without_best3": 0.005323415766010644,
+   "profit_factor": 2.197880855240616,
+   "mean_net_at_cost_bp": {
+    "2": 0.005885239833593733,
+    "5": 0.005583413896456259,
+    "10": 0.0050803706678937,
+    "20": 0.004074284210768677
+   },
+   "mean_gross_if_sold_next_open": 0.0063816033785490806,
+   "holdout": {
+    "trades": 143,
+    "excess": 0.00892583717795749,
+    "p": 0.0018998100189981002,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.003370938242032929,
+    "development_sd": 0.021118412840198057,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 190,
+    "mean_net": 0.013926909297456451,
+    "median_net": 0.03144353052763127,
+    "win_rate": 0.6789473684210526,
+    "worst_net": -0.41837539268514423,
+    "mae_median": -0.03758054881361167,
+    "mae_worst": -0.4729707618359049,
+    "mean_gross": 0.014129735244505332,
+    "mean_gross_1x": 0.005980386342586878,
+    "ratio_to_1x": 2.362679337936112
+   },
+   "filters": [
+    {
+     "test": "spy_200d_trend",
+     "label": "Insufficient evidence",
+     "group_label": "SPY below its 200-day average",
+     "group": 44,
+     "rest": 148,
+     "diff": 0.0003969131929666839,
+     "ci90": [
+      -0.008668277624366809,
+      0.008525138919024209
+     ],
+     "p": 0.9277072292770723,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "vix_level",
+     "label": "Insufficient evidence",
+     "group_label": "VIX 20 or higher",
+     "group": 84,
+     "rest": 108,
+     "diff": 0.0031465042163281447,
+     "ci90": [
+      -0.0024789165737072343,
+      0.008434724946261322
+     ],
+     "p": 0.3291670832916708,
+     "q": 0.6912508749125087
+    },
+    {
+     "test": "vix_term_structure",
+     "label": "Insufficient evidence",
+     "group_label": "VIX above VIX3M",
+     "group": 35,
+     "rest": 157,
+     "diff": -0.0011114858578451414,
+     "ci90": [
+      -0.010741438891094213,
+      0.007832736300475188
+     ],
+     "p": 0.8861113888611138,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "release_within_5_sessions",
+     "label": "Insufficient evidence",
+     "group_label": "a release within 5 sessions",
+     "group": 98,
+     "rest": 94,
+     "diff": -0.0006490341120565474,
+     "ci90": [
+      -0.006004536881063059,
+      0.004523318385514418
+     ],
+     "p": 0.8555144485551445,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "volatility_matched_baseline",
+     "label": "Not shown beyond volatility",
+     "group_label": null,
+     "group": null,
+     "rest": null,
+     "diff": 0.002933958578360766,
+     "ci90": [
+      0.000572919934140363,
+      0.005111798847986185
+     ],
+     "p": 0.021397860213978603,
+     "q": 0.1084891510848915
+    }
+   ],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 7,
+     "tests": "filter test gap_at_next_open",
+     "title": "A large overnight gap uses up the bounce",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 8,
+     "tests": "filter tests spy_200d_trend and vix_level",
+     "title": "Oversold rules depend on the regime",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -20.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "rsi2_below_10@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(2) closes below 10 (short-term oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 24.43,
+    "trades_per_year": 11.38,
+    "last_fired": "2026-11-17"
+   },
+   "trades": 192,
+   "quarters": 67,
+   "win_rate": 0.6979166666666666,
+   "mean_net": 0.00464770338391722,
+   "excess": 0.0026355178969335417,
+   "excess_ci90": [
+    0.00013535045897498336,
+    0.004868051336051081
+   ],
+   "p": 0.04179582041795821,
+   "q": 0.11145552111455521,
+   "best5_share": 0.23120425258454355,
+   "net_distribution": {
+    "net_p10": -0.0127154852957168,
+    "median_net": 0.008196710901390736,
+    "net_p90": 0.020996420054166198,
+    "worst_net": -0.15076795422798228,
+    "best_net": 0.06337429050660748
+   },
+   "inside_trades": {
+    "mae_median": -0.013141996582853088,
+    "mae_p10": -0.0477137942862783,
+    "mae_worst": -0.19730965793625488,
+    "trades_mae_below_5pct": 19,
+    "trades_mae_below_10pct": 4,
+    "mfe_median": 0.012579377291297877
+   },
+   "mean_net_without_best3": 0.003970943875660932,
+   "profit_factor": 1.934957940393921,
+   "mean_net_at_cost_bp": {
+    "2": 0.00464770338391722,
+    "5": 0.004346248781981691,
+    "10": 0.0038438244454223644,
+    "20": 0.0028389757723038312
+   },
+   "mean_gross_if_sold_next_open": 0.005126976362249103,
+   "holdout": {
+    "trades": 143,
+    "excess": 0.009058488404844944,
+    "p": 0.0014998500149985001,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0026355178969335417,
+    "development_sd": 0.02164945908397453,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 190,
+    "mean_net": 0.011219271367970882,
+    "median_net": 0.023040838627534588,
+    "win_rate": 0.6789473684210526,
+    "worst_net": -0.47612727007172917,
+    "mae_median": -0.0396338790325369,
+    "mae_worst": -0.5253016425428166,
+    "mean_gross": 0.011421555679106674,
+    "mean_gross_1x": 0.004775712489239202,
+    "ratio_to_1x": 2.3915919781272663
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -19.7% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi14_below_30+hold_5|etf_close",
+   "symbol": "QQQ",
+   "signal": "rsi14_below_30@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 2.85,
+    "trades_per_year": 1.48,
+    "last_fired": "2026-11-05"
+   },
+   "trades": 25,
+   "quarters": 21,
+   "win_rate": 0.88,
+   "mean_net": 0.03117257591892477,
+   "excess": 0.02766367211977405,
+   "excess_ci90": [
+    0.019771879737060384,
+    0.036238842844569276
+   ],
+   "p": 9.999000099990002e-05,
+   "q": 0.0005999400059994001,
+   "best5_share": 0.43854533542844687,
+   "net_distribution": {
+    "net_p10": -0.0019117857071692989,
+    "median_net": 0.03123904510616371,
+    "net_p90": 0.06991846303233956,
+    "worst_net": -0.01808727064940574,
+    "best_net": 0.07637806452194296
+   },
+   "inside_trades": {
+    "mae_median": -0.013796529238478294,
+    "mae_p10": -0.04911641624373666,
+    "mae_worst": -0.17246076265641352,
+    "trades_mae_below_5pct": 2,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.043169058591255194
+   },
+   "mean_net_without_best3": 0.02517159303121809,
+   "profit_factor": 27.710875562062,
+   "mean_net_at_cost_bp": {
+    "2": 0.03117257591892477,
+    "5": 0.030863162263418037,
+    "10": 0.03034747283757334,
+    "20": 0.029316093985884063
+   },
+   "mean_gross_if_sold_next_open": 0.03225333020561437,
+   "holdout": {
+    "trades": 26,
+    "excess": 0.01494618893256322,
+    "p": 0.07339266073392661,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.02766367211977405,
+    "development_sd": 0.026292415349436445,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 25,
+    "mean_net": 0.08276784653757939,
+    "median_net": 0.0721313249780926,
+    "win_rate": 0.8,
+    "worst_net": -0.10160963928921662,
+    "mae_median": -0.046313423086415506,
+    "mae_worst": -0.2895993798205968,
+    "mean_gross": 0.0829844434262646,
+    "mean_gross_1x": 0.0313788516892626,
+    "ratio_to_1x": 2.644597840865563
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 25 development trades.",
+    "Worst point inside a trade: -17.2% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi14_below_30+hold_5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "rsi14_below_30@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "Failed holdout",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Failed holdout",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 2.85,
+    "trades_per_year": 1.48,
+    "last_fired": "2026-11-05"
+   },
+   "trades": 25,
+   "quarters": 21,
+   "win_rate": 0.8,
+   "mean_net": 0.029729701823985866,
+   "excess": 0.026722914739518662,
+   "excess_ci90": [
+    0.01554996930009554,
+    0.03885617899467145
+   ],
+   "p": 9.999000099990002e-05,
+   "q": 0.0005999400059994001,
+   "best5_share": 0.5724783978029999,
+   "net_distribution": {
+    "net_p10": -0.015348272015941,
+    "median_net": 0.03259875266682433,
+    "net_p90": 0.06534648413962171,
+    "worst_net": -0.05049193567315036,
+    "best_net": 0.120649999827936
+   },
+   "inside_trades": {
+    "mae_median": -0.0153428007573162,
+    "mae_p10": -0.04680292421642094,
+    "mae_worst": -0.10835509142546562,
+    "trades_mae_below_5pct": 2,
+    "trades_mae_below_10pct": 2,
+    "mfe_median": 0.03651954952723635
+   },
+   "mean_net_without_best3": 0.020240790517437025,
+   "profit_factor": 7.72562536925362,
+   "mean_net_at_cost_bp": {
+    "2": 0.029729701823985866,
+    "5": 0.029420721117297356,
+    "10": 0.02890575327281641,
+    "20": 0.027875817583854618
+   },
+   "mean_gross_if_sold_next_open": 0.03071297633499455,
+   "holdout": {
+    "trades": 26,
+    "excess": 0.011760498619227707,
+    "p": 0.14038596140385962,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.026722914739518662,
+    "development_sd": 0.03970543151097053,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 25,
+    "mean_net": 0.08152390222748825,
+    "median_net": 0.09704110149674694,
+    "win_rate": 0.8,
+    "worst_net": -0.23024604121081615,
+    "mae_median": -0.04761904761904767,
+    "mae_worst": -0.3734687255746981,
+    "mean_gross": 0.08174025027754371,
+    "mean_gross_1x": 0.029935688961778187,
+    "ratio_to_1x": 2.7305284465612085
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 25 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -10.8% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "signal": "rsi14_below_30@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 2.85,
+    "trades_per_year": 1.54,
+    "last_fired": "2026-11-05"
+   },
+   "trades": 26,
+   "quarters": 21,
+   "win_rate": 1.0,
+   "mean_net": 0.02963786652265487,
+   "excess": 0.027781035086437054,
+   "excess_ci90": [
+    0.020882591383183765,
+    0.03516542899155978
+   ],
+   "p": 9.999000099990002e-05,
+   "q": 0.0005999400059994001,
+   "best5_share": 0.39492793521841296,
+   "net_distribution": {
+    "net_p10": 0.006403228652030246,
+    "median_net": 0.02590754981528498,
+    "net_p90": 0.05073448649588719,
+    "worst_net": 0.00011255124173548126,
+    "best_net": 0.10229449078008668
+   },
+   "inside_trades": {
+    "mae_median": -0.01318661096325574,
+    "mae_p10": -0.04892712732059873,
+    "mae_worst": -0.17246076265641352,
+    "trades_mae_below_5pct": 2,
+    "trades_mae_below_10pct": 1,
+    "mfe_median": 0.02989242960217886
+   },
+   "mean_net_without_best3": 0.02453560689039763,
+   "profit_factor": null,
+   "mean_net_at_cost_bp": {
+    "2": 0.02963786652265487,
+    "5": 0.029328913372067996,
+    "10": 0.02881399145442307,
+    "20": 0.027784147619133354
+   },
+   "mean_gross_if_sold_next_open": 0.029165309339574418,
+   "holdout": {
+    "trades": 23,
+    "excess": 0.026413630108715665,
+    "p": 0.017198280171982803,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.027781035086437054,
+    "development_sd": 0.021367296541294177,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 26,
+    "mean_net": 0.0780581158022689,
+    "median_net": 0.07029021276807557,
+    "win_rate": 0.8846153846153846,
+    "worst_net": -0.027004303234912874,
+    "mae_median": -0.04221527806889103,
+    "mae_worst": -0.2895993798205968,
+    "mean_gross": 0.07827377055638016,
+    "mean_gross_1x": 0.029843835289712788,
+    "ratio_to_1x": 2.6227785335406013
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 26 development trades.",
+    "Worst point inside a trade: -17.2% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "rsi14_below_30@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "RSI(14) closes below 30 (classic oversold). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 2.85,
+    "trades_per_year": 1.54,
+    "last_fired": "2026-11-05"
+   },
+   "trades": 26,
+   "quarters": 21,
+   "win_rate": 0.9230769230769231,
+   "mean_net": 0.028146646998211823,
+   "excess": 0.026791600698363862,
+   "excess_ci90": [
+    0.018537244618733427,
+    0.03703301464293634
+   ],
+   "p": 9.999000099990002e-05,
+   "q": 0.0005999400059994001,
+   "best5_share": 0.5468778728122627,
+   "net_distribution": {
+    "net_p10": 0.007106038271180504,
+    "median_net": 0.01696131073773932,
+    "net_p90": 0.06637818401328088,
+    "worst_net": -0.016333044019233744,
+    "best_net": 0.14008422551339028
+   },
+   "inside_trades": {
+    "mae_median": -0.014551959629419575,
+    "mae_p10": -0.04028496616757332,
+    "mae_worst": -0.11647270927318765,
+    "trades_mae_below_5pct": 2,
+    "trades_mae_below_10pct": 2,
+    "mfe_median": 0.025813856575601868
+   },
+   "mean_net_without_best3": 0.017794285960056968,
+   "profit_factor": 43.09491886605325,
+   "mean_net_at_cost_bp": {
+    "2": 0.028146646998211823,
+    "5": 0.027838141302973365,
+    "10": 0.027323965144242457,
+    "20": 0.02629561282678074
+   },
+   "mean_gross_if_sold_next_open": 0.027695196310663157,
+   "holdout": {
+    "trades": 23,
+    "excess": 0.02337425444927589,
+    "p": 0.034596540345965404,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.026791600698363862,
+    "development_sd": 0.033020354403667664,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 26,
+    "mean_net": 0.07634897277106892,
+    "median_net": 0.05086266165934927,
+    "win_rate": 0.9230769230769231,
+    "worst_net": -0.16632310160006358,
+    "mae_median": -0.045114853917587794,
+    "mae_worst": -0.3822741998305367,
+    "mean_gross": 0.07656428562819453,
+    "mean_gross_1x": 0.02835231746170416,
+    "ratio_to_1x": 2.7004595208702393
+   },
+   "filters": [
+    {
+     "test": "gap_at_next_open",
+     "label": "Insufficient evidence",
+     "group_label": "gap up 0.5% or more",
+     "group": 14,
+     "rest": 12,
+     "diff": -0.027231785344195,
+     "ci90": [
+      -0.04961856189456387,
+      -0.0063566174579938965
+     ],
+     "p": 0.030996900309969003,
+     "q": 0.1084891510848915
+    },
+    {
+     "test": "spy_200d_trend",
+     "label": "Insufficient evidence",
+     "group_label": "SPY below its 200-day average",
+     "group": 17,
+     "rest": 9,
+     "diff": 0.014186113499602478,
+     "ci90": [
+      0.0007526341053038726,
+      0.031814332732594465
+     ],
+     "p": 0.0788,
+     "q": 0.20684999999999998
+    },
+    {
+     "test": "vix_level",
+     "label": "Too few trades",
+     "group_label": "VIX 20 or higher",
+     "group": 23,
+     "rest": 3,
+     "diff": null,
+     "ci90": null,
+     "p": null,
+     "q": null
+    },
+    {
+     "test": "vix_term_structure",
+     "label": "Too few trades",
+     "group_label": "VIX above VIX3M",
+     "group": 20,
+     "rest": 6,
+     "diff": null,
+     "ci90": null,
+     "p": null,
+     "q": null
+    },
+    {
+     "test": "release_within_5_sessions",
+     "label": "No meaningful difference",
+     "group_label": "a release within 5 sessions",
+     "group": 13,
+     "rest": 13,
+     "diff": 0.0014314786243917743,
+     "ci90": [
+      -0.01570155431020292,
+      0.021292975235383736
+     ],
+     "p": 0.9419058094190581,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "volatility_matched_baseline",
+     "label": "Edge beyond volatility",
+     "group_label": null,
+     "group": null,
+     "rest": null,
+     "diff": 0.02497106583236482,
+     "ci90": [
+      0.016882521593980248,
+      0.03517764423743978
+     ],
+     "p": 9.999000099990002e-05,
+     "q": 0.0020997900209979003
+    }
+   ],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 7,
+     "tests": "filter test gap_at_next_open",
+     "title": "A large overnight gap uses up the bounce",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 8,
+     "tests": "filter tests spy_200d_trend and vix_level",
+     "title": "Oversold rules depend on the regime",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Only 26 development trades.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -11.6% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:bollinger_lower_close+hold_5|etf_close",
+   "symbol": "QQQ",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_close",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 12.51,
+    "trades_per_year": 5.75,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 97,
+   "quarters": 49,
+   "win_rate": 0.5670103092783505,
+   "mean_net": 0.006262386470104623,
+   "excess": 0.002748499636457235,
+   "excess_ci90": [
+    -0.002178497447974021,
+    0.00730507472609238
+   ],
+   "p": 0.17228277172282772,
+   "q": 0.2584241575842416,
+   "best5_share": 0.5821027117659451,
+   "net_distribution": {
+    "net_p10": -0.03057011983894473,
+    "median_net": 0.005816026263897323,
+    "net_p90": 0.0437732776115373,
+    "worst_net": -0.1255560381759102,
+    "best_net": 0.09364128594710386
+   },
+   "inside_trades": {
+    "mae_median": -0.019918811417569793,
+    "mae_p10": -0.05590107799181473,
+    "mae_worst": -0.20862887609172043,
+    "trades_mae_below_5pct": 12,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.024312098538027627
+   },
+   "mean_net_without_best3": 0.0038941917629331194,
+   "profit_factor": 1.6218429606880802,
+   "mean_net_at_cost_bp": {
+    "2": 0.006262386470104623,
+    "5": 0.005960447366342861,
+    "10": 0.0054572155267398415,
+    "20": 0.004450751847533895
+   },
+   "mean_gross_if_sold_next_open": 0.008645253474495818,
+   "holdout": {
+    "trades": 66,
+    "excess": 0.009174366726560973,
+    "p": 0.0547945205479452,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002748499636457235,
+    "development_sd": 0.03360989648728365,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 96,
+    "mean_net": 0.016457966989598654,
+    "median_net": 0.01534461813670529,
+    "win_rate": 0.5625,
+    "worst_net": -0.39175979160638874,
+    "mae_median": -0.06024688222286484,
+    "mae_worst": -0.39588437608620597,
+    "mean_gross": 0.01666129924944851,
+    "mean_gross_1x": 0.006854175058044543,
+    "ratio_to_1x": 2.430824878027245
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -20.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:bollinger_lower_close+hold_5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "hold_5@v1",
+   "entry": "etf_next_open",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the close five sessions after the signal.",
+   "verdict": "No edge",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "No edge",
+   "verdict_v1": "No edge",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 12.51,
+    "trades_per_year": 5.75,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 97,
+   "quarters": 49,
+   "win_rate": 0.5876288659793815,
+   "mean_net": 0.005600704695432958,
+   "excess": 0.002589090846187105,
+   "excess_ci90": [
+    -0.00292992686538296,
+    0.007309235746041484
+   ],
+   "p": 0.20737926207379262,
+   "q": 0.2682931706829317,
+   "best5_share": 0.7038479768663953,
+   "net_distribution": {
+    "net_p10": -0.03175579817762022,
+    "median_net": 0.007334452855290552,
+    "net_p90": 0.043958319829639526,
+    "worst_net": -0.15834071099962066,
+    "best_net": 0.10487590007942371
+   },
+   "inside_trades": {
+    "mae_median": -0.019391582001481833,
+    "mae_p10": -0.058442541888394026,
+    "mae_worst": -0.19730965793625488,
+    "trades_mae_below_5pct": 12,
+    "trades_mae_below_10pct": 4,
+    "mfe_median": 0.022782923240075803
+   },
+   "mean_net_without_best3": 0.002960144899059932,
+   "profit_factor": 1.5130272368421007,
+   "mean_net_at_cost_bp": {
+    "2": 0.005600704695432958,
+    "5": 0.0052989641359124555,
+    "10": 0.004796063203378181,
+    "20": 0.0037902613383097214
+   },
+   "mean_gross_if_sold_next_open": 0.007963707220549744,
+   "holdout": {
+    "trades": 66,
+    "excess": 0.009744129121147325,
+    "p": 0.0392960703929607,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002589090846187105,
+    "development_sd": 0.035740935107283885,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 96,
+    "mean_net": 0.016361350616599962,
+    "median_net": 0.01793818591871643,
+    "win_rate": 0.5729166666666666,
+    "worst_net": -0.4521544404829331,
+    "mae_median": -0.05979283959011977,
+    "mae_worst": -0.4558694781620247,
+    "mean_gross": 0.016564663549309796,
+    "mean_gross_1x": 0.006246802032524205,
+    "ratio_to_1x": 2.651702977469954
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "More than half of the gross profit came from 5 trades.",
+    "Worst point inside a trade: -19.7% at 1x.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_close",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 12.51,
+    "trades_per_year": 6.17,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 104,
+   "quarters": 49,
+   "win_rate": 0.7980769230769231,
+   "mean_net": 0.008370168969077408,
+   "excess": 0.005938442467921092,
+   "excess_ci90": [
+    0.0025937219751829693,
+    0.008803920116594298
+   ],
+   "p": 0.004399560043995601,
+   "q": 0.021117888211178885,
+   "best5_share": 0.20681442261012237,
+   "net_distribution": {
+    "net_p10": -0.015039386621353566,
+    "median_net": 0.012291833549292863,
+    "net_p90": 0.027289255662018543,
+    "worst_net": -0.11768830414164744,
+    "best_net": 0.046524985802258056
+   },
+   "inside_trades": {
+    "mae_median": -0.016536708128336686,
+    "mae_p10": -0.05363298254780167,
+    "mae_worst": -0.20862887609172043,
+    "trades_mae_below_5pct": 14,
+    "trades_mae_below_10pct": 5,
+    "mfe_median": 0.018832783269865705
+   },
+   "mean_net_without_best3": 0.007475869865349921,
+   "profit_factor": 2.8059001556441827,
+   "mean_net_at_cost_bp": {
+    "2": 0.008370168969077408,
+    "5": 0.00806759740407372,
+    "10": 0.007563311462400788,
+    "20": 0.006554739579055042
+   },
+   "mean_gross_if_sold_next_open": 0.008594098667608322,
+   "holdout": {
+    "trades": 63,
+    "excess": 0.014633278069833788,
+    "p": 0.000999900009999,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.005938442467921092,
+    "development_sd": 0.02275284887874492,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 102,
+    "mean_net": 0.020364170242237307,
+    "median_net": 0.03545919391726016,
+    "win_rate": 0.7647058823529411,
+    "worst_net": -0.41837539268514423,
+    "mae_median": -0.050790267282950385,
+    "mae_worst": -0.4729707618359049,
+    "mean_gross": 0.020568283899017093,
+    "mean_gross_1x": 0.008597559322775618,
+    "ratio_to_1x": 2.3923398637715794
+   },
+   "filters": [],
+   "ideas": [
+    {
+     "id": 2,
+     "tests": "closing-price pricing of the oversold rules",
+     "title": "Buying at the signal close beats the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -20.9% at 1x.",
+    "Needs a market-on-close order placed on an estimate of the close (about 3:50 PM ET).",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  },
+  {
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "signal": "bollinger_lower_close@v1",
+   "exit": "close_above_sma5@v1",
+   "entry": "etf_next_open",
+   "description": "Close below the lower Bollinger band (20 days, 2 standard deviations). Exit: Exit at the first close above the 5-day SMA, at most ten sessions after the signal.",
+   "verdict": "Lead",
+   "verdict_version": "v3",
+   "verdict_v2_to_date": "Lead",
+   "verdict_v1": "Lead",
+   "development": {
+    "start": "2010-01-01",
+    "end": "2026-11-13"
+   },
+   "occurrence": {
+    "signal_days_per_year": 12.51,
+    "trades_per_year": 6.17,
+    "last_fired": "2026-11-06"
+   },
+   "trades": 104,
+   "quarters": 49,
+   "win_rate": 0.7403846153846154,
+   "mean_net": 0.007888745352299055,
+   "excess": 0.005959402040580117,
+   "excess_ci90": [
+    0.001952374670908111,
+    0.009249963490091906
+   ],
+   "p": 0.010798920107989201,
+   "q": 0.0323967603239676,
+   "best5_share": 0.3248823769343677,
+   "net_distribution": {
+    "net_p10": -0.012691792401291868,
+    "median_net": 0.011303171665324352,
+    "net_p90": 0.025948566987734577,
+    "worst_net": -0.15076795422798228,
+    "best_net": 0.06768879734763944
+   },
+   "inside_trades": {
+    "mae_median": -0.014276855680471656,
+    "mae_p10": -0.05500876835779569,
+    "mae_worst": -0.19730965793625488,
+    "trades_mae_below_5pct": 13,
+    "trades_mae_below_10pct": 4,
+    "mfe_median": 0.015946430821432545
+   },
+   "mean_net_without_best3": 0.006258325138332445,
+   "profit_factor": 2.598103948858385,
+   "mean_net_at_cost_bp": {
+    "2": 0.007888745352299055,
+    "5": 0.007586318243271606,
+    "10": 0.007082273061559051,
+    "20": 0.00607418269813406
+   },
+   "mean_gross_if_sold_next_open": 0.008092822876434067,
+   "holdout": {
+    "trades": 63,
+    "excess": 0.014407217788689239,
+    "p": 0.0005999400059994001,
+    "independent": false
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.005959402040580117,
+    "development_sd": 0.025613548509796146,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 102,
+    "mean_net": 0.02101248128181339,
+    "median_net": 0.030819467528276134,
+    "win_rate": 0.7450980392156863,
+    "worst_net": -0.47612727007172917,
+    "mae_median": -0.04157072548129476,
+    "mae_worst": -0.5253016425428166,
+    "mean_gross": 0.021216724626738723,
+    "mean_gross_1x": 0.008247468200213959,
+    "ratio_to_1x": 2.5725136625793006
+   },
+   "filters": [
+    {
+     "test": "gap_at_next_open",
+     "label": "Insufficient evidence",
+     "group_label": "gap up 0.5% or more",
+     "group": 29,
+     "rest": 75,
+     "diff": -0.01270335584465623,
+     "ci90": [
+      -0.025296626782290475,
+      -0.0024280525344051156
+     ],
+     "p": 0.029797020297970205,
+     "q": 0.1084891510848915
+    },
+    {
+     "test": "spy_200d_trend",
+     "label": "Insufficient evidence",
+     "group_label": "SPY below its 200-day average",
+     "group": 30,
+     "rest": 74,
+     "diff": -0.002667544458055079,
+     "ci90": [
+      -0.016879598294746556,
+      0.00965697232455546
+     ],
+     "p": 0.7481251874812519,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "vix_level",
+     "label": "Insufficient evidence",
+     "group_label": "VIX 20 or higher",
+     "group": 60,
+     "rest": 44,
+     "diff": 0.001976953107786475,
+     "ci90": [
+      -0.006031615071969373,
+      0.009337209881299768
+     ],
+     "p": 0.642935706429357,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "vix_term_structure",
+     "label": "Insufficient evidence",
+     "group_label": "VIX above VIX3M",
+     "group": 38,
+     "rest": 66,
+     "diff": 0.003917476736138097,
+     "ci90": [
+      -0.0075852429489544695,
+      0.015072301235789442
+     ],
+     "p": 0.5475452454754525,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "release_within_5_sessions",
+     "label": "Insufficient evidence",
+     "group_label": "a release within 5 sessions",
+     "group": 51,
+     "rest": 53,
+     "diff": -0.0011679322572554123,
+     "ci90": [
+      -0.009698096579241014,
+      0.006339504991988916
+     ],
+     "p": 0.8115188481151885,
+     "q": 0.941905809419058
+    },
+    {
+     "test": "volatility_matched_baseline",
+     "label": "Not shown beyond volatility",
+     "group_label": null,
+     "group": null,
+     "rest": null,
+     "diff": 0.004971486621817155,
+     "ci90": [
+      0.0009030101332600798,
+      0.008318135555367786
+     ],
+     "p": 0.025097490250974904,
+     "q": 0.1084891510848915
+    }
+   ],
+   "ideas": [
+    {
+     "id": 1,
+     "tests": "next-open pricing of the oversold rules",
+     "title": "Oversold bounce, bought at the next open",
+     "stage": "forward",
+     "updated": "2026-11-14T16:53:35-05:00"
+    },
+    {
+     "id": 7,
+     "tests": "filter test gap_at_next_open",
+     "title": "A large overnight gap uses up the bounce",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 8,
+     "tests": "filter tests spy_200d_trend and vix_level",
+     "title": "Oversold rules depend on the regime",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    },
+    {
+     "id": 11,
+     "tests": "leveraged-ETF pricing (TQQQ, UPRO)",
+     "title": "Evidence priced in the leveraged ETFs",
+     "stage": "idea",
+     "updated": "2026-11-13T01:43:02-05:00"
+    }
+   ],
+   "limitations": [
+    "1993-2009 helped choose this signal (2026-11-08), so it can remove a Lead but cannot confirm one.",
+    "Daily bars: no stops are simulated, and a day's high and low are not ordered.",
+    "Worst point inside a trade: -19.7% at 1x.",
+    "The exit decides at a close and sells at that close; the card shows the result if sold at the next open instead.",
+    "No forward evidence yet (trades signalled after the development window)."
+   ]
+  }
+ ]
+}

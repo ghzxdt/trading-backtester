@@ -2,20 +2,28 @@
 
 ## Pick up here (next session)
 
-**Where it stands (2026-11-14).** A review on 2026-11-13 found the trade simulator's Lead verdict claimed more
-than its evidence. Three fixes are in and pushed: every run keeps its inputs and can be rebuilt, the 1993-2009
-period is looked at once and stored, and the verdict is now Lead v2 (`backtester/lead_v2.py`).
+**Where it stands (2026-11-18).** The 2026-11-17 audit's fixes are in (`docs/CHANGES_2026-11-18.md`): the verdict is
+now Lead v3 (`backtester/lead_v3.py`): v2's tests on a development window fixed at 2010-01-01 to 2026-11-13, plus a
+forward record of trades signalled after it. The indicator studies use the same fixed window (method 3). Reports now
+show intervals, the worst point inside trades (MAE), a cost line, the leveraged-ETF version of each trade, and the
+verdicts that changed since the last registered run. Registered filter tests (`run_splits.py`) test trend, VIX, the VIX
+curve, release days, the overnight gap and a volatility-matched baseline. `exports/evidence.json` holds one evidence
+card per strategy for the research app.
 
-Latest trade simulation (code 213f39e, data 4e1f98996cd13f8f, report `2026-11-14-084052-trade-simulation`):
-14 Leads of 48 under v2, against 24 under v1. All 14 are on QQQ; SPY has none. In the export the research app
-reads (ETF pricing): 6 Leads of 24, and only 2 at the next-open entry, QQQ RSI(14) < 30 and QQQ close below the
-lower Bollinger band, both with the `close_above_sma5` exit. QQQ RSI(14) rests on 25-26 trades, so its p-value
-is rougher than it looks.
+Latest runs (code 43f0869/40ad5e1, data d09e16aa32e780ea through 2026-11-17): studies 10 Candidates (report
+`2026-11-18-071234-indicator-studies`); trade simulation 14 Leads of 48, all QQQ, no verdict changed from v2
+(`2026-11-18-070804-trade-simulation`); next-open Leads QQQ Bollinger (+0.60% excess, 90% interval +0.20% to +0.92%)
+and QQQ RSI(14) (+2.68%, +1.85% to +3.70%), both with the 5-day-average exit. In TQQQ the same Bollinger trades
+averaged +2.10% but the worst lost 47.6%. Filter tests (`2026-11-18-070830-filter-tests`): no condition earned a
+place yet; the gap-up effect (idea 7) points the same way on all three next-open strategies in 2010-2026 (q 0.108)
+but not in 1993-2009; QQQ RSI(14) is an edge beyond volatility. No forward trades yet.
 
 Open items:
-- The research app reads the v2 export as of 2026-11-14 (its commit b615284; idea ledger and page wording
-  updated). Its paper book reads `verdict_v1` and the page reads `risk_matched`: keep both in every export, or
-  tell the research chat before dropping either (a test checks they are there).
+- The research app reads the export (schema 1, now verdict v3; checked with its own reader on 2026-11-18: ok, 6 of 6
+  date cross-checks match). Its paper book reads `verdict_v1` and the page reads `risk_matched`: keep both in every
+  export, or tell the research chat before dropping either (a test checks they are there). Its "provisional Lead"
+  caution checks `verdict_version == "v2"` and no longer shows; the research chat should accept "v3" (see the
+  change log's last section for its other tasks).
 - The research page cautions when the export is over 10 days old and stops using it after 45. Since 2026-11-14
   the scheduled task "Trading Backtester Weekly Run" re-runs the trade simulation every Saturday at 10:00 AM and
   commits and pushes the results (`run_weekly.ps1`, log in `work\weekly_run.log`). If the export ever goes stale,
@@ -23,12 +31,24 @@ Open items:
   has not yet been seen on this laptop (the System log showed only power-button and USB wakes).
 - Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
 - `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
-- Full audit of 2026-11-17: `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md`. Its first fixes: report verdict changes
-  and intra-trade risk (MAE); Lead v3 with the development window frozen at 2026-11-13 and a forward block; see its
-  roadmap (part 11) before starting new work.
+- Full audit of 2026-11-17: `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md`; its roadmap (part 11) lists what is left.
+- Known residual: each Yahoo re-download moves adjusted prices by about 1e-6 and flips two knife-edge exits (QQQ
+  2013-12-12, SPY 1993-07-22), so QQQ RSI(2)'s p moves by about 0.0005 between downloads. Visible in the
+  verdict-change list; a tolerance would need a new exit version.
 
-Next ideas (each a new registered version, never an edit): score trades after 2026-11-08 as the only untouched
-evidence, a trend or volatility filter, stops once intraday bars exist, and leverage scaling for the risk view.
+Next ideas (each a new registered version, never an edit): watch the forward record and the gap-up effect forward;
+a credit-spread split; a leveraged-ETF verdict once a loss limit is set; stops once intraday bars exist.
+
+## 2026-11-18: audit fixes (Lead v3, filter tests, risk and evidence cards)
+- User asked to order the audit's fixes, act on them and give a before/after change log: `docs/CHANGES_2026-11-18.md`.
+- Order: descriptive fixes first (verdict-change list, MAE and risk profile, intervals; verified to leave every
+  recorded number unchanged), then Lead v3 and the filter tests, registered in `rule_lock.json` and committed
+  (43f0869) before any run on real prices, then leveraged pricing and `exports/evidence.json`.
+- First runs (data through 2026-11-17): v3 kept the 14 Leads; filter tests stored 15 first looks at 1993-2009.
+- Found while running: the studies' open window turned 2 of 10 Candidates into No evidence with unchanged excess
+  (two more days re-randomised the shift test: QQQ RSI(2) h1 p 0.009 -> 0.021). Fixed with the same window
+  (method 3, 40ad5e1); re-run reproduces the 2026-11-13 record (10 Candidates).
+- The research app's reader accepts the v3 export unchanged. Its own follow-ups are in the change log. 53 tests.
 
 ## 2026-11-17 and 2026-11-18: full audit (read-only)
 - The user's brief (backtester audit, edge validation, research-app integration), run in a session started from this

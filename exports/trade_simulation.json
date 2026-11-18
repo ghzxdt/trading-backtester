@@ -1,28 +1,42 @@
 {
  "kind": "trade_simulation",
  "schema": 1,
- "generated_at": "2026-11-18T00:27:51+00:00",
- "code": "407cd65",
- "data_fingerprint": "c4713b15d633ad4c",
- "report": "2026-11-18-002751-trade-simulation.md",
- "verdict_definition": "v2, registered 2026-11-13. Lead: the average trade beats the average of every possible trade of the same length in the period, judged by resampling the rule's own trades by calendar quarter (development p < 0.05 and q < 0.1 across the run's strategy-and-entry tests; 1993-2009 p < 0.1), and CAGR is above buy-and-hold scaled to the same time in the market and the same volatility while in a trade, in both periods. The 1993-2009 period also helped choose these signals, so it is not independent confirmation; a Lead is provisional until trades after 2026-11-08 support it.",
- "verdict_version": "v2",
+ "generated_at": "2026-11-18T07:08:04+00:00",
+ "code": "43f0869",
+ "data_fingerprint": "d09e16aa32e780ea",
+ "report": "2026-11-18-070804-trade-simulation.md",
+ "verdict_definition": "v3, registered 2026-11-18: v2's tests and thresholds on a development window fixed at 2010-01-01 to 2026-11-13, so a verdict no longer moves as data is added. Lead: the average trade beats the average of every possible trade of the same length (development p < 0.05 by resampling the rule's trades by calendar quarter, q < 0.10 across the run's strategy-and-entry tests; 1993-2009 p < 0.10), and CAGR is above buy-and-hold scaled to the same time in the market and volatility in a trade, in both periods. Trades signalled after 2026-11-13 are kept apart as the forward record; from 5 forward trades, a Lead whose forward mean excess falls below its development mean minus 2 standard errors is labelled 'Forward below band'. 1993-2009 also helped choose these signals, so it can remove a Lead but not confirm one.",
+ "verdict_version": "v3",
  "verdict_parameters": {
-  "version": "v2",
-  "registered": "2026-11-13",
-  "resamples": 10000,
-  "cluster": "calendar quarter of the signal day",
-  "dev_p": 0.05,
-  "dev_q": 0.1,
-  "holdout_p": 0.1,
-  "min_trades": 20,
-  "min_quarters": 8,
-  "family": "strategies x entry prices (close, next open) of a registered run",
-  "benchmark": "buy-and-hold at exposure x (in-trade volatility / all-days volatility)"
+  "version": "v3",
+  "registered": "2026-11-18",
+  "tests": "lead_v2, unchanged",
+  "lead_v2": {
+   "version": "v2",
+   "registered": "2026-11-13",
+   "resamples": 10000,
+   "cluster": "calendar quarter of the signal day",
+   "dev_p": 0.05,
+   "dev_q": 0.1,
+   "holdout_p": 0.1,
+   "min_trades": 20,
+   "min_quarters": 8,
+   "family": "strategies x entry prices (close, next open) of a registered run",
+   "benchmark": "buy-and-hold at exposure x (in-trade volatility / all-days volatility)"
+  },
+  "development_end": "2026-11-13",
+  "forward": "signal day after development_end",
+  "forward_baseline": "development-window mean gross of every trade of the same length and entry",
+  "min_forward": 5,
+  "band": "m - 2.0 * s / sqrt(n)",
+  "failed": "f + 1.645 * s / sqrt(n) < 0",
+  "demoted_label": "Forward below band"
  },
+ "development_end": "2026-11-13",
+ "verdict_changes": [],
  "data_through": {
-  "SPY": "2026-11-13",
-  "QQQ": "2026-11-13"
+  "SPY": "2026-11-17",
+  "QQQ": "2026-11-17"
  },
  "entry_notes": {
   "etf_close": "Needs the order in before the close, on an estimate of that close's signal.",
@@ -48,41 +62,58 @@
   "funding_note": "Mean US500 perp funding per daily record (zeros included), measured 2026-11-07; charged for every calendar day held through a 4 PM funding time.",
   "verdict_cost": "etf"
  },
- "trade_list": "exports/trades/2026-11-18-002751-trade-simulation.csv",
+ "trade_list": "exports/trades/2026-11-18-070804-trade-simulation.csv",
  "periods": {
   "development": {
+   "start": "2010-01-01",
+   "end": "2026-11-13"
+  },
+  "development_to_date": {
    "start": "2010-01-01",
    "end": null
   },
   "holdout": {
    "start": "1993-01-01",
    "end": "2009-12-31"
+  },
+  "forward": {
+   "after": "2026-11-13"
   }
  },
  "buy_and_hold": {
   "SPY": {
    "development": {
-    "cagr": 0.14009064102558133,
-    "max_drawdown": -0.33717252250853647,
-    "return_per_drawdown": 0.4154865289238821
+    "cagr": 0.14009061611763185,
+    "max_drawdown": -0.3371725386608829,
+    "return_per_drawdown": 0.41548643514687417
+   },
+   "development_to_date": {
+    "cagr": 0.13802539303390438,
+    "max_drawdown": -0.3371725386608829,
+    "return_per_drawdown": 0.4093613127038373
    },
    "holdout": {
-    "cagr": 0.07591453185799413,
-    "max_drawdown": -0.5518943145315163,
-    "return_per_drawdown": 0.13755266154976667
+    "cagr": 0.07591454012177024,
+    "max_drawdown": -0.5518942455455045,
+    "return_per_drawdown": 0.1375526937171353
    },
    "holdout_start": "1993-01-29"
   },
   "QQQ": {
    "development": {
-    "cagr": 0.18390794799982602,
-    "max_drawdown": -0.3511873777660449,
-    "return_per_drawdown": 0.5236747094092384
+    "cagr": 0.1839079547691158,
+    "max_drawdown": -0.35118730410359666,
+    "return_per_drawdown": 0.5236748385268075
+   },
+   "development_to_date": {
+    "cagr": 0.18140416121651293,
+    "max_drawdown": -0.35118730410359666,
+    "return_per_drawdown": 0.5165453280822491
    },
    "holdout": {
-    "cagr": -0.0075023817805852655,
-    "max_drawdown": -0.8296391069337358,
-    "return_per_drawdown": -0.009042946165246871
+    "cagr": -0.007502390626434208,
+    "max_drawdown": -0.829639042220338,
+    "return_per_drawdown": -0.009042957532899833
    },
    "holdout_start": "1999-03-10"
   }
@@ -106,42 +137,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "Lead",
+   "verdict_v2": "No edge",
    "q": 0.16478352164783522,
+   "q_v2": 0.1645835416458354,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.2262550082488805,
     "win_rate": 0.6354166666666666,
-    "mean_gross": 0.0058573929407765395,
-    "mean_net": 0.005656221462188413,
-    "avg_win": 0.020812807481395794,
-    "avg_loss": -0.020759542742715877,
+    "mean_gross": 0.0058573956210793135,
+    "mean_net": 0.00565622414195512,
+    "avg_win": 0.02081282817735485,
+    "avg_loss": -0.0207595714625987,
     "mean_sessions": 5.0,
     "random_percentile": 96.85000000000001,
     "v2": {
-     "mean_excess": 0.003025383938097325,
-     "baseline": 0.002832009002679214,
+     "mean_excess": 0.0030253866148387196,
+     "baseline": 0.002832009006240595,
      "p": 0.07739226077392261,
      "quarters": 67,
-     "top5_share": 0.4143710446651719
+     "top5_share": 0.41437086733073886,
+     "ci90": [
+      -0.0004939784009706814,
+      0.0063325567476890405
+     ]
     },
     "risk_matched": {
-     "cagr": 0.04445451365897046,
-     "max_drawdown": -0.11332695765627943,
-     "return_per_drawdown": 0.3922677761614405
+     "cagr": 0.044454528599544796,
+     "max_drawdown": -0.11332702164686248,
+     "return_per_drawdown": 0.39226768650171745
     },
-    "risk_fraction": 0.30796245867865807,
-    "per_volatility": 0.5912510243955855,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.3079625985473308,
+    "per_volatility": 0.5912508584131068,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.00541601874860731,
+     "net_p10": -0.02442718945208001,
+     "net_p90": 0.03788929253124267,
+     "best_net": 0.17334664356206564,
+     "worst_net": -0.12554429175397408,
+     "profit_factor": 1.7473282778169898,
+     "mean_net_without_best3": 0.003985999979339994,
+     "mean_net_at_cost_bp": {
+      "2": 0.00565622414195512,
+      "5": 0.005354466923268825,
+      "10": 0.004851538225458228,
+      "20": 0.0038456808298371523
+     },
+     "mae_median": -0.011758400509410849,
+     "mae_p10": -0.044038068289171374,
+     "mae_worst": -0.13444935323876628,
+     "mfe_median": 0.015924500843677802,
+     "trades_mae_below_5pct": 16,
+     "trades_mae_below_10pct": 3,
+     "mean_gross_exit_next_open": 0.007300479689805013,
+     "by_year": {
+      "2010": [
+       10,
+       -0.0027759027932353964
+      ],
+      "2011": [
+       13,
+       0.002578002829612044
+      ],
+      "2012": [
+       14,
+       0.00993056175920705
+      ],
+      "2013": [
+       6,
+       0.00683093100329496
+      ],
+      "2014": [
+       11,
+       0.003723339112653626
+      ],
+      "2015": [
+       13,
+       0.001552829260706366
+      ],
+      "2016": [
+       10,
+       0.00376530457721892
+      ],
+      "2017": [
+       6,
+       0.007944529066695702
+      ],
+      "2018": [
+       13,
+       -0.015393628551442586
+      ],
+      "2019": [
+       7,
+       0.0029860976791984406
+      ],
+      "2020": [
+       11,
+       0.015483479783452457
+      ],
+      "2021": [
+       10,
+       0.013401665069400225
+      ],
+      "2022": [
+       17,
+       0.002851363766837602
+      ],
+      "2023": [
+       13,
+       0.010765599468436693
+      ],
+      "2024": [
+       13,
+       0.0176914675248489
+      ],
+      "2025": [
+       12,
+       0.011059306071030534
+      ],
+      "2026": [
+       13,
+       0.005962744327264829
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.06110937532543104,
-     "max_drawdown": -0.3065390067001511,
-     "return_per_drawdown": 0.19935268918388163
+     "cagr": 0.06110940092837702,
+     "max_drawdown": -0.306539176186836,
+     "return_per_drawdown": 0.19935266248360622
     },
     "matched": {
-     "cagr": 0.032749693442928995,
-     "max_drawdown": -0.08408071068247491,
-     "return_per_drawdown": 0.38950305221141607
+     "cagr": 0.03274968996595162,
+     "max_drawdown": -0.08408072227162644,
+     "return_per_drawdown": 0.3895029571719463
     }
    },
    "holdout": {
@@ -169,6 +298,7 @@
     "risk_fraction": 0.3065585226239712,
     "per_volatility": 0.9020273680696476,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.10736655888335966,
      "max_drawdown": -0.20637333800893198,
@@ -179,6 +309,30 @@
      "max_drawdown": -0.1694491804844861,
      "return_per_drawdown": 0.13405331433526124
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0030253866148387196,
+    "development_sd": 0.029904300830916743,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 192,
+    "mean_net": 0.015652741281590207,
+    "median_net": 0.01354632809309353,
+    "win_rate": 0.6197916666666666,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.036748621710439244,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.015855912464082998,
+    "mean_gross_1x": 0.0058573956210793135,
+    "ratio_to_1x": 2.706990186392994
    }
   },
   {
@@ -192,42 +346,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2682931706829317,
+   "q_v2": 0.2668533146685331,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
     "exposure": 0.2262550082488805,
     "win_rate": 0.5833333333333334,
-    "mean_gross": 0.003946593449716392,
-    "mean_net": 0.003745804131026471,
-    "avg_win": 0.020077961933714472,
-    "avg_loss": -0.019119216792736732,
+    "mean_gross": 0.003946606321563898,
+    "mean_net": 0.0037458170002996095,
+    "avg_win": 0.020078001359638782,
+    "avg_loss": -0.019119241102775235,
     "mean_sessions": 5.0,
     "random_percentile": 83.5,
     "v2": {
-     "mean_excess": 0.0014772392639654205,
-     "baseline": 0.0024693541857509697,
+     "mean_excess": 0.0014772520956859694,
+     "baseline": 0.002469354225877927,
      "p": 0.22357764223577642,
      "quarters": 67,
-     "top5_share": 0.5278008058750137
+     "top5_share": 0.5277994135201934,
+     "ci90": [
+      -0.0018683502637276265,
+      0.004733199377537284
+     ]
     },
     "risk_matched": {
-     "cagr": 0.04305328957702437,
-     "max_drawdown": -0.10984780296614816,
-     "return_per_drawdown": 0.39193582770419283
+     "cagr": 0.04305331353279884,
+     "max_drawdown": -0.10984788865249584,
+     "return_per_drawdown": 0.39193574005776427
     },
-    "risk_fraction": 0.29815465795798934,
-    "per_volatility": 0.4089170851441001,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.29815485943091846,
+    "per_volatility": 0.4089180523381568,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.00532985602542102,
+     "net_p10": -0.025711109549827613,
+     "net_p90": 0.03278626842061943,
+     "best_net": 0.11593580907852874,
+     "worst_net": -0.15752523227747905,
+     "profit_factor": 1.4702048973802697,
+     "mean_net_without_best3": 0.0023047234007295236,
+     "mean_net_at_cost_bp": {
+      "2": 0.0037458170002996095,
+      "5": 0.0034446330184031725,
+      "10": 0.002942659715242327,
+      "20": 0.0019387131089207688
+     },
+     "mae_median": -0.012999889286085309,
+     "mae_p10": -0.04235517055482678,
+     "mae_worst": -0.16610461432646018,
+     "mfe_median": 0.014119107343484316,
+     "trades_mae_below_5pct": 16,
+     "trades_mae_below_10pct": 2,
+     "mean_gross_exit_next_open": 0.005380988184369491,
+     "by_year": {
+      "2010": [
+       10,
+       -0.0013866465132886141
+      ],
+      "2011": [
+       13,
+       0.005949461323750225
+      ],
+      "2012": [
+       14,
+       0.010168922715306434
+      ],
+      "2013": [
+       6,
+       0.00606037875811416
+      ],
+      "2014": [
+       11,
+       0.0018102396127743883
+      ],
+      "2015": [
+       13,
+       0.0007855799932706259
+      ],
+      "2016": [
+       10,
+       0.0032186932844281537
+      ],
+      "2017": [
+       6,
+       0.006566735705539191
+      ],
+      "2018": [
+       13,
+       -0.014986350441604653
+      ],
+      "2019": [
+       7,
+       0.0022739395500265586
+      ],
+      "2020": [
+       11,
+       0.00412784696536976
+      ],
+      "2021": [
+       10,
+       0.011972347348407353
+      ],
+      "2022": [
+       17,
+       0.0018258499524877686
+      ],
+      "2023": [
+       13,
+       0.008288085914656077
+      ],
+      "2024": [
+       13,
+       0.013771789277981514
+      ],
+      "2025": [
+       12,
+       0.0056573235028621605
+      ],
+      "2026": [
+       13,
+       0.0002576999034413176
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.0387504430500607,
-     "max_drawdown": -0.3410389830043271,
-     "return_per_drawdown": 0.11362467336928762
+     "cagr": 0.03875058529145381,
+     "max_drawdown": -0.3410385936817033,
+     "return_per_drawdown": 0.11362522016385143
     },
     "matched": {
-     "cagr": 0.032749693442928995,
-     "max_drawdown": -0.08408071068247491,
-     "return_per_drawdown": 0.38950305221141607
+     "cagr": 0.03274968996595162,
+     "max_drawdown": -0.08408072227162644,
+     "return_per_drawdown": 0.3895029571719463
     }
    },
    "holdout": {
@@ -255,6 +507,7 @@
     "risk_fraction": 0.29858976470359977,
     "per_volatility": 0.7197970394640693,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.08100721056426807,
      "max_drawdown": -0.2275647758164272,
@@ -265,6 +518,30 @@
      "max_drawdown": -0.1694491804844861,
      "return_per_drawdown": 0.13405331433526124
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0014772520956859694,
+    "development_sd": 0.028392761222423728,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 192,
+    "mean_net": 0.010205073218543815,
+    "median_net": 0.014543865221974706,
+    "win_rate": 0.5833333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.03863431121188621,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.010407154649473687,
+    "mean_gross_1x": 0.003946606321563898,
+    "ratio_to_1x": 2.636988288548047
    }
   },
   {
@@ -278,42 +555,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.21289299641464426,
+   "q_v2": 0.21203593926321654,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 188,
     "exposure": 0.1553146358708461,
     "win_rate": 0.723404255319149,
-    "mean_gross": 0.004150475414941273,
-    "mean_net": 0.003949645319858304,
-    "avg_win": 0.013006754800486547,
-    "avg_loss": -0.01973817947563095,
+    "mean_gross": 0.0041504671650333825,
+    "mean_net": 0.003949637071600392,
+    "avg_win": 0.013006741367004433,
+    "avg_loss": -0.019738174162533262,
     "mean_sessions": 3.50531914893617,
     "random_percentile": 94.55,
     "v2": {
-     "mean_excess": 0.002162919463655945,
-     "baseline": 0.0019875559512853268,
+     "mean_excess": 0.002162911109938389,
+     "baseline": 0.001987556055094994,
      "p": 0.12098790120987901,
      "quarters": 67,
-     "top5_share": 0.2494093995767316
+     "top5_share": 0.24941084621407483,
+     "ci90": [
+      -0.0010316667508233584,
+      0.005026680640655642
+     ]
     },
     "risk_matched": {
-     "cagr": 0.03323395171679544,
-     "max_drawdown": -0.08529901421714758,
-     "return_per_drawdown": 0.3896170667598929
+     "cagr": 0.03323394466743479,
+     "max_drawdown": -0.08529901710582,
+     "return_per_drawdown": 0.38961697092248465
     },
-    "risk_fraction": 0.2296258086081736,
-    "per_volatility": 0.45932790818780683,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.22962578416376453,
+    "per_volatility": 0.4593268957520421,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.00821949029185165,
+     "net_p10": -0.016372482995813377,
+     "net_p90": 0.021053113988219883,
+     "best_net": 0.04737565368646557,
+     "worst_net": -0.18237920049044154,
+     "profit_factor": 1.7234436674554159,
+     "mean_net_without_best3": 0.003317000637249635,
+     "mean_net_at_cost_bp": {
+      "2": 0.003949637071600392,
+      "5": 0.003648391931450917,
+      "10": 0.0031463166978683453,
+      "20": 0.002142166230703315
+     },
+     "mae_median": -0.010498822194315305,
+     "mae_p10": -0.0445571463794166,
+     "mae_worst": -0.199418651829389,
+     "mfe_median": 0.011396536187193052,
+     "trades_mae_below_5pct": 16,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.004857698566055634,
+     "by_year": {
+      "2010": [
+       9,
+       0.00161621781159349
+      ],
+      "2011": [
+       12,
+       -0.004700487425842291
+      ],
+      "2012": [
+       14,
+       0.006855676671750981
+      ],
+      "2013": [
+       6,
+       0.007204608052998218
+      ],
+      "2014": [
+       10,
+       0.0020996169890666995
+      ],
+      "2015": [
+       13,
+       0.003103412370354258
+      ],
+      "2016": [
+       10,
+       0.003186807321071039
+      ],
+      "2017": [
+       6,
+       0.007885812049133337
+      ],
+      "2018": [
+       14,
+       -0.007000729094670287
+      ],
+      "2019": [
+       7,
+       0.0024736854986757866
+      ],
+      "2020": [
+       10,
+       -0.0064201915322791405
+      ],
+      "2021": [
+       10,
+       0.011556394606145848
+      ],
+      "2022": [
+       16,
+       0.004818995102232722
+      ],
+      "2023": [
+       12,
+       0.004547655021867862
+      ],
+      "2024": [
+       14,
+       0.010007427461488845
+      ],
+      "2025": [
+       12,
+       0.011192415354056665
+      ],
+      "2026": [
+       13,
+       0.009838822140129126
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.04161290796898931,
-     "max_drawdown": -0.27091657142252545,
-     "return_per_drawdown": 0.15360045253226393
+     "cagr": 0.041612811581018816,
+     "max_drawdown": -0.2709169669990781,
+     "return_per_drawdown": 0.1535998724700045
     },
     "matched": {
-     "cagr": 0.022531964461360632,
-     "max_drawdown": -0.05820635080885528,
-     "return_per_drawdown": 0.38710491463987656
+     "cagr": 0.022531962205756262,
+     "max_drawdown": -0.05820635937047669,
+     "return_per_drawdown": 0.38710481894844084
     }
    },
    "holdout": {
@@ -341,6 +716,7 @@
     "risk_fraction": 0.2401005701342938,
     "per_volatility": 0.781882329460493,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.0859650135151766,
      "max_drawdown": -0.237463628586285,
@@ -351,6 +727,30 @@
      "max_drawdown": -0.12033260117315536,
      "return_per_drawdown": 0.1336421334553414
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002162911109938389,
+    "development_sd": 0.024241706386584544,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 188,
+    "mean_net": 0.01020801113342109,
+    "median_net": 0.02352380966778489,
+    "win_rate": 0.7074468085106383,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.03263142479750203,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.010410093152051481,
+    "mean_gross_1x": 0.0041504671650333825,
+    "ratio_to_1x": 2.508173836370478
    }
   },
   {
@@ -364,42 +764,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2682931706829317,
+   "q_v2": 0.2668533146685331,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 188,
     "exposure": 0.1553146358708461,
     "win_rate": 0.723404255319149,
-    "mean_gross": 0.003027122042112736,
-    "mean_net": 0.0028265166177043376,
-    "avg_win": 0.011646355824832786,
-    "avg_loss": -0.020240755154785454,
+    "mean_gross": 0.0030271147141005227,
+    "mean_net": 0.0028265092911577256,
+    "avg_win": 0.011646353865452907,
+    "avg_loss": -0.020240776518537364,
     "mean_sessions": 3.50531914893617,
     "random_percentile": 86.4,
     "v2": {
-     "mean_excess": 0.0014009333528660016,
-     "baseline": 0.0016261886892467345,
+     "mean_excess": 0.0014009258857924868,
+     "baseline": 0.0016261888283080356,
      "p": 0.21537846215378462,
      "quarters": 67,
-     "top5_share": 0.39235382679942
+     "top5_share": 0.3923546607756927,
+     "ci90": [
+      -0.0019118921172847703,
+      0.004235451251796831
+     ]
     },
     "risk_matched": {
-     "cagr": 0.032176450932961176,
-     "max_drawdown": -0.08263760839364953,
-     "return_per_drawdown": 0.38936812860902986
+     "cagr": 0.03217645133264457,
+     "max_drawdown": -0.08263762940814245,
+     "return_per_drawdown": 0.3893680344305008
     },
-    "risk_fraction": 0.22226585110008745,
-    "per_volatility": 0.33793426798476206,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.22226587757344327,
+    "per_volatility": 0.33793332937295895,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.006487735556901519,
+     "net_p10": -0.014197829451758993,
+     "net_p90": 0.01867621646529708,
+     "best_net": 0.05732577460066324,
+     "worst_net": -0.21228155222000333,
+     "profit_factor": 1.504867893637104,
+     "mean_net_without_best3": 0.002004389881011305,
+     "mean_net_at_cost_bp": {
+      "2": 0.0028265092911577256,
+      "5": 0.0025256011567435315,
+      "10": 0.002024087599386421,
+      "20": 0.0010210604846723204
+     },
+     "mae_median": -0.010607000573618353,
+     "mae_p10": -0.041930067395717675,
+     "mae_worst": -0.2286978299954583,
+     "mfe_median": 0.00980313756110962,
+     "trades_mae_below_5pct": 15,
+     "trades_mae_below_10pct": 3,
+     "mean_gross_exit_next_open": 0.0037181627740840786,
+     "by_year": {
+      "2010": [
+       9,
+       0.0030896497624540472
+      ],
+      "2011": [
+       12,
+       -7.45157063411402e-05
+      ],
+      "2012": [
+       14,
+       0.006634409989871526
+      ],
+      "2013": [
+       6,
+       0.006446880576161107
+      ],
+      "2014": [
+       10,
+       -8.309500331298292e-05
+      ],
+      "2015": [
+       13,
+       0.0023373926774540054
+      ],
+      "2016": [
+       10,
+       0.0026305636788355514
+      ],
+      "2017": [
+       6,
+       0.006504677751218583
+      ],
+      "2018": [
+       14,
+       -0.006325049189582932
+      ],
+      "2019": [
+       7,
+       0.0017601502081868409
+      ],
+      "2020": [
+       10,
+       -0.012982368122771393
+      ],
+      "2021": [
+       10,
+       0.010099192603877682
+      ],
+      "2022": [
+       16,
+       0.004518590325461695
+      ],
+      "2023": [
+       12,
+       0.0024875989614468372
+      ],
+      "2024": [
+       14,
+       0.006380882539048386
+      ],
+      "2025": [
+       12,
+       0.011039738762480794
+      ],
+      "2026": [
+       13,
+       0.004547903454742046
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.028283103320544623,
-     "max_drawdown": -0.3009722613493564,
-     "return_per_drawdown": 0.09397245843767224
+     "cagr": 0.028283021465398628,
+     "max_drawdown": -0.3009723822061985,
+     "return_per_drawdown": 0.09397214873363934
     },
     "matched": {
-     "cagr": 0.022531964461360632,
-     "max_drawdown": -0.05820635080885528,
-     "return_per_drawdown": 0.38710491463987656
+     "cagr": 0.022531962205756262,
+     "max_drawdown": -0.05820635937047669,
+     "return_per_drawdown": 0.38710481894844084
     }
    },
    "holdout": {
@@ -427,6 +925,7 @@
     "risk_fraction": 0.23470062620660434,
     "per_volatility": 0.5950488057212533,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.061695837056119585,
      "max_drawdown": -0.237463628586285,
@@ -437,6 +936,30 @@
      "max_drawdown": -0.12033260117315536,
      "return_per_drawdown": 0.1336421334553414
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0014009258857924868,
+    "development_sd": 0.02529584460545861,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 188,
+    "mean_net": 0.0075383977293018945,
+    "median_net": 0.018590158194988105,
+    "win_rate": 0.7180851063829787,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.03079995793000656,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.0077399457184455615,
+    "mean_gross_1x": 0.0030271147141005227,
+    "ratio_to_1x": 2.556872285808108
    }
   },
   {
@@ -450,42 +973,120 @@
    "mode": "etf_close",
    "verdict": "Failed holdout",
    "verdict_v1": "Failed holdout",
+   "verdict_v2": "Failed holdout",
    "q": 0.03153970317253989,
+   "q_v2": 0.031196880311968805,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.028281876031110063,
     "win_rate": 0.75,
-    "mean_gross": 0.014515351260270828,
-    "mean_net": 0.014312448190018803,
-    "avg_win": 0.03287173197151778,
-    "avg_loss": -0.04136540315447812,
+    "mean_gross": 0.01451524508136362,
+    "mean_net": 0.01431234203234738,
+    "avg_win": 0.03287165172748263,
+    "avg_loss": -0.04136558705305837,
     "mean_sessions": 5.0,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.011683342257591614,
-     "baseline": 0.002832009002679213,
+     "mean_excess": 0.011683236075123024,
+     "baseline": 0.002832009006240596,
      "p": 0.0091990800919908,
      "quarters": 17,
-     "top5_share": 1.0532786434244603
+     "top5_share": 1.0532855961919871,
+     "ci90": [
+      0.003756520040827254,
+      0.020324102138561537
+     ]
     },
     "risk_matched": {
-     "cagr": 0.010933681154939645,
-     "max_drawdown": -0.02844346586419244,
-     "return_per_drawdown": 0.38440045271360856
+     "cagr": 0.010933680853233874,
+     "max_drawdown": -0.028443472209467857,
+     "return_per_drawdown": 0.38440035635292186
     },
-    "risk_fraction": 0.07518612452306171,
-    "per_volatility": 0.28020485844071547,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.07518612947875664,
+    "per_volatility": 0.28020281895559485,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.012857431904821581,
+     "net_p10": -0.027993094215414335,
+     "net_p90": 0.05124675352821893,
+     "best_net": 0.17334664356206564,
+     "worst_net": -0.12554429175397408,
+     "profit_factor": 2.383985389980263,
+     "mean_net_without_best3": 0.0026375032478971753,
+     "mean_net_at_cost_bp": {
+      "2": 0.01431234203234738,
+      "5": 0.014007987458822988,
+      "10": 0.013500729836282241,
+      "20": 0.012486214591200903
+     },
+     "mae_median": -0.019802247715931365,
+     "mae_p10": -0.08154830829060095,
+     "mae_worst": -0.13444935323876628,
+     "mfe_median": 0.030823846693501578,
+     "trades_mae_below_5pct": 5,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.01905333448489931,
+     "by_year": {
+      "2011": [
+       1,
+       -0.02455930763281533
+      ],
+      "2012": [
+       3,
+       0.025529007944601112
+      ],
+      "2014": [
+       1,
+       0.03337143046917612
+      ],
+      "2015": [
+       1,
+       0.007127375453334306
+      ],
+      "2016": [
+       3,
+       0.010108469164029557
+      ],
+      "2018": [
+       4,
+       0.006336530725272405
+      ],
+      "2019": [
+       1,
+       0.01477138305340886
+      ],
+      "2020": [
+       3,
+       0.0026390782259199477
+      ],
+      "2022": [
+       2,
+       -0.010301131559117438
+      ],
+      "2023": [
+       2,
+       0.044381635995483504
+      ],
+      "2025": [
+       2,
+       0.03274102145510427
+      ],
+      "2026": [
+       1,
+       0.03896648674555103
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.01871965905181394,
-     "max_drawdown": -0.17645603619522898,
-     "return_per_drawdown": 0.10608681604466463
+     "cagr": 0.018719505047748664,
+     "max_drawdown": -0.1764562885070481,
+     "return_per_drawdown": 0.10608579159252214
     },
     "matched": {
-     "cagr": 0.004118286731063847,
-     "max_drawdown": -0.010757757667548606,
-     "return_per_drawdown": 0.3828201804068236
+     "cagr": 0.004118286362618351,
+     "max_drawdown": -0.010757759432775238,
+     "return_per_drawdown": 0.38282008334108414
     }
    },
    "holdout": {
@@ -513,6 +1114,7 @@
     "risk_fraction": 0.06258826819125936,
     "per_volatility": 0.13457623359774934,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.007054677006588239,
      "max_drawdown": -0.18945449000494152,
@@ -523,6 +1125,30 @@
      "max_drawdown": -0.02202070503393172,
      "return_per_drawdown": 0.13288700833831482
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.011683236075123024,
+    "development_sd": 0.05086882173254916,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.03783135688126054,
+    "median_net": 0.03709199994264789,
+    "win_rate": 0.75,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.05857239215546112,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.03803896467419536,
+    "mean_gross_1x": 0.01451524508136362,
+    "ratio_to_1x": 2.6206215920552562
    }
   },
   {
@@ -536,42 +1162,120 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "Failed holdout",
+   "verdict_v2": "No edge",
    "q": 0.16006399360063994,
+   "q_v2": 0.15982401759824016,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.028281876031110063,
     "win_rate": 0.7083333333333334,
-    "mean_gross": 0.013950192667128367,
-    "mean_net": 0.013747402628594951,
-    "avg_win": 0.03676071698911077,
-    "avg_loss": -0.04214207510408633,
+    "mean_gross": 0.013950252950742995,
+    "mean_net": 0.01374746290015289,
+    "avg_win": 0.03676076858176017,
+    "avg_loss": -0.04214199375517907,
     "mean_sessions": 5.0,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.011480838481377398,
-     "baseline": 0.0024693541857509697,
+     "mean_excess": 0.011480898724865069,
+     "baseline": 0.002469354225877927,
      "p": 0.06669333066693331,
      "quarters": 17,
-     "top5_share": 1.1177202418683236
+     "top5_share": 1.117716877324828,
+     "ci90": [
+      -0.001059449164031009,
+      0.02525780889754612
+     ]
     },
     "risk_matched": {
-     "cagr": 0.010430429594525004,
-     "max_drawdown": -0.027142535609108176,
-     "return_per_drawdown": 0.3842835372766309
+     "cagr": 0.010430430254064316,
+     "max_drawdown": -0.027142544119275414,
+     "return_per_drawdown": 0.384283441088969
     },
-    "risk_fraction": 0.0717182809134271,
-    "per_volatility": 0.2769241418706135,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.07171829214670485,
+    "per_volatility": 0.2769251961577394,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.01626513030447907,
+     "net_p10": -0.03374385504560856,
+     "net_p90": 0.05958769485929067,
+     "best_net": 0.11593580907852874,
+     "worst_net": -0.15752523227747905,
+     "profit_factor": 2.1184605737600473,
+     "mean_net_without_best3": 0.0028606410647391187,
+     "mean_net_at_cost_bp": {
+      "2": 0.01374746290015289,
+      "5": 0.013443277824267685,
+      "10": 0.012936302697792251,
+      "20": 0.011922352444841513
+     },
+     "mae_median": -0.019568166718298197,
+     "mae_p10": -0.08150241581375267,
+     "mae_worst": -0.16610461432646018,
+     "mfe_median": 0.02738275015793823,
+     "trades_mae_below_5pct": 4,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.018475185476215256,
+     "by_year": {
+      "2011": [
+       1,
+       -0.036575804681502344
+      ],
+      "2012": [
+       3,
+       0.023473002619363026
+      ],
+      "2014": [
+       1,
+       0.05239502467516233
+      ],
+      "2015": [
+       1,
+       0.06267026779534568
+      ],
+      "2016": [
+       3,
+       0.007035577163370148
+      ],
+      "2018": [
+       4,
+       0.010729300216500176
+      ],
+      "2019": [
+       1,
+       0.007353565436206466
+      ],
+      "2020": [
+       3,
+       -0.028716663196460972
+      ],
+      "2022": [
+       2,
+       -0.0013143149876385651
+      ],
+      "2023": [
+       2,
+       0.040110947823983834
+      ],
+      "2025": [
+       2,
+       0.0445072387527779
+      ],
+      "2026": [
+       1,
+       0.02919536257539357
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.017721429534929056,
-     "max_drawdown": -0.2104392198677859,
-     "return_per_drawdown": 0.08421162911582271
+     "cagr": 0.01772151635737451,
+     "max_drawdown": -0.21043897746546814,
+     "return_per_drawdown": 0.08421213869603844
     },
     "matched": {
-     "cagr": 0.004118286731063847,
-     "max_drawdown": -0.010757757667548606,
-     "return_per_drawdown": 0.3828201804068236
+     "cagr": 0.004118286362618351,
+     "max_drawdown": -0.010757759432775238,
+     "return_per_drawdown": 0.38282008334108414
     }
    },
    "holdout": {
@@ -599,6 +1303,7 @@
     "risk_fraction": 0.06357015302848303,
     "per_volatility": 0.14660464408315557,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.007999418969999228,
      "max_drawdown": -0.1554164024670729,
@@ -609,6 +1314,30 @@
      "max_drawdown": -0.02202070503393172,
      "return_per_drawdown": 0.13288700833831482
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.011480898724865069,
+    "development_sd": 0.05218811872626174,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.03895444629816089,
+    "median_net": 0.04517931193789815,
+    "win_rate": 0.7083333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.057701676711544025,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.03916227875391165,
+    "mean_gross_1x": 0.013950252950742995,
+    "ratio_to_1x": 2.807280906818672
    }
   },
   {
@@ -622,42 +1351,120 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.3139322431393224,
+   "q_v2": 0.3133868431338684,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.019561630921517793,
     "win_rate": 0.7916666666666666,
-    "mean_gross": 0.006450832223601701,
-    "mean_net": 0.006249542057157016,
-    "avg_win": 0.02017648896503856,
-    "avg_loss": -0.04667285619279284,
+    "mean_gross": 0.006450736969077646,
+    "mean_net": 0.006249446821683847,
+    "avg_win": 0.020176361432841124,
+    "avg_loss": -0.046672828700713806,
     "mean_sessions": 3.4583333333333335,
     "random_percentile": 88.4,
     "v2": {
-     "mean_excess": 0.004487509215351122,
-     "baseline": 0.001963323008250579,
+     "mean_excess": 0.004487413838738455,
+     "baseline": 0.00196332313033919,
      "p": 0.28777122287771223,
      "quarters": 17,
-     "top5_share": 1.3090411025470856
+     "top5_share": 1.3090576969885865,
+     "ci90": [
+      -0.013558952017818628,
+      0.018944177493555713
+     ]
     },
     "risk_matched": {
-     "cagr": 0.00855529975788194,
-     "max_drawdown": -0.022288235786556476,
-     "return_per_drawdown": 0.383848225575674
+     "cagr": 0.008555297653205285,
+     "max_drawdown": -0.02228823593679896,
+     "return_per_drawdown": 0.3838481285582621
     },
-    "risk_fraction": 0.05880327709572271,
-    "per_volatility": 0.13857961985803968,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.058803268024099895,
+    "per_volatility": 0.13857773906656698,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.009886322128730862,
+     "net_p10": -0.013760853791198468,
+     "net_p90": 0.028524528951917035,
+     "best_net": 0.08555703193335384,
+     "worst_net": -0.18237920049044154,
+     "profit_factor": 1.6427153780722892,
+     "mean_net_without_best3": 2.7873697298651046e-05,
+     "mean_net_at_cost_bp": {
+      "2": 0.006249446821683847,
+      "5": 0.005947511600593138,
+      "10": 0.0054442862321085654,
+      "20": 0.004437835495139482
+     },
+     "mae_median": -0.0191151517116242,
+     "mae_p10": -0.08154830829060095,
+     "mae_worst": -0.199418651829389,
+     "mfe_median": 0.02011844683647923,
+     "trades_mae_below_5pct": 5,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.006030147051941108,
+     "by_year": {
+      "2011": [
+       1,
+       -0.02455930763281533
+      ],
+      "2012": [
+       3,
+       0.02037989731533396
+      ],
+      "2014": [
+       1,
+       0.010740223968172202
+      ],
+      "2015": [
+       1,
+       0.007076933913465311
+      ],
+      "2016": [
+       3,
+       0.01553530518578868
+      ],
+      "2018": [
+       4,
+       0.0017060882515878006
+      ],
+      "2019": [
+       1,
+       0.03432186953758509
+      ],
+      "2020": [
+       2,
+       -0.0969816180498943
+      ],
+      "2022": [
+       3,
+       0.01395621930301294
+      ],
+      "2023": [
+       2,
+       0.01838051457580747
+      ],
+      "2025": [
+       2,
+       0.048874223638653125
+      ],
+      "2026": [
+       1,
+       0.02542214518611452
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.007387405865836527,
-     "max_drawdown": -0.23456842527619082,
-     "return_per_drawdown": 0.031493607279574315
+     "cagr": 0.007387270516977518,
+     "max_drawdown": -0.23456859706839917,
+     "return_per_drawdown": 0.03149300720259422
     },
     "matched": {
-     "cagr": 0.00284917251397232,
-     "max_drawdown": -0.007448298062603054,
-     "return_per_drawdown": 0.38252665105840067
+     "cagr": 0.0028491722611216908,
+     "max_drawdown": -0.007448299293623339,
+     "return_per_drawdown": 0.38252655388874246
     }
    },
    "holdout": {
@@ -685,6 +1492,7 @@
     "risk_fraction": 0.04651539433155673,
     "per_volatility": 0.24025002186537742,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.013477385114722962,
      "max_drawdown": -0.15708250405350221,
@@ -695,6 +1503,30 @@
      "max_drawdown": -0.014712315173104451,
      "return_per_drawdown": 0.1328346856491987
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.004487413838738455,
+    "development_sd": 0.046031203940140535,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.012741984843920326,
+    "median_net": 0.029395460632879122,
+    "win_rate": 0.7916666666666666,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.05549090323498651,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.012944573758672051,
+    "mean_gross_1x": 0.006450736969077646,
+    "ratio_to_1x": 2.0066813793095832
    }
   },
   {
@@ -708,42 +1540,120 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "Lead",
+   "verdict_v2": "No edge",
    "q": 0.3128829974145443,
+   "q_v2": 0.31242590026711614,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 24,
     "exposure": 0.019561630921517793,
     "win_rate": 0.7916666666666666,
-    "mean_gross": 0.007932858766278278,
-    "mean_net": 0.0077312721945250506,
-    "avg_win": 0.02451439805883457,
-    "avg_loss": -0.05604460608985111,
+    "mean_gross": 0.007932917942507348,
+    "mean_net": 0.007731331358918861,
+    "avg_win": 0.024514396478525796,
+    "avg_loss": -0.056044316095587486,
     "mean_sessions": 3.4583333333333335,
     "random_percentile": 96.65,
     "v2": {
-     "mean_excess": 0.006331069238636979,
-     "baseline": 0.0016017895276412997,
+     "mean_excess": 0.006331128255029274,
+     "baseline": 0.0016017896874780744,
      "p": 0.27377262273772623,
      "quarters": 17,
-     "top5_share": 1.4114265667279204
+     "top5_share": 1.411416266206102,
+     "ci90": [
+      -0.014155366356618591,
+      0.024784529099438932
+     ]
     },
     "risk_matched": {
-     "cagr": 0.008422366381767521,
-     "max_drawdown": -0.021943681368345125,
-     "return_per_drawdown": 0.383817384165868
+     "cagr": 0.008422363975826741,
+     "max_drawdown": -0.021943680651348663,
+     "return_per_drawdown": 0.3838172870652445
     },
-    "risk_fraction": 0.057888068252619405,
-    "per_volatility": 0.1587327669942211,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.057888057018805214,
+    "per_volatility": 0.15873397678256032,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.015445250341322936,
+     "net_p10": -0.014229933551421978,
+     "net_p90": 0.028846491697479635,
+     "best_net": 0.12126227732804518,
+     "worst_net": -0.21228155222000333,
+     "profit_factor": 1.6621615376573813,
+     "mean_net_without_best3": -0.0013178363684423408,
+     "mean_net_at_cost_bp": {
+      "2": 0.007731331358918861,
+      "5": 0.007428951483536145,
+      "10": 0.006924985024564831,
+      "20": 0.005917052106622324
+     },
+     "mae_median": -0.016019311131837077,
+     "mae_p10": -0.08150241581375267,
+     "mae_worst": -0.2286978299954583,
+     "mfe_median": 0.01917171114944638,
+     "trades_mae_below_5pct": 4,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.007372241570541578,
+     "by_year": {
+      "2011": [
+       1,
+       -0.036575804681502344
+      ],
+      "2012": [
+       3,
+       0.018334980482898573
+      ],
+      "2014": [
+       1,
+       0.029347194609607552
+      ],
+      "2015": [
+       1,
+       0.0626170444136891
+      ],
+      "2016": [
+       3,
+       0.012412847488724807
+      ],
+      "2018": [
+       4,
+       0.006108822128829294
+      ],
+      "2019": [
+       1,
+       0.026761140969710162
+      ],
+      "2020": [
+       2,
+       -0.11433942710609579
+      ],
+      "2022": [
+       3,
+       0.01630362319356878
+      ],
+      "2023": [
+       2,
+       0.014256347758850985
+      ],
+      "2025": [
+       2,
+       0.06110024653702084
+      ],
+      "2026": [
+       1,
+       0.015778400912102475
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.008752501036251248,
-     "max_drawdown": -0.22661523347306411,
-     "return_per_drawdown": 0.03862273909000732
+     "cagr": 0.00875258879258678,
+     "max_drawdown": -0.2266148158051452,
+     "return_per_drawdown": 0.038623197523469495
     },
     "matched": {
-     "cagr": 0.00284917251397232,
-     "max_drawdown": -0.007448298062603054,
-     "return_per_drawdown": 0.38252665105840067
+     "cagr": 0.0028491722611216908,
+     "max_drawdown": -0.007448299293623339,
+     "return_per_drawdown": 0.38252655388874246
     }
    },
    "holdout": {
@@ -771,6 +1681,7 @@
     "risk_fraction": 0.04765544879129491,
     "per_volatility": 0.20537701554512486,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.011438325007724348,
      "max_drawdown": -0.15993104959357296,
@@ -781,6 +1692,30 @@
      "max_drawdown": -0.014712315173104451,
      "return_per_drawdown": 0.1328346856491987
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.006331128255029274,
+    "development_sd": 0.055873758505749445,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 24,
+    "mean_net": 0.022182166739374055,
+    "median_net": 0.04520947433220679,
+    "win_rate": 0.7916666666666666,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.0484653132031469,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.022386644068187637,
+    "mean_gross_1x": 0.007932917942507348,
+    "ratio_to_1x": 2.8219936510665478
    }
   },
   {
@@ -794,42 +1729,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2584241575842416,
+   "q_v2": 0.25692430756924306,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 96,
     "exposure": 0.11312750412444025,
     "win_rate": 0.59375,
-    "mean_gross": 0.005636008785939257,
-    "mean_net": 0.005434881584182084,
-    "avg_win": 0.024364598190338763,
-    "avg_loss": -0.022231627301739214,
+    "mean_gross": 0.0056359577339796215,
+    "mean_net": 0.005434830542432848,
+    "avg_win": 0.024364599475773917,
+    "avg_loss": -0.02223175482168102,
     "mean_sessions": 5.0,
     "random_percentile": 90.0,
     "v2": {
-     "mean_excess": 0.002803999783260043,
-     "baseline": 0.002832009002679214,
+     "mean_excess": 0.0028039487277390263,
+     "baseline": 0.002832009006240595,
      "p": 0.1718828117188281,
      "quarters": 57,
-     "top5_share": 0.5842324908117108
+     "top5_share": 0.5842383366862843,
+     "ci90": [
+      -0.002313837642594163,
+      0.007530141662549133
+     ]
     },
     "risk_matched": {
-     "cagr": 0.025978052502757976,
-     "max_drawdown": -0.06696891393467086,
-     "return_per_drawdown": 0.38791210692322026
+     "cagr": 0.0259780567386394,
+     "max_drawdown": -0.06696894105609053,
+     "return_per_drawdown": 0.38791201307604983
     },
-    "risk_fraction": 0.17920218538818158,
-    "per_volatility": 0.3552346948737266,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.1792022331810262,
+    "per_volatility": 0.3552312553966682,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.0070108823561306766,
+     "net_p10": -0.02920255187523141,
+     "net_p90": 0.04342082831415861,
+     "best_net": 0.08756599716446134,
+     "worst_net": -0.12554429175397408,
+     "profit_factor": 1.601753866010422,
+     "mean_net_without_best3": 0.003368220671940111,
+     "mean_net_at_cost_bp": {
+      "2": 0.005434830542432848,
+      "5": 0.0051331397551126826,
+      "10": 0.004630321776245643,
+      "20": 0.003624685818511665
+     },
+     "mae_median": -0.013396381897875231,
+     "mae_p10": -0.043482031115599395,
+     "mae_worst": -0.13444935323876628,
+     "mfe_median": 0.019402099816720253,
+     "trades_mae_below_5pct": 9,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.008095259388284275,
+     "by_year": {
+      "2010": [
+       4,
+       -0.0009970288088614332
+      ],
+      "2011": [
+       8,
+       0.012922160081295167
+      ],
+      "2012": [
+       5,
+       0.00759981905899072
+      ],
+      "2013": [
+       5,
+       0.013547218832690411
+      ],
+      "2014": [
+       8,
+       0.0044793506377399095
+      ],
+      "2015": [
+       7,
+       0.012543111847940372
+      ],
+      "2016": [
+       5,
+       0.010352277390374942
+      ],
+      "2017": [
+       5,
+       0.007140516924794759
+      ],
+      "2018": [
+       6,
+       -0.005513431565459821
+      ],
+      "2019": [
+       4,
+       0.00874231855447874
+      ],
+      "2020": [
+       3,
+       -0.037988294322166626
+      ],
+      "2021": [
+       5,
+       0.017401709992232183
+      ],
+      "2022": [
+       8,
+       -0.0074238126429831686
+      ],
+      "2023": [
+       4,
+       0.014703785376201567
+      ],
+      "2024": [
+       5,
+       0.01497777022754374
+      ],
+      "2025": [
+       5,
+       -0.009989818033564158
+      ],
+      "2026": [
+       9,
+       0.011802451604025092
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.028580311366875666,
-     "max_drawdown": -0.19884849496602008,
-     "return_per_drawdown": 0.14372908063377382
+     "cagr": 0.028580003588860814,
+     "max_drawdown": -0.19884961222779796,
+     "return_per_drawdown": 0.1437267252808125
     },
     "matched": {
-     "cagr": 0.016432804210791296,
-     "max_drawdown": -0.042607314352538395,
-     "return_per_drawdown": 0.3856803570115723
+     "cagr": 0.01643280262432567,
+     "max_drawdown": -0.0426073208576494,
+     "return_per_drawdown": 0.38568026089289886
     }
    },
    "holdout": {
@@ -857,6 +1890,7 @@
     "risk_fraction": 0.15495404995172735,
     "per_volatility": 0.5823953003120038,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.050553196688050805,
      "max_drawdown": -0.20187124761785935,
@@ -867,6 +1901,30 @@
      "max_drawdown": -0.07776497206850796,
      "return_per_drawdown": 0.1333036622637876
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0028039487277390263,
+    "development_sd": 0.030956582115272722,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 96,
+    "mean_net": 0.014145003402275974,
+    "median_net": 0.018093639046702692,
+    "win_rate": 0.59375,
+    "worst_net": -0.41754639965784546,
+    "mae_median": -0.0406643308126996,
+    "mae_worst": -0.4243623134837289,
+    "mean_gross": 0.01434787297687133,
+    "mean_gross_1x": 0.0056359577339796215,
+    "ratio_to_1x": 2.545773700602278
    }
   },
   {
@@ -880,42 +1938,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2682931706829317,
+   "q_v2": 0.2668533146685331,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 96,
     "exposure": 0.11312750412444025,
     "win_rate": 0.59375,
-    "mean_gross": 0.004951340283688204,
-    "mean_net": 0.00475035001563149,
-    "avg_win": 0.023486245361801286,
-    "avg_loss": -0.022632881644155136,
+    "mean_gross": 0.004951322693011563,
+    "mean_net": 0.004750332428472986,
+    "avg_win": 0.023486245882309627,
+    "avg_loss": -0.022632925696365186,
     "mean_sessions": 5.0,
     "random_percentile": 87.64999999999999,
     "v2": {
-     "mean_excess": 0.0024819860979372345,
-     "baseline": 0.0024693541857509697,
-     "p": 0.21557844215578442,
+     "mean_excess": 0.0024819684671336362,
+     "baseline": 0.002469354225877927,
+     "p": 0.2156784321567843,
      "quarters": 57,
-     "top5_share": 0.6993013756652541
+     "top5_share": 0.6993040648663704,
+     "ci90": [
+      -0.0031221005739906437,
+      0.007564620361050986
+     ]
     },
     "risk_matched": {
-     "cagr": 0.025529059222229478,
-     "max_drawdown": -0.06582931591911201,
-     "return_per_drawdown": 0.38780684358923606
+     "cagr": 0.025529056934019856,
+     "max_drawdown": -0.06582932621581306,
+     "return_per_drawdown": 0.3878067481706572
     },
-    "risk_fraction": 0.17608770176906824,
-    "per_volatility": 0.3122610409632404,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.1760877039366003,
+    "per_volatility": 0.3122598211157195,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.005800059623772502,
+     "net_p10": -0.03076107732143063,
+     "net_p90": 0.041913437960256816,
+     "best_net": 0.1034252431149254,
+     "worst_net": -0.15752523227747905,
+     "profit_factor": 1.516642264223823,
+     "mean_net_without_best3": 0.0024845391418851733,
+     "mean_net_at_cost_bp": {
+      "2": 0.004750332428472986,
+      "5": 0.004448847031665116,
+      "10": 0.00394637137031855,
+      "20": 0.0029414200476255265
+     },
+     "mae_median": -0.011672853321759713,
+     "mae_p10": -0.040507716209296496,
+     "mae_worst": -0.16610461432646018,
+     "mfe_median": 0.017847690644999803,
+     "trades_mae_below_5pct": 8,
+     "trades_mae_below_10pct": 2,
+     "mean_gross_exit_next_open": 0.007399362860924851,
+     "by_year": {
+      "2010": [
+       4,
+       0.004142219472352299
+      ],
+      "2011": [
+       8,
+       0.015081123274645516
+      ],
+      "2012": [
+       5,
+       0.005162316074804241
+      ],
+      "2013": [
+       5,
+       0.011263179990300775
+      ],
+      "2014": [
+       8,
+       0.004770066375735446
+      ],
+      "2015": [
+       7,
+       0.010485156195920229
+      ],
+      "2016": [
+       5,
+       0.014241536814901123
+      ],
+      "2017": [
+       5,
+       0.005876485297989076
+      ],
+      "2018": [
+       6,
+       -0.0048896026816356115
+      ],
+      "2019": [
+       4,
+       0.00999836473886967
+      ],
+      "2020": [
+       3,
+       -0.05047511818782979
+      ],
+      "2021": [
+       5,
+       0.0103041830150292
+      ],
+      "2022": [
+       8,
+       -0.006497744973877742
+      ],
+      "2023": [
+       4,
+       0.014916829999926134
+      ],
+      "2024": [
+       5,
+       0.018906360784366916
+      ],
+      "2025": [
+       5,
+       -0.007633054224033509
+      ],
+      "2026": [
+       9,
+       0.005526281932428977
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.024197579552910797,
-     "max_drawdown": -0.23404832415870624,
-     "return_per_drawdown": 0.10338710879426173
+     "cagr": 0.02419747504445846,
+     "max_drawdown": -0.23404864319272445,
+     "return_per_drawdown": 0.10338652134177659
     },
     "matched": {
-     "cagr": 0.016432804210791296,
-     "max_drawdown": -0.042607314352538395,
-     "return_per_drawdown": 0.3856803570115723
+     "cagr": 0.01643280262432567,
+     "max_drawdown": -0.0426073208576494,
+     "return_per_drawdown": 0.38568026089289886
     }
    },
    "holdout": {
@@ -943,6 +2099,7 @@
     "risk_fraction": 0.15577790564569763,
     "per_volatility": 0.5220816502381888,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.04493862151428818,
      "max_drawdown": -0.18205109840544076,
@@ -953,6 +2110,30 @@
      "max_drawdown": -0.07776497206850796,
      "return_per_drawdown": 0.1333036622637876
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0024819684671336362,
+    "development_sd": 0.032886965233950335,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 96,
+    "mean_net": 0.013307859277375442,
+    "median_net": 0.016231016274078747,
+    "win_rate": 0.5833333333333334,
+    "worst_net": -0.4772156915469531,
+    "mae_median": -0.035464058806310594,
+    "mae_worst": -0.4833333510375062,
+    "mean_gross": 0.013510561389653354,
+    "mean_gross_1x": 0.004951322693011563,
+    "ratio_to_1x": 2.7286772095712
    }
   },
   {
@@ -966,42 +2147,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "Lead",
+   "verdict_v2": "No edge",
    "q": 0.16478352164783522,
+   "q_v2": 0.1645835416458354,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 99,
     "exposure": 0.08296016969125619,
     "win_rate": 0.7272727272727273,
-    "mean_gross": 0.005807977081424735,
-    "mean_net": 0.005606815486008469,
-    "avg_win": 0.014985339795456624,
-    "avg_loss": -0.019402582672519948,
+    "mean_gross": 0.005807942229811077,
+    "mean_net": 0.005606780641365138,
+    "avg_win": 0.014985299353006569,
+    "avg_loss": -0.01940260258967868,
     "mean_sessions": 3.5555555555555554,
     "random_percentile": 98.15,
     "v2": {
-     "mean_excess": 0.003792141711734339,
-     "baseline": 0.002015835369690396,
+     "mean_excess": 0.0037921067575450574,
+     "baseline": 0.0020158354722660194,
      "p": 0.08239176082391761,
      "quarters": 57,
-     "top5_share": 0.31233251624090913
+     "top5_share": 0.3123333622840011,
+     "ci90": [
+      -0.0008347710340549376,
+      0.007536525000621319
+     ]
     },
     "risk_matched": {
-     "cagr": 0.021718894627072327,
-     "max_drawdown": -0.05613354626607636,
-     "return_per_drawdown": 0.38691470736809447
+     "cagr": 0.021718892728079142,
+     "max_drawdown": -0.05613355523998398,
+     "return_per_drawdown": 0.3869146116832585
     },
-    "risk_fraction": 0.14968410117557387,
-    "per_volatility": 0.39196010581626134,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.14968410300932042,
+    "per_volatility": 0.39195770327841994,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.009464960676611733,
+     "net_p10": -0.011956840541767998,
+     "net_p90": 0.02275987952040862,
+     "best_net": 0.04119911218114569,
+     "worst_net": -0.18237920049044154,
+     "profit_factor": 2.05955866435885,
+     "mean_net_without_best3": 0.004541650615235825,
+     "mean_net_at_cost_bp": {
+      "2": 0.005606780641365138,
+      "5": 0.005305038258696222,
+      "10": 0.004802134287581254,
+      "20": 0.0037963263453514497
+     },
+     "mae_median": -0.012428665052183319,
+     "mae_p10": -0.05613244945353992,
+     "mae_worst": -0.199418651829389,
+     "mfe_median": 0.016001230832090485,
+     "trades_mae_below_5pct": 11,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.0060019216314384964,
+     "by_year": {
+      "2010": [
+       4,
+       0.007198295530990745
+      ],
+      "2011": [
+       7,
+       -0.0012031870629737953
+      ],
+      "2012": [
+       5,
+       0.00828588827809038
+      ],
+      "2013": [
+       5,
+       0.01414751013584945
+      ],
+      "2014": [
+       8,
+       0.00305059270065558
+      ],
+      "2015": [
+       8,
+       0.00917652944455813
+      ],
+      "2016": [
+       5,
+       0.004260928320446023
+      ],
+      "2017": [
+       5,
+       0.008442029327264677
+      ],
+      "2018": [
+       6,
+       -0.000700591587595852
+      ],
+      "2019": [
+       5,
+       0.009804831321946428
+      ],
+      "2020": [
+       3,
+       -0.05516145437885075
+      ],
+      "2021": [
+       5,
+       0.014965406919429446
+      ],
+      "2022": [
+       9,
+       0.009619337155403715
+      ],
+      "2023": [
+       4,
+       0.0044581002012114845
+      ],
+      "2024": [
+       5,
+       0.005824406357706091
+      ],
+      "2025": [
+       5,
+       0.003382222886713149
+      ],
+      "2026": [
+       10,
+       0.015659879337171233
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.031371029146898266,
-     "max_drawdown": -0.22289080349546087,
-     "return_per_drawdown": 0.1407461799900467
+     "cagr": 0.03137081764609473,
+     "max_drawdown": -0.22289074540197595,
+     "return_per_drawdown": 0.14074526777466026
     },
     "matched": {
-     "cagr": 0.012061466329776671,
-     "max_drawdown": -0.03135596393353335,
-     "return_per_drawdown": 0.3846625909936593
+     "cagr": 0.012061465195849053,
+     "max_drawdown": -0.03135596884720837,
+     "return_per_drawdown": 0.38466249455158796
     }
    },
    "holdout": {
@@ -1029,6 +2308,7 @@
     "risk_fraction": 0.13781059003500412,
     "per_volatility": 0.4587567110770731,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.0387349602555358,
      "max_drawdown": -0.237463628586285,
@@ -1039,6 +2319,30 @@
      "max_drawdown": -0.061563636497144136,
      "return_per_drawdown": 0.13317940268546152
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0037921067575450574,
+    "development_sd": 0.02593290359366329,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 99,
+    "mean_net": 0.014009781448515253,
+    "median_net": 0.02615350824094831,
+    "win_rate": 0.7070707070707071,
+    "worst_net": -0.5388393462999219,
+    "mae_median": -0.038032040126700806,
+    "mae_worst": -0.5664767137220187,
+    "mean_gross": 0.014212623973309893,
+    "mean_gross_1x": 0.005807942229811077,
+    "ratio_to_1x": 2.4471014708719316
    }
   },
   {
@@ -1052,42 +2356,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "Lead",
+   "verdict_v2": "No edge",
    "q": 0.21289299641464426,
+   "q_v2": 0.21203593926321654,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 99,
     "exposure": 0.08296016969125619,
     "win_rate": 0.696969696969697,
-    "mean_gross": 0.004967547411452111,
-    "mean_net": 0.0047665539019698475,
-    "avg_win": 0.015013146221715928,
-    "avg_loss": -0.01880060843344614,
+    "mean_gross": 0.004967547708683699,
+    "mean_net": 0.004766554199141981,
+    "avg_win": 0.015013134376464041,
+    "avg_loss": -0.018800580208698757,
     "mean_sessions": 3.5555555555555554,
     "random_percentile": 96.8,
     "v2": {
-     "mean_excess": 0.0033127333926030547,
-     "baseline": 0.0016548140188490552,
+     "mean_excess": 0.0033127335457062974,
+     "baseline": 0.0016548141629774001,
      "p": 0.12418758124187582,
      "quarters": 57,
-     "top5_share": 0.5199907843927145
+     "top5_share": 0.5199887068411796,
+     "ci90": [
+      -0.0018785268054145928,
+      0.007441427231413617
+     ]
     },
     "risk_matched": {
-     "cagr": 0.02139990134627734,
-     "max_drawdown": -0.05531975844836978,
-     "return_per_drawdown": 0.3868401082454107
+     "cagr": 0.021399894508287387,
+     "max_drawdown": -0.055319754624651885,
+     "return_per_drawdown": 0.3868400113754491
     },
-    "risk_fraction": 0.14747562773242887,
-    "per_volatility": 0.33386664230479884,
-    "index_per_volatility": 0.854227660214595,
+    "risk_fraction": 0.14747559512666517,
+    "per_volatility": 0.33386668434265354,
+    "index_per_volatility": 0.8542272983163388,
+    "risk": {
+     "median_net": 0.008130388204361516,
+     "net_p10": -0.012145248879023551,
+     "net_p90": 0.025111756535078824,
+     "best_net": 0.06482047918843037,
+     "worst_net": -0.21228155222000333,
+     "profit_factor": 1.8366565649867903,
+     "mean_net_without_best3": 0.0031648181497575824,
+     "mean_net_at_cost_bp": {
+      "2": 0.004766554199141981,
+      "5": 0.004465063934829415,
+      "10": 0.003962580160975018,
+      "20": 0.0029576126132663293
+     },
+     "mae_median": -0.011261018780405085,
+     "mae_p10": -0.04861106974027389,
+     "mae_worst": -0.2286978299954583,
+     "mfe_median": 0.011717452467021605,
+     "trades_mae_below_5pct": 10,
+     "trades_mae_below_10pct": 2,
+     "mean_gross_exit_next_open": 0.0051196712816263135,
+     "by_year": {
+      "2010": [
+       4,
+       0.012328930681346884
+      ],
+      "2011": [
+       7,
+       0.002483575356760613
+      ],
+      "2012": [
+       5,
+       0.005878547021269109
+      ],
+      "2013": [
+       5,
+       0.011880880128212246
+      ],
+      "2014": [
+       8,
+       0.00101584652754165
+      ],
+      "2015": [
+       8,
+       0.006530370883788134
+      ],
+      "2016": [
+       5,
+       0.0082480292184141
+      ],
+      "2017": [
+       5,
+       0.007280118527793489
+      ],
+      "2018": [
+       6,
+       -0.00011890258382037573
+      ],
+      "2019": [
+       5,
+       0.009279301662900674
+      ],
+      "2020": [
+       3,
+       -0.06699549511522791
+      ],
+      "2021": [
+       5,
+       0.007892241533043465
+      ],
+      "2022": [
+       9,
+       0.010444991405624778
+      ],
+      "2023": [
+       4,
+       0.004711970945065619
+      ],
+      "2024": [
+       5,
+       0.009762618183138106
+      ],
+      "2025": [
+       5,
+       0.006684275842664955
+      ],
+      "2026": [
+       10,
+       0.00991354100322458
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.025708897766390404,
-     "max_drawdown": -0.22675089698482198,
-     "return_per_drawdown": 0.11337947548719633
+     "cagr": 0.02570890444794971,
+     "max_drawdown": -0.22675006935709707,
+     "return_per_drawdown": 0.11337991878389272
     },
     "matched": {
-     "cagr": 0.012061466329776671,
-     "max_drawdown": -0.03135596393353335,
-     "return_per_drawdown": 0.3846625909936593
+     "cagr": 0.012061465195849053,
+     "max_drawdown": -0.03135596884720837,
+     "return_per_drawdown": 0.38466249455158796
     }
    },
    "holdout": {
@@ -1115,6 +2517,7 @@
     "risk_fraction": 0.1387487832770976,
     "per_volatility": 0.3614170799638873,
     "index_per_volatility": 0.467410507421113,
+    "risk": null,
     "strategy": {
      "cagr": 0.02962315674017546,
      "max_drawdown": -0.237463628586285,
@@ -1125,6 +2528,30 @@
      "max_drawdown": -0.061563636497144136,
      "return_per_drawdown": 0.13317940268546152
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0033127335457062974,
+    "development_sd": 0.029107590222225026,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "UPRO",
+    "trades": 99,
+    "mean_net": 0.012829303278437959,
+    "median_net": 0.024007537029721915,
+    "win_rate": 0.6868686868686869,
+    "worst_net": -0.5860828170883883,
+    "mae_median": -0.034060003304634656,
+    "mae_worst": -0.6108888823384547,
+    "mean_gross": 0.013031909660370012,
+    "mean_gross_1x": 0.004967547708683699,
+    "ratio_to_1x": 2.623409059079416
    }
   },
   {
@@ -1138,42 +2565,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.6086000095642609,
+   "q_v2": 0.6053655504014815,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 193,
     "exposure": 0.22743341975017675,
     "win_rate": 0.5854922279792746,
-    "mean_gross": 0.0032283611954029485,
-    "mean_net": 0.003027715523163887,
-    "avg_win": 0.022465277413627447,
-    "avg_loss": -0.02442784064711589,
+    "mean_gross": 0.00322836016853995,
+    "mean_net": 0.0030277144965062666,
+    "avg_win": 0.022465305938877668,
+    "avg_loss": -0.024427883415843343,
     "mean_sessions": 5.0,
     "random_percentile": 41.699999999999996,
     "v2": {
-     "mean_excess": -0.0004868182816717652,
-     "baseline": 0.003715179477074713,
+     "mean_excess": -0.0004868194009486001,
+     "baseline": 0.0037151795694885478,
      "p": 0.5832416758324167,
      "quarters": 67,
-     "top5_share": 0.5802449633651507
+     "top5_share": 0.5802447293520627,
+     "ci90": [
+      -0.004256728719444284,
+      0.0032276601800264497
+     ]
     },
     "risk_matched": {
-     "cagr": 0.053570979921555795,
-     "max_drawdown": -0.10753313469034509,
-     "return_per_drawdown": 0.4981811427316802
+     "cagr": 0.05357104367779053,
+     "max_drawdown": -0.10753322934634135,
+     "return_per_drawdown": 0.4981812971063089
     },
-    "risk_fraction": 0.28317020782411967,
-    "per_volatility": 0.29640094740840217,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.28317052189914743,
+    "per_volatility": 0.29640052999573757,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.006032819448908544,
+     "net_p10": -0.032197346596534726,
+     "net_p90": 0.037001886205104924,
+     "best_net": 0.09052088517101353,
+     "worst_net": -0.1255560381759102,
+     "profit_factor": 1.299017360549704,
+     "mean_net_without_best3": 0.0018116779629685777,
+     "mean_net_at_cost_bp": {
+      "2": 0.0030277144965062666,
+      "5": 0.0027267459884557335,
+      "10": 0.0022251318083714106,
+      "20": 0.001221903448202865
+     },
+     "mae_median": -0.014263429922774185,
+     "mae_p10": -0.04912822973145507,
+     "mae_worst": -0.20862887609172043,
+     "mfe_median": 0.02016463539116442,
+     "trades_mae_below_5pct": 19,
+     "trades_mae_below_10pct": 4,
+     "mean_gross_exit_next_open": 0.005613093996018882,
+     "by_year": {
+      "2010": [
+       11,
+       0.0006797659334542017
+      ],
+      "2011": [
+       14,
+       -0.009656010307556981
+      ],
+      "2012": [
+       15,
+       0.01274183489122304
+      ],
+      "2013": [
+       8,
+       0.013172838266907017
+      ],
+      "2014": [
+       11,
+       -0.0004587142131619744
+      ],
+      "2015": [
+       14,
+       0.008311449360219112
+      ],
+      "2016": [
+       10,
+       0.0033432582143498426
+      ],
+      "2017": [
+       10,
+       0.008518880838729837
+      ],
+      "2018": [
+       10,
+       -0.016261364396277622
+      ],
+      "2019": [
+       8,
+       0.0008787579719964633
+      ],
+      "2020": [
+       7,
+       -0.00045517338237157013
+      ],
+      "2021": [
+       10,
+       0.0013446093619798095
+      ],
+      "2022": [
+       17,
+       -0.00899838235949371
+      ],
+      "2023": [
+       9,
+       0.002058112458506561
+      ],
+      "2024": [
+       13,
+       0.018163365183060873
+      ],
+      "2025": [
+       14,
+       0.01328514224467993
+      ],
+      "2026": [
+       12,
+       0.0036055842961631355
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.029302306519609633,
-     "max_drawdown": -0.30376961135853286,
-     "return_per_drawdown": 0.09646227082611215
+     "cagr": 0.029302284525222877,
+     "max_drawdown": -0.30376920308300936,
+     "return_per_drawdown": 0.09646232806956273
     },
     "matched": {
-     "cagr": 0.04308931072581523,
-     "max_drawdown": -0.0868426654848854,
-     "return_per_drawdown": 0.49617674083615904
+     "cagr": 0.043089314723126826,
+     "max_drawdown": -0.08684264849420964,
+     "return_per_drawdown": 0.4961768839419939
     }
    },
    "holdout": {
@@ -1201,6 +2726,7 @@
     "risk_fraction": 0.3174679617704114,
     "per_volatility": 0.4389594440119475,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.07344802661155092,
      "max_drawdown": -0.36152808439449224,
@@ -1211,6 +2737,30 @@
      "max_drawdown": -0.33222380086021763,
      "return_per_drawdown": 0.028677725627916918
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": -0.0004868194009486001,
+    "development_sd": 0.03159225117963116,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 192,
+    "mean_net": 0.00783935248618088,
+    "median_net": 0.0158559186506263,
+    "win_rate": 0.5677083333333334,
+    "worst_net": -0.39175979160638874,
+    "mae_median": -0.04426866101266713,
+    "mae_worst": -0.39588437608620597,
+    "mean_gross": 0.008040960678316523,
+    "mean_gross_1x": 0.00340675747460284,
+    "ratio_to_1x": 2.360297361423985
    }
   },
   {
@@ -1224,42 +2774,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.7531246875312468,
+   "q_v2": 0.7510248975102489,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 193,
     "exposure": 0.22743341975017675,
     "win_rate": 0.5803108808290155,
-    "mean_gross": 0.0017166915861727386,
-    "mean_net": 0.0015163482478555243,
-    "avg_win": 0.019962975005123212,
-    "avg_loss": -0.02399009862639116,
+    "mean_gross": 0.0017166654035687596,
+    "mean_net": 0.0015163220704880675,
+    "avg_win": 0.019962943574662526,
+    "avg_loss": -0.023990117540222292,
     "mean_sessions": 5.0,
     "random_percentile": 20.8,
     "v2": {
-     "mean_excess": -0.0014960826760683805,
-     "baseline": 0.0032127742622411167,
+     "mean_excess": -0.001496108818690764,
+     "baseline": 0.0032127742222595253,
      "p": 0.7531246875312468,
      "quarters": 67,
-     "top5_share": 0.9280605289848088
+     "top5_share": 0.9280726169823003,
+     "ci90": [
+      -0.005193846796293534,
+      0.001981928010138046
+     ]
     },
     "risk_matched": {
-     "cagr": 0.0519479325339387,
-     "max_drawdown": -0.10434046965294053,
-     "return_per_drawdown": 0.49786945282812134
+     "cagr": 0.05194795742343605,
+     "max_drawdown": -0.10434048885011127,
+     "return_per_drawdown": 0.4978695997683229
     },
-    "risk_fraction": 0.2745270418040569,
-    "per_volatility": 0.15976508567637376,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.27452714941860845,
+    "per_volatility": 0.15976256106805115,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.002646708406317755,
+     "net_p10": -0.03253755443331761,
+     "net_p90": 0.03683625706485596,
+     "best_net": 0.07633084300332804,
+     "worst_net": -0.15834071099962066,
+     "profit_factor": 1.150602218906497,
+     "mean_net_without_best3": 0.0004948175436148964,
+     "mean_net_at_cost_bp": {
+      "2": 0.0015163220704880675,
+      "5": 0.0012158070708670249,
+      "10": 0.0007149487381651958,
+      "20": -0.0002867679272383892
+     },
+     "mae_median": -0.015179377527860693,
+     "mae_p10": -0.047792269848010084,
+     "mae_worst": -0.19730965793625488,
+     "mfe_median": 0.017214422444799427,
+     "trades_mae_below_5pct": 18,
+     "trades_mae_below_10pct": 4,
+     "mean_gross_exit_next_open": 0.004090756761213479,
+     "by_year": {
+      "2010": [
+       11,
+       0.0020678407605512
+      ],
+      "2011": [
+       14,
+       -0.005754168278328912
+      ],
+      "2012": [
+       15,
+       0.01084561716269729
+      ],
+      "2013": [
+       8,
+       0.011480706550883915
+      ],
+      "2014": [
+       11,
+       -0.000881089767584982
+      ],
+      "2015": [
+       14,
+       0.010291834652256915
+      ],
+      "2016": [
+       10,
+       0.0035771891643847755
+      ],
+      "2017": [
+       10,
+       0.006591755675875522
+      ],
+      "2018": [
+       10,
+       -0.01849480898398017
+      ],
+      "2019": [
+       8,
+       -0.0007351581441546184
+      ],
+      "2020": [
+       7,
+       -0.012747997136362337
+      ],
+      "2021": [
+       10,
+       -0.0007869713404269008
+      ],
+      "2022": [
+       17,
+       -0.009073964822186822
+      ],
+      "2023": [
+       9,
+       0.005123001865128633
+      ],
+      "2024": [
+       13,
+       0.013506447629581565
+      ],
+      "2025": [
+       14,
+       0.0060973808144909524
+      ],
+      "2026": [
+       12,
+       -0.00041770882067736675
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.011978360449784953,
-     "max_drawdown": -0.4035001293675182,
-     "return_per_drawdown": 0.02968613781750428
+     "cagr": 0.01197805873339286,
+     "max_drawdown": -0.40350161532172935,
+     "return_per_drawdown": 0.029685280748733146
     },
     "matched": {
-     "cagr": 0.04308931072581523,
-     "max_drawdown": -0.0868426654848854,
-     "return_per_drawdown": 0.49617674083615904
+     "cagr": 0.043089314723126826,
+     "max_drawdown": -0.08684264849420964,
+     "return_per_drawdown": 0.4961768839419939
     }
    },
    "holdout": {
@@ -1287,6 +2935,7 @@
     "risk_fraction": 0.3158471434993807,
     "per_volatility": 0.40711212267275915,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.06604157777400665,
      "max_drawdown": -0.32789334574316586,
@@ -1297,6 +2946,30 @@
      "max_drawdown": -0.33222380086021763,
      "return_per_drawdown": 0.028677725627916918
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": -0.001496108818690764,
+    "development_sd": 0.03053865961719863,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 192,
+    "mean_net": 0.004001041555261617,
+    "median_net": 0.00857543054074894,
+    "win_rate": 0.5416666666666666,
+    "worst_net": -0.4521544404829331,
+    "mae_median": -0.044979570177216655,
+    "mae_worst": -0.4558694781620247,
+    "mean_gross": 0.004201881931647926,
+    "mean_gross_1x": 0.0019178568040196422,
+    "ratio_to_1x": 2.1909257890584883
    }
   },
   {
@@ -1310,42 +2983,140 @@
    "mode": "etf_close",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.03153970317253989,
+   "q_v2": 0.031196880311968805,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
-    "exposure": 0.16497761018147536,
+    "exposure": 0.1652132924817346,
     "win_rate": 0.703125,
-    "mean_gross": 0.0060968466743746745,
-    "mean_net": 0.005895627305039823,
-    "avg_win": 0.015372334209650293,
-    "avg_loss": -0.01654920483745866,
-    "mean_sessions": 3.6458333333333335,
+    "mean_gross": 0.006086457125018717,
+    "mean_net": 0.005885239833593733,
+    "avg_win": 0.015357557431314192,
+    "avg_loss": -0.016549196582059986,
+    "mean_sessions": 3.6510416666666665,
     "random_percentile": 97.7,
     "v2": {
-     "mean_excess": 0.003385231345873757,
-     "baseline": 0.002711615328500918,
-     "p": 0.008099190080991902,
+     "mean_excess": 0.003370938242032929,
+     "baseline": 0.0027155188829857875,
+     "p": 0.008399160083991601,
      "quarters": 67,
-     "top5_share": 0.16362499181000756
+     "top5_share": 0.16390476273263316,
+     "ci90": [
+      0.0011357028647610765,
+      0.00550582064047016
+     ]
     },
     "risk_matched": {
-     "cagr": 0.043204821223667755,
-     "max_drawdown": -0.08707160965907712,
-     "return_per_drawdown": 0.4961987195692517
+     "cagr": 0.04323711952817466,
+     "max_drawdown": -0.08713559685847894,
+     "return_per_drawdown": 0.49620500790736677
     },
-    "risk_fraction": 0.22804663740227626,
-    "per_volatility": 0.6126098646271151,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.22821808401833305,
+    "per_volatility": 0.6115890552456594,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.01091924815984191,
+     "net_p10": -0.015025900202412389,
+     "net_p90": 0.024166576664310657,
+     "best_net": 0.04931564880580841,
+     "worst_net": -0.11768830414164744,
+     "profit_factor": 2.197880855240616,
+     "mean_net_without_best3": 0.005323415766010644,
+     "mean_net_at_cost_bp": {
+      "2": 0.005885239833593733,
+      "5": 0.005583413896456259,
+      "10": 0.0050803706678937,
+      "20": 0.004074284210768677
+     },
+     "mae_median": -0.011800744626707493,
+     "mae_p10": -0.05161391491032374,
+     "mae_worst": -0.20862887609172043,
+     "mfe_median": 0.014918002832198685,
+     "trades_mae_below_5pct": 20,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.0063816033785490806,
+     "by_year": {
+      "2010": [
+       11,
+       0.007871429362619108
+      ],
+      "2011": [
+       14,
+       0.0022553161478038796
+      ],
+      "2012": [
+       14,
+       0.007468114977409687
+      ],
+      "2013": [
+       8,
+       0.010282418455474451
+      ],
+      "2014": [
+       10,
+       0.004229347594126675
+      ],
+      "2015": [
+       14,
+       0.004463119336240028
+      ],
+      "2016": [
+       10,
+       0.0015393847009719463
+      ],
+      "2017": [
+       10,
+       0.009043096513747928
+      ],
+      "2018": [
+       11,
+       0.00045985266306543385
+      ],
+      "2019": [
+       8,
+       0.004247545351854856
+      ],
+      "2020": [
+       7,
+       -0.013902653565587
+      ],
+      "2021": [
+       10,
+       0.010237795210403956
+      ],
+      "2022": [
+       16,
+       0.0025923024678812384
+      ],
+      "2023": [
+       10,
+       0.007754841090631115
+      ],
+      "2024": [
+       13,
+       0.014261934738577339
+      ],
+      "2025": [
+       14,
+       0.012035178859001516
+      ],
+      "2026": [
+       12,
+       0.008114163132929028
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.06685518526856304,
-     "max_drawdown": -0.18881179961650063,
-     "return_per_drawdown": 0.35408372466315097
+     "cagr": 0.06672919602966743,
+     "max_drawdown": -0.1888117075924871,
+     "return_per_drawdown": 0.3534166227323639
     },
     "matched": {
-     "cagr": 0.031303825186945744,
-     "max_drawdown": -0.06337481834200742,
-     "return_per_drawdown": 0.4939473754072489
+     "cagr": 0.031348376426938884,
+     "max_drawdown": -0.06346391789956773,
+     "return_per_drawdown": 0.49395589595568296
     }
    },
    "holdout": {
@@ -1373,6 +3144,7 @@
     "risk_fraction": 0.2515764633662705,
     "per_volatility": 0.6815496977208763,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.1201668247393628,
      "max_drawdown": -0.3420418036971241,
@@ -1383,6 +3155,30 @@
      "max_drawdown": -0.2596853155486708,
      "return_per_drawdown": 0.030693269371391375
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.003370938242032929,
+    "development_sd": 0.021118412840198057,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 190,
+    "mean_net": 0.013926909297456451,
+    "median_net": 0.03144353052763127,
+    "win_rate": 0.6789473684210526,
+    "worst_net": -0.41837539268514423,
+    "mae_median": -0.03758054881361167,
+    "mae_worst": -0.4729707618359049,
+    "mean_gross": 0.014129735244505332,
+    "mean_gross_1x": 0.005980386342586878,
+    "ratio_to_1x": 2.362679337936112
    }
   },
   {
@@ -1396,42 +3192,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "Lead",
-   "q": 0.11012232110122322,
+   "verdict_v2": "No edge",
+   "q": 0.11145552111455521,
+   "q_v2": 0.10878912108789122,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 192,
-    "exposure": 0.16497761018147536,
+    "exposure": 0.1652132924817346,
     "win_rate": 0.6979166666666666,
-    "mean_gross": 0.004859037194784063,
-    "mean_net": 0.004658065387345131,
-    "avg_win": 0.01378204472664783,
-    "avg_loss": -0.01642147308621628,
-    "mean_sessions": 3.6458333333333335,
+    "mean_gross": 0.004848673118540908,
+    "mean_net": 0.00464770338391722,
+    "avg_win": 0.013782064845271546,
+    "avg_loss": -0.016455821371625535,
+    "mean_sessions": 3.6510416666666665,
     "random_percentile": 95.8,
     "v2": {
-     "mean_excess": 0.002649745163118774,
-     "baseline": 0.0022092920316652887,
-     "p": 0.04129587041295871,
+     "mean_excess": 0.0026355178969335417,
+     "baseline": 0.002213155221607367,
+     "p": 0.04179582041795821,
      "quarters": 67,
-     "top5_share": 0.2307108807063754
+     "top5_share": 0.23120425258454355,
+     "ci90": [
+      0.00013535045897498336,
+      0.004868051336051081
+     ]
     },
     "risk_matched": {
-     "cagr": 0.04148178939747238,
-     "max_drawdown": -0.0836543753300909,
-     "return_per_drawdown": 0.4958711272876025
+     "cagr": 0.0415126624321851,
+     "max_drawdown": -0.08371562135001387,
+     "return_per_drawdown": 0.49587713455080534
     },
-    "risk_fraction": 0.2189017302066957,
-    "per_volatility": 0.5068637848233674,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.21906552443317562,
+    "per_volatility": 0.5057989693823232,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.008196710901390736,
+     "net_p10": -0.0127154852957168,
+     "net_p90": 0.020996420054166198,
+     "best_net": 0.06337429050660748,
+     "worst_net": -0.15076795422798228,
+     "profit_factor": 1.934957940393921,
+     "mean_net_without_best3": 0.003970943875660932,
+     "mean_net_at_cost_bp": {
+      "2": 0.00464770338391722,
+      "5": 0.004346248781981691,
+      "10": 0.0038438244454223644,
+      "20": 0.0028389757723038312
+     },
+     "mae_median": -0.013141996582853088,
+     "mae_p10": -0.0477137942862783,
+     "mae_worst": -0.19730965793625488,
+     "mfe_median": 0.012579377291297877,
+     "trades_mae_below_5pct": 19,
+     "trades_mae_below_10pct": 4,
+     "mean_gross_exit_next_open": 0.005126976362249103,
+     "by_year": {
+      "2010": [
+       11,
+       0.00926292865705339
+      ],
+      "2011": [
+       14,
+       0.005928326536978469
+      ],
+      "2012": [
+       14,
+       0.005625642335086635
+      ],
+      "2013": [
+       8,
+       0.008597242954756862
+      ],
+      "2014": [
+       10,
+       0.003890917832932306
+      ],
+      "2015": [
+       14,
+       0.0064555883242691
+      ],
+      "2016": [
+       10,
+       0.0017810162339832792
+      ],
+      "2017": [
+       10,
+       0.007138950815294198
+      ],
+      "2018": [
+       11,
+       -0.0028442679673711595
+      ],
+      "2019": [
+       8,
+       0.0036974134575722267
+      ],
+      "2020": [
+       7,
+       -0.025930915276644245
+      ],
+      "2021": [
+       10,
+       0.008030543820655689
+      ],
+      "2022": [
+       16,
+       0.0029464755904002604
+      ],
+      "2023": [
+       10,
+       0.009704417648574503
+      ],
+      "2024": [
+       13,
+       0.010289858452264941
+      ],
+      "2025": [
+       14,
+       0.009687972487654914
+      ],
+      "2026": [
+       12,
+       0.002564774112281898
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.05177499159130239,
-     "max_drawdown": -0.22231233825252816,
-     "return_per_drawdown": 0.23289301888629474
+     "cagr": 0.05165050540148708,
+     "max_drawdown": -0.2223144712578321,
+     "return_per_drawdown": 0.23233082897957072
     },
     "matched": {
-     "cagr": 0.031303825186945744,
-     "max_drawdown": -0.06337481834200742,
-     "return_per_drawdown": 0.4939473754072489
+     "cagr": 0.031348376426938884,
+     "max_drawdown": -0.06346391789956773,
+     "return_per_drawdown": 0.49395589595568296
     }
    },
    "holdout": {
@@ -1459,6 +3353,7 @@
     "risk_fraction": 0.24829781602627266,
     "per_volatility": 0.6570388484171946,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.11357966905775085,
      "max_drawdown": -0.34766906537163633,
@@ -1469,6 +3364,30 @@
      "max_drawdown": -0.2596853155486708,
      "return_per_drawdown": 0.030693269371391375
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.0026355178969335417,
+    "development_sd": 0.02164945908397453,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 190,
+    "mean_net": 0.011219271367970882,
+    "median_net": 0.023040838627534588,
+    "win_rate": 0.6789473684210526,
+    "worst_net": -0.47612727007172917,
+    "mae_median": -0.0396338790325369,
+    "mae_worst": -0.5253016425428166,
+    "mean_gross": 0.011421555679106674,
+    "mean_gross_1x": 0.004775712489239202,
+    "ratio_to_1x": 2.3915919781272663
    }
   },
   {
@@ -1482,42 +3401,128 @@
    "mode": "etf_close",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.0005999400059994001,
+   "q_v2": 0.0005999400059994001,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 25,
     "exposure": 0.029460287532406315,
     "win_rate": 0.88,
-    "mean_gross": 0.03137882653680482,
-    "mean_net": 0.031172550771497477,
-    "avg_win": 0.03674950610852546,
-    "avg_loss": -0.009725121700041103,
+    "mean_gross": 0.0313788516892626,
+    "mean_net": 0.03117257591892477,
+    "avg_win": 0.03674955995797538,
+    "avg_loss": -0.009725307034113043,
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.02766364705973012,
-     "baseline": 0.0037151794770747125,
+     "mean_excess": 0.02766367211977405,
+     "baseline": 0.003715179569488548,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.43854403647355783
+     "top5_share": 0.43854533542844687,
+     "ci90": [
+      0.019771879737060384,
+      0.036238842844569276
+     ]
     },
     "risk_matched": {
-     "cagr": 0.011444374462821205,
-     "max_drawdown": -0.023343920690612197,
-     "return_per_drawdown": 0.4902507429878128
+     "cagr": 0.01144435383272624,
+     "max_drawdown": -0.023343872015294753,
+     "return_per_drawdown": 0.4902508814830707
     },
-    "risk_fraction": 0.06017829366442153,
-    "per_volatility": 0.6409728925608557,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.06017817891213929,
+    "per_volatility": 0.6409741585320203,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.03123904510616371,
+     "net_p10": -0.0019117857071692989,
+     "net_p90": 0.06991846303233956,
+     "best_net": 0.07637806452194296,
+     "worst_net": -0.01808727064940574,
+     "profit_factor": 27.710875562062,
+     "mean_net_without_best3": 0.02517159303121809,
+     "mean_net_at_cost_bp": {
+      "2": 0.03117257591892477,
+      "5": 0.030863162263418037,
+      "10": 0.03034747283757334,
+      "20": 0.029316093985884063
+     },
+     "mae_median": -0.013796529238478294,
+     "mae_p10": -0.04911641624373666,
+     "mae_worst": -0.17246076265641352,
+     "mfe_median": 0.043169058591255194,
+     "trades_mae_below_5pct": 2,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.03225333020561437,
+     "by_year": {
+      "2010": [
+       1,
+       0.03326617809490151
+      ],
+      "2011": [
+       1,
+       0.07430594427934278
+      ],
+      "2012": [
+       3,
+       0.012164748026741426
+      ],
+      "2014": [
+       1,
+       0.04309553121936216
+      ],
+      "2015": [
+       1,
+       0.03123904510616371
+      ],
+      "2016": [
+       3,
+       0.020515739101570674
+      ],
+      "2018": [
+       3,
+       0.035725281396356966
+      ],
+      "2019": [
+       2,
+       0.04810185118008481
+      ],
+      "2020": [
+       2,
+       0.015222568482904042
+      ],
+      "2021": [
+       1,
+       0.01615977587415629
+      ],
+      "2022": [
+       2,
+       -0.0015743962156851699
+      ],
+      "2024": [
+       1,
+       0.03922310892569514
+      ],
+      "2025": [
+       2,
+       0.047944696275361354
+      ],
+      "2026": [
+       2,
+       0.05870903472708022
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.04614832317772044,
-     "max_drawdown": -0.11978781215916545,
-     "return_per_drawdown": 0.38525057220681064
+     "cagr": 0.046148356508687316,
+     "max_drawdown": -0.11978789465447703,
+     "return_per_drawdown": 0.3852505851430167
     },
     "matched": {
-     "cagr": 0.005605928062255572,
-     "max_drawdown": -0.011459878732565043,
-     "return_per_drawdown": 0.4891786547727986
+     "cagr": 0.005605928642678615,
+     "max_drawdown": -0.011459876586037754,
+     "return_per_drawdown": 0.48917879704818545
     }
    },
    "holdout": {
@@ -1545,6 +3550,7 @@
     "risk_fraction": 0.07687392340645334,
     "per_volatility": 0.3326718653780982,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.03380640587775963,
      "max_drawdown": -0.1584012361504784,
@@ -1555,6 +3561,30 @@
      "max_drawdown": -0.06647132795599386,
      "return_per_drawdown": 0.03488415716860018
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.02766367211977405,
+    "development_sd": 0.026292415349436445,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 25,
+    "mean_net": 0.08276784653757939,
+    "median_net": 0.0721313249780926,
+    "win_rate": 0.8,
+    "worst_net": -0.10160963928921662,
+    "mae_median": -0.046313423086415506,
+    "mae_worst": -0.2895993798205968,
+    "mean_gross": 0.0829844434262646,
+    "mean_gross_1x": 0.0313788516892626,
+    "ratio_to_1x": 2.644597840865563
    }
   },
   {
@@ -1568,42 +3598,128 @@
    "mode": "etf_next_open",
    "verdict": "Failed holdout",
    "verdict_v1": "Lead",
+   "verdict_v2": "Failed holdout",
    "q": 0.0005999400059994001,
+   "q_v2": 0.0005999400059994001,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 25,
     "exposure": 0.029460287532406315,
     "win_rate": 0.8,
-    "mean_gross": 0.029935619889740122,
-    "mean_net": 0.029729632765762216,
-    "avg_win": 0.042687499478022375,
-    "avg_loss": -0.022101834083278416,
+    "mean_gross": 0.029935688961778187,
+    "mean_net": 0.029729701823985866,
+    "avg_win": 0.042687580340432296,
+    "avg_loss": -0.022101812241799856,
     "mean_sessions": 5.0,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.026722845627499003,
-     "baseline": 0.003212774262241117,
+     "mean_excess": 0.026722914739518662,
+     "baseline": 0.0032127742222595257,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.5724783369138405
+     "top5_share": 0.5724783978029999,
+     "ci90": [
+      0.01554996930009554,
+      0.03885617899467145
+     ]
     },
     "risk_matched": {
-     "cagr": 0.010807055078622785,
-     "max_drawdown": -0.022049212274709573,
-     "return_per_drawdown": 0.4901333863531473
+     "cagr": 0.010807041624157687,
+     "max_drawdown": -0.02204917853473254,
+     "return_per_drawdown": 0.4901335261599023
     },
-    "risk_fraction": 0.05682328354134928,
-    "per_volatility": 0.6370700548851678,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.056823206908832365,
+    "per_volatility": 0.6370719394238256,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.03259875266682433,
+     "net_p10": -0.015348272015941,
+     "net_p90": 0.06534648413962171,
+     "best_net": 0.120649999827936,
+     "worst_net": -0.05049193567315036,
+     "profit_factor": 7.72562536925362,
+     "mean_net_without_best3": 0.020240790517437025,
+     "mean_net_at_cost_bp": {
+      "2": 0.029729701823985866,
+      "5": 0.029420721117297356,
+      "10": 0.02890575327281641,
+      "20": 0.027875817583854618
+     },
+     "mae_median": -0.0153428007573162,
+     "mae_p10": -0.04680292421642094,
+     "mae_worst": -0.10835509142546562,
+     "mfe_median": 0.03651954952723635,
+     "trades_mae_below_5pct": 2,
+     "trades_mae_below_10pct": 2,
+     "mean_gross_exit_next_open": 0.03071297633499455,
+     "by_year": {
+      "2010": [
+       1,
+       -0.010739273401207283
+      ],
+      "2011": [
+       1,
+       0.05840602096425562
+      ],
+      "2012": [
+       3,
+       0.007159493927336021
+      ],
+      "2014": [
+       1,
+       0.06559076783277895
+      ],
+      "2015": [
+       1,
+       0.120649999827936
+      ],
+      "2016": [
+       3,
+       0.008897084432539152
+      ],
+      "2018": [
+       3,
+       0.03447096306411616
+      ],
+      "2019": [
+       2,
+       0.03745794371870603
+      ],
+      "2020": [
+       2,
+       0.007244061463367757
+      ],
+      "2021": [
+       1,
+       0.013028557734406476
+      ],
+      "2022": [
+       2,
+       0.0006103606428914943
+      ],
+      "2024": [
+       1,
+       0.03259875266682433
+      ],
+      "2025": [
+       2,
+       0.0667799247480596
+      ],
+      "2026": [
+       2,
+       0.043970257278314384
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.04336126220248704,
-     "max_drawdown": -0.12266284712070097,
-     "return_per_drawdown": 0.3534995576926345
+     "cagr": 0.04336136458966444,
+     "max_drawdown": -0.12266280376008631,
+     "return_per_drawdown": 0.35350051735711224
     },
     "matched": {
-     "cagr": 0.005605928062255572,
-     "max_drawdown": -0.011459878732565043,
-     "return_per_drawdown": 0.4891786547727986
+     "cagr": 0.005605928642678615,
+     "max_drawdown": -0.011459876586037754,
+     "return_per_drawdown": 0.48917879704818545
     }
    },
    "holdout": {
@@ -1631,6 +3747,7 @@
     "risk_fraction": 0.07720003918533583,
     "per_volatility": 0.25893036360673677,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.02463784043114181,
      "max_drawdown": -0.16813480189306906,
@@ -1641,6 +3758,30 @@
      "max_drawdown": -0.06647132795599386,
      "return_per_drawdown": 0.03488415716860018
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.026722914739518662,
+    "development_sd": 0.03970543151097053,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 25,
+    "mean_net": 0.08152390222748825,
+    "median_net": 0.09704110149674694,
+    "win_rate": 0.8,
+    "worst_net": -0.23024604121081615,
+    "mae_median": -0.04761904761904767,
+    "mae_worst": -0.3734687255746981,
+    "mean_gross": 0.08174025027754371,
+    "mean_gross_1x": 0.029935688961778187,
+    "ratio_to_1x": 2.7305284465612085
    }
   },
   {
@@ -1654,42 +3795,128 @@
    "mode": "etf_close",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.0005999400059994001,
+   "q_v2": 0.0005999400059994001,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 26,
     "exposure": 0.016969125618666037,
     "win_rate": 1.0,
-    "mean_gross": 0.029843895127502032,
-    "mean_net": 0.029637926348476548,
-    "avg_win": 0.029637926348476548,
+    "mean_gross": 0.029843835289712788,
+    "mean_net": 0.02963786652265487,
+    "avg_win": 0.02963786652265487,
     "avg_loss": null,
     "mean_sessions": 2.769230769230769,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.027781095116422936,
-     "baseline": 0.0020628000110790934,
+     "mean_excess": 0.027781035086437054,
+     "baseline": 0.002062800203275727,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.3949273478302747
+     "top5_share": 0.39492793521841296,
+     "ci90": [
+      0.020882591383183765,
+      0.03516542899155978
+     ]
     },
     "risk_matched": {
-     "cagr": 0.008162579611446175,
-     "max_drawdown": -0.0166703253567011,
-     "return_per_drawdown": 0.4896472886274532
+     "cagr": 0.008162564478649825,
+     "max_drawdown": -0.01667028970350881,
+     "return_per_drawdown": 0.4896474280786941
     },
-    "risk_fraction": 0.04290702320677451,
-    "per_volatility": 0.658142970531107,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.04290693917796163,
+    "per_volatility": 0.6581427113099075,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.02590754981528498,
+     "net_p10": 0.006403228652030246,
+     "net_p90": 0.05073448649588719,
+     "best_net": 0.10229449078008668,
+     "worst_net": 0.00011255124173548126,
+     "profit_factor": null,
+     "mean_net_without_best3": 0.02453560689039763,
+     "mean_net_at_cost_bp": {
+      "2": 0.02963786652265487,
+      "5": 0.029328913372067996,
+      "10": 0.02881399145442307,
+      "20": 0.027784147619133354
+     },
+     "mae_median": -0.01318661096325574,
+     "mae_p10": -0.04892712732059873,
+     "mae_worst": -0.17246076265641352,
+     "mfe_median": 0.02989242960217886,
+     "trades_mae_below_5pct": 2,
+     "trades_mae_below_10pct": 1,
+     "mean_gross_exit_next_open": 0.029165309339574418,
+     "by_year": {
+      "2010": [
+       1,
+       0.05176011215466869
+      ],
+      "2011": [
+       1,
+       0.04940455049799519
+      ],
+      "2012": [
+       2,
+       0.012009569869702141
+      ],
+      "2014": [
+       1,
+       0.006619045941235413
+      ],
+      "2015": [
+       1,
+       0.005951024420789874
+      ],
+      "2016": [
+       4,
+       0.02265865263112271
+      ],
+      "2018": [
+       3,
+       0.031512941888880576
+      ],
+      "2019": [
+       2,
+       0.03470331988037456
+      ],
+      "2020": [
+       2,
+       0.04498262539869302
+      ],
+      "2021": [
+       1,
+       0.019789021093745918
+      ],
+      "2022": [
+       3,
+       0.014488219512117503
+      ],
+      "2024": [
+       1,
+       0.024924715317858226
+      ],
+      "2025": [
+       2,
+       0.058375527647117176
+      ],
+      "2026": [
+       2,
+       0.041677939921737184
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.045812358409854204,
-     "max_drawdown": -0.11978781215916545,
-     "return_per_drawdown": 0.3824459065082684
+     "cagr": 0.04581226434551944,
+     "max_drawdown": -0.11978789465447703,
+     "return_per_drawdown": 0.38244485786867627
     },
     "matched": {
-     "cagr": 0.0032297681853517,
-     "max_drawdown": -0.0066082987667615,
-     "return_per_drawdown": 0.48874427433529893
+     "cagr": 0.003229768521805232,
+     "max_drawdown": -0.006608297532901708,
+     "return_per_drawdown": 0.48874441650435774
     }
    },
    "holdout": {
@@ -1717,6 +3944,7 @@
     "risk_fraction": 0.05340095146005474,
     "per_volatility": 0.5494764988287153,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.05481056886238678,
      "max_drawdown": -0.22123212853736407,
@@ -1727,6 +3955,30 @@
      "max_drawdown": -0.04279027842460492,
      "return_per_drawdown": 0.03531141732524348
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.027781035086437054,
+    "development_sd": 0.021367296541294177,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 26,
+    "mean_net": 0.0780581158022689,
+    "median_net": 0.07029021276807557,
+    "win_rate": 0.8846153846153846,
+    "worst_net": -0.027004303234912874,
+    "mae_median": -0.04221527806889103,
+    "mae_worst": -0.2895993798205968,
+    "mean_gross": 0.07827377055638016,
+    "mean_gross_1x": 0.029843835289712788,
+    "ratio_to_1x": 2.6227785335406013
    }
   },
   {
@@ -1740,42 +3992,128 @@
    "mode": "etf_next_open",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.0005999400059994001,
+   "q_v2": 0.0005999400059994001,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 26,
     "exposure": 0.016969125618666037,
     "win_rate": 0.9230769230769231,
-    "mean_gross": 0.028352327440991025,
-    "mean_net": 0.028146656975502855,
-    "avg_win": 0.031216599410232426,
-    "avg_loss": -0.008692652241251986,
+    "mean_gross": 0.02835231746170416,
+    "mean_net": 0.028146646998211823,
+    "avg_win": 0.031216568646895825,
+    "avg_loss": -0.008692412785996195,
     "mean_sessions": 2.769230769230769,
     "random_percentile": 100.0,
     "v2": {
-     "mean_excess": 0.02679161075114006,
-     "baseline": 0.0015607166898509682,
+     "mean_excess": 0.026791600698363862,
+     "baseline": 0.0015607167633402959,
      "p": 9.999000099990002e-05,
      "quarters": 21,
-     "top5_share": 0.5468792379456929
+     "top5_share": 0.5468778728122627,
+     "ci90": [
+      0.018537244618733427,
+      0.03703301464293634
+     ]
     },
     "risk_matched": {
-     "cagr": 0.007670539294170053,
-     "max_drawdown": -0.0156683273792515,
-     "return_per_drawdown": 0.489556996640728
+     "cagr": 0.007670529494999245,
+     "max_drawdown": -0.015668302868689366,
+     "return_per_drawdown": 0.48955713706093784
     },
-    "risk_fraction": 0.04031857728831804,
-    "per_volatility": 0.6569139112019804,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.040318521585829714,
+    "per_volatility": 0.6569143107045826,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.01696131073773932,
+     "net_p10": 0.007106038271180504,
+     "net_p90": 0.06637818401328088,
+     "best_net": 0.14008422551339028,
+     "worst_net": -0.016333044019233744,
+     "profit_factor": 43.09491886605325,
+     "mean_net_without_best3": 0.017794285960056968,
+     "mean_net_at_cost_bp": {
+      "2": 0.028146646998211823,
+      "5": 0.027838141302973365,
+      "10": 0.027323965144242457,
+      "20": 0.02629561282678074
+     },
+     "mae_median": -0.014551959629419575,
+     "mae_p10": -0.04028496616757332,
+     "mae_worst": -0.11647270927318765,
+     "mfe_median": 0.025813856575601868,
+     "trades_mae_below_5pct": 2,
+     "trades_mae_below_10pct": 2,
+     "mean_gross_exit_next_open": 0.027695196310663157,
+     "by_year": {
+      "2010": [
+       1,
+       0.006967028259965646
+      ],
+      "2011": [
+       1,
+       0.03387317233866227
+      ],
+      "2012": [
+       2,
+       0.010130682540067881
+      ],
+      "2014": [
+       1,
+       0.02832763632465829
+      ],
+      "2015": [
+       1,
+       0.09316944572052654
+      ],
+      "2016": [
+       4,
+       0.0129317131861717
+      ],
+      "2018": [
+       3,
+       0.030228228942244195
+      ],
+      "2019": [
+       2,
+       0.024229226409561155
+      ],
+      "2020": [
+       2,
+       0.03647876480952328
+      ],
+      "2021": [
+       1,
+       0.01664661971417991
+      ],
+      "2022": [
+       3,
+       0.013553916111704941
+      ],
+      "2024": [
+       1,
+       0.018391501810119726
+      ],
+      "2025": [
+       2,
+       0.07767845568681064
+      ],
+      "2026": [
+       2,
+       0.027164935493467435
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.04303783249355164,
-     "max_drawdown": -0.11978781215916545,
-     "return_per_drawdown": 0.3592839014069817
+     "cagr": 0.043037819007738065,
+     "max_drawdown": -0.11978789465447703,
+     "return_per_drawdown": 0.3592835413952201
     },
     "matched": {
-     "cagr": 0.0032297681853517,
-     "max_drawdown": -0.0066082987667615,
-     "return_per_drawdown": 0.48874427433529893
+     "cagr": 0.003229768521805232,
+     "max_drawdown": -0.006608297532901708,
+     "return_per_drawdown": 0.48874441650435774
     }
    },
    "holdout": {
@@ -1803,6 +4141,7 @@
     "risk_fraction": 0.05438360983081081,
     "per_volatility": 0.47396587406452934,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.046863017078778046,
      "max_drawdown": -0.23267669228219678,
@@ -1813,6 +4152,30 @@
      "max_drawdown": -0.04279027842460492,
      "return_per_drawdown": 0.03531141732524348
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.026791600698363862,
+    "development_sd": 0.033020354403667664,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 26,
+    "mean_net": 0.07634897277106892,
+    "median_net": 0.05086266165934927,
+    "win_rate": 0.9230769230769231,
+    "worst_net": -0.16632310160006358,
+    "mae_median": -0.045114853917587794,
+    "mae_worst": -0.3822741998305367,
+    "mean_gross": 0.07656428562819453,
+    "mean_gross_1x": 0.02835231746170416,
+    "ratio_to_1x": 2.7004595208702393
    }
   },
   {
@@ -1826,42 +4189,140 @@
    "mode": "etf_close",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2584241575842416,
+   "q_v2": 0.25692430756924306,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 97,
     "exposure": 0.11430591562573651,
     "win_rate": 0.5670103092783505,
-    "mean_gross": 0.006463618158729051,
-    "mean_net": 0.006262325435097333,
-    "avg_win": 0.028805500994567086,
-    "avg_loss": -0.023258499702303533,
+    "mean_gross": 0.006463679205945785,
+    "mean_net": 0.006262386470104623,
+    "avg_win": 0.02880560414492233,
+    "avg_loss": -0.023258493818347135,
     "mean_sessions": 5.0,
     "random_percentile": 83.75,
     "v2": {
-     "mean_excess": 0.0027484386816543365,
-     "baseline": 0.003715179477074713,
+     "mean_excess": 0.002748499636457235,
+     "baseline": 0.0037151795694885478,
      "p": 0.17228277172282772,
      "quarters": 49,
-     "top5_share": 0.5821064871759675
+     "top5_share": 0.5821027117659451,
+     "ci90": [
+      -0.002178497447974021,
+      0.00730507472609238
+     ]
     },
     "risk_matched": {
-     "cagr": 0.03336949324690841,
-     "max_drawdown": -0.0675036364658349,
-     "return_per_drawdown": 0.49433623126062926
+     "cagr": 0.03336950337667077,
+     "max_drawdown": -0.06750363724535657,
+     "return_per_drawdown": 0.49433637561457755
     },
-    "risk_fraction": 0.17590907764402908,
-    "per_volatility": 0.35726221043482026,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.17590911436139336,
+    "per_volatility": 0.35726522956511725,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.005816026263897323,
+     "net_p10": -0.03057011983894473,
+     "net_p90": 0.0437732776115373,
+     "best_net": 0.09364128594710386,
+     "worst_net": -0.1255560381759102,
+     "profit_factor": 1.6218429606880802,
+     "mean_net_without_best3": 0.0038941917629331194,
+     "mean_net_at_cost_bp": {
+      "2": 0.006262386470104623,
+      "5": 0.005960447366342861,
+      "10": 0.0054572155267398415,
+      "20": 0.004450751847533895
+     },
+     "mae_median": -0.019918811417569793,
+     "mae_p10": -0.05590107799181473,
+     "mae_worst": -0.20862887609172043,
+     "mfe_median": 0.024312098538027627,
+     "trades_mae_below_5pct": 12,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.008645253474495818,
+     "by_year": {
+      "2010": [
+       5,
+       0.008381412469464378
+      ],
+      "2011": [
+       7,
+       0.011102264591106683
+      ],
+      "2012": [
+       8,
+       0.008631500694619196
+      ],
+      "2013": [
+       5,
+       0.02005378182493902
+      ],
+      "2014": [
+       8,
+       0.00035711594733521534
+      ],
+      "2015": [
+       5,
+       0.023530463027310565
+      ],
+      "2016": [
+       6,
+       0.0003685219126512059
+      ],
+      "2017": [
+       3,
+       0.00925388140908486
+      ],
+      "2018": [
+       7,
+       0.007665228817605848
+      ],
+      "2019": [
+       4,
+       0.024033286142587235
+      ],
+      "2020": [
+       3,
+       -0.0323652605746364
+      ],
+      "2021": [
+       8,
+       0.01370332912978929
+      ],
+      "2022": [
+       9,
+       -0.014578815255568638
+      ],
+      "2023": [
+       4,
+       0.0028198845773218795
+      ],
+      "2024": [
+       3,
+       0.008122904110043164
+      ],
+      "2025": [
+       4,
+       0.0018663143108418045
+      ],
+      "2026": [
+       8,
+       0.011725108978046656
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.033289272979340145,
-     "max_drawdown": -0.1923373071389579,
-     "return_per_drawdown": 0.1730775660454144
+     "cagr": 0.0332896252521393,
+     "max_drawdown": -0.19233557055670136,
+     "return_per_drawdown": 0.17308096030175227
     },
     "matched": {
-     "cagr": 0.021713705575530762,
-     "max_drawdown": -0.04411985137388352,
-     "return_per_drawdown": 0.49215273622576294
+     "cagr": 0.02171370772702752,
+     "max_drawdown": -0.04411984294122728,
+     "return_per_drawdown": 0.49215287905609006
     }
    },
    "holdout": {
@@ -1889,6 +4350,7 @@
     "risk_fraction": 0.156633064085274,
     "per_volatility": 0.42188276978688827,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.05506911136796511,
      "max_drawdown": -0.2079770627911457,
@@ -1899,6 +4361,30 @@
      "max_drawdown": -0.1628044891354048,
      "return_per_drawdown": 0.03297122219348588
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002748499636457235,
+    "development_sd": 0.03360989648728365,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 96,
+    "mean_net": 0.016457966989598654,
+    "median_net": 0.01534461813670529,
+    "win_rate": 0.5625,
+    "worst_net": -0.39175979160638874,
+    "mae_median": -0.06024688222286484,
+    "mae_worst": -0.39588437608620597,
+    "mean_gross": 0.01666129924944851,
+    "mean_gross_1x": 0.006854175058044543,
+    "ratio_to_1x": 2.430824878027245
    }
   },
   {
@@ -1912,42 +4398,140 @@
    "mode": "etf_next_open",
    "verdict": "No edge",
    "verdict_v1": "No edge",
+   "verdict_v2": "No edge",
    "q": 0.2682931706829317,
+   "q_v2": 0.2668533146685331,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 97,
     "exposure": 0.11430591562573651,
     "win_rate": 0.5876288659793815,
-    "mean_gross": 0.005801812452832729,
-    "mean_net": 0.005600652090342185,
-    "avg_win": 0.028108974527700413,
-    "avg_loss": -0.026473707382893293,
+    "mean_gross": 0.005801865068446628,
+    "mean_net": 0.005600704695432958,
+    "avg_win": 0.02810903113607677,
+    "avg_loss": -0.026473660482484472,
     "mean_sessions": 5.0,
     "random_percentile": 84.3,
     "v2": {
-     "mean_excess": 0.0025890381905916094,
-     "baseline": 0.0032127742622411167,
+     "mean_excess": 0.002589090846187105,
+     "baseline": 0.0032127742222595253,
      "p": 0.20737926207379262,
      "quarters": 49,
-     "top5_share": 0.7038508562057524
+     "top5_share": 0.7038479768663953,
+     "ci90": [
+      -0.00292992686538296,
+      0.007309235746041484
+     ]
     },
     "risk_matched": {
-     "cagr": 0.03271448835463597,
-     "max_drawdown": -0.06619514031851603,
-     "return_per_drawdown": 0.49421284096115303
+     "cagr": 0.03271450076118709,
+     "max_drawdown": -0.06619514602966081,
+     "return_per_drawdown": 0.4942129857456366
     },
-    "risk_fraction": 0.17244212787350827,
-    "per_volatility": 0.32218380301019306,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.17244217693230005,
+    "per_volatility": 0.322186433811171,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.007334452855290552,
+     "net_p10": -0.03175579817762022,
+     "net_p90": 0.043958319829639526,
+     "best_net": 0.10487590007942371,
+     "worst_net": -0.15834071099962066,
+     "profit_factor": 1.5130272368421007,
+     "mean_net_without_best3": 0.002960144899059932,
+     "mean_net_at_cost_bp": {
+      "2": 0.005600704695432958,
+      "5": 0.0052989641359124555,
+      "10": 0.004796063203378181,
+      "20": 0.0037902613383097214
+     },
+     "mae_median": -0.019391582001481833,
+     "mae_p10": -0.058442541888394026,
+     "mae_worst": -0.19730965793625488,
+     "mfe_median": 0.022782923240075803,
+     "trades_mae_below_5pct": 12,
+     "trades_mae_below_10pct": 4,
+     "mean_gross_exit_next_open": 0.007963707220549744,
+     "by_year": {
+      "2010": [
+       5,
+       0.012659833765262918
+      ],
+      "2011": [
+       7,
+       0.007649469203580244
+      ],
+      "2012": [
+       8,
+       0.008261521673390254
+      ],
+      "2013": [
+       5,
+       0.018880165903650492
+      ],
+      "2014": [
+       8,
+       0.001330484066314988
+      ],
+      "2015": [
+       5,
+       0.019669162446511245
+      ],
+      "2016": [
+       6,
+       0.009167354716945445
+      ],
+      "2017": [
+       3,
+       0.007757358491090827
+      ],
+      "2018": [
+       7,
+       0.006671797761468122
+      ],
+      "2019": [
+       4,
+       0.02507144899332414
+      ],
+      "2020": [
+       3,
+       -0.04705142893837736
+      ],
+      "2021": [
+       8,
+       0.007363085135791675
+      ],
+      "2022": [
+       9,
+       -0.01335543854731569
+      ],
+      "2023": [
+       4,
+       0.002800385597623023
+      ],
+      "2024": [
+       3,
+       0.006524903831060931
+      ],
+      "2025": [
+       4,
+       0.008886469027827859
+      ],
+      "2026": [
+       8,
+       0.008475256639788126
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.028908906591864847,
-     "max_drawdown": -0.23659077748464818,
-     "return_per_drawdown": 0.12218949064377913
+     "cagr": 0.028909207624609357,
+     "max_drawdown": -0.23658995980052266,
+     "return_per_drawdown": 0.1221911853274912
     },
     "matched": {
-     "cagr": 0.021713705575530762,
-     "max_drawdown": -0.04411985137388352,
-     "return_per_drawdown": 0.49215273622576294
+     "cagr": 0.02171370772702752,
+     "max_drawdown": -0.04411984294122728,
+     "return_per_drawdown": 0.49215287905609006
     }
    },
    "holdout": {
@@ -1975,6 +4559,7 @@
     "risk_fraction": 0.15302832889728907,
     "per_volatility": 0.42797344530649534,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.05502246044326453,
      "max_drawdown": -0.19030223714514394,
@@ -1985,6 +4570,30 @@
      "max_drawdown": -0.1628044891354048,
      "return_per_drawdown": 0.03297122219348588
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.002589090846187105,
+    "development_sd": 0.035740935107283885,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 96,
+    "mean_net": 0.016361350616599962,
+    "median_net": 0.01793818591871643,
+    "win_rate": 0.5729166666666666,
+    "worst_net": -0.4521544404829331,
+    "mae_median": -0.05979283959011977,
+    "mae_worst": -0.4558694781620247,
+    "mean_gross": 0.016564663549309796,
+    "mean_gross_1x": 0.006246802032524205,
+    "ratio_to_1x": 2.651702977469954
    }
   },
   {
@@ -1998,42 +4607,140 @@
    "mode": "etf_close",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.021117888211178885,
+   "q_v2": 0.020637936206379364,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 104,
     "exposure": 0.08673108649540419,
     "win_rate": 0.7980769230769231,
-    "mean_gross": 0.008571876101834493,
-    "mean_net": 0.008370161726614147,
-    "avg_win": 0.016295494827349575,
-    "avg_loss": -0.02295377386200683,
+    "mean_gross": 0.008571883345746538,
+    "mean_net": 0.008370168969077408,
+    "avg_win": 0.016295509727817476,
+    "avg_loss": -0.02295379688689524,
     "mean_sessions": 3.5384615384615383,
     "random_percentile": 99.65,
     "v2": {
-     "mean_excess": 0.005938435405347179,
-     "baseline": 0.002633440696487315,
+     "mean_excess": 0.005938442467921092,
+     "baseline": 0.002633440877825447,
      "p": 0.004399560043995601,
      "quarters": 49,
-     "top5_share": 0.2068131828115619
+     "top5_share": 0.20681442261012237,
+     "ci90": [
+      0.0025937219751829693,
+      0.008803920116594298
+     ]
     },
     "risk_matched": {
-     "cagr": 0.02751513143386619,
-     "max_drawdown": -0.0557848902105359,
-     "return_per_drawdown": 0.4932362747335748
+     "cagr": 0.027515133613243314,
+     "max_drawdown": -0.0557848784711954,
+     "return_per_drawdown": 0.49323641759748194
     },
-    "risk_fraction": 0.14494393451328727,
-    "per_volatility": 0.538619368821433,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.1449439318650701,
+    "per_volatility": 0.5386196465927169,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.012291833549292863,
+     "net_p10": -0.015039386621353566,
+     "net_p90": 0.027289255662018543,
+     "best_net": 0.046524985802258056,
+     "worst_net": -0.11768830414164744,
+     "profit_factor": 2.8059001556441827,
+     "mean_net_without_best3": 0.007475869865349921,
+     "mean_net_at_cost_bp": {
+      "2": 0.008370168969077408,
+      "5": 0.00806759740407372,
+      "10": 0.007563311462400788,
+      "20": 0.006554739579055042
+     },
+     "mae_median": -0.016536708128336686,
+     "mae_p10": -0.05363298254780167,
+     "mae_worst": -0.20862887609172043,
+     "mfe_median": 0.018832783269865705,
+     "trades_mae_below_5pct": 14,
+     "trades_mae_below_10pct": 5,
+     "mean_gross_exit_next_open": 0.008594098667608322,
+     "by_year": {
+      "2010": [
+       6,
+       0.012993720741711975
+      ],
+      "2011": [
+       6,
+       0.002061293343554963
+      ],
+      "2012": [
+       7,
+       0.003751104514583841
+      ],
+      "2013": [
+       6,
+       0.014702075571914164
+      ],
+      "2014": [
+       11,
+       0.011714303517192522
+      ],
+      "2015": [
+       5,
+       0.004628770869802979
+      ],
+      "2016": [
+       7,
+       0.0030175534353972405
+      ],
+      "2017": [
+       3,
+       0.014904475525662505
+      ],
+      "2018": [
+       8,
+       0.0068210108163747896
+      ],
+      "2019": [
+       4,
+       0.02082847184087344
+      ],
+      "2020": [
+       3,
+       -0.034045084050440044
+      ],
+      "2021": [
+       8,
+       0.014712806799825728
+      ],
+      "2022": [
+       9,
+       0.006400864830945053
+      ],
+      "2023": [
+       4,
+       0.0028783516292881783
+      ],
+      "2024": [
+       3,
+       0.010421235094795608
+      ],
+      "2025": [
+       4,
+       0.016551111531776574
+      ],
+      "2026": [
+       10,
+       0.012782129202704695
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.05127190129500536,
-     "max_drawdown": -0.170545156426417,
-     "return_per_drawdown": 0.30063534121607854
+     "cagr": 0.05127194530130241,
+     "max_drawdown": -0.17054549208593994,
+     "return_per_drawdown": 0.30063500755250605
     },
     "matched": {
-     "cagr": 0.01648516023370261,
-     "max_drawdown": -0.03356223918170076,
-     "return_per_drawdown": 0.4911817755798268
+     "cagr": 0.01648516189142124,
+     "max_drawdown": -0.03356223280723403,
+     "return_per_drawdown": 0.4911819182622444
     }
    },
    "holdout": {
@@ -2061,6 +4768,7 @@
     "risk_fraction": 0.12417190497689616,
     "per_volatility": 0.6586071975701792,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.08681286669079435,
      "max_drawdown": -0.19506561969393277,
@@ -2071,6 +4779,30 @@
      "max_drawdown": -0.126565475353556,
      "return_per_drawdown": 0.03372655387409128
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.005938442467921092,
+    "development_sd": 0.02275284887874492,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 102,
+    "mean_net": 0.020364170242237307,
+    "median_net": 0.03545919391726016,
+    "win_rate": 0.7647058823529411,
+    "worst_net": -0.41837539268514423,
+    "mae_median": -0.050790267282950385,
+    "mae_worst": -0.4729707618359049,
+    "mean_gross": 0.020568283899017093,
+    "mean_gross_1x": 0.008597559322775618,
+    "ratio_to_1x": 2.3923398637715794
    }
   },
   {
@@ -2084,42 +4816,140 @@
    "mode": "etf_next_open",
    "verdict": "Lead",
    "verdict_v1": "Lead",
+   "verdict_v2": "Lead",
    "q": 0.0323967603239676,
+   "q_v2": 0.0314968503149685,
    "holdout_source": "ledger, first computed 2026-11-14",
    "development": {
     "trades": 104,
     "exposure": 0.08673108649540419,
     "win_rate": 0.7403846153846154,
-    "mean_gross": 0.008090365601582576,
-    "mean_net": 0.007888747528462293,
-    "avg_win": 0.01732217451706728,
-    "avg_loss": -0.01901398869830008,
+    "mean_gross": 0.00809036342498403,
+    "mean_net": 0.007888745352299055,
+    "avg_win": 0.017322160162008184,
+    "avg_loss": -0.01901395614205661,
     "mean_sessions": 3.5384615384615383,
     "random_percentile": 99.7,
     "v2": {
-     "mean_excess": 0.005959404297940147,
-     "baseline": 0.00213096130364243,
+     "mean_excess": 0.005959402040580117,
+     "baseline": 0.002130961384403914,
      "p": 0.010798920107989201,
      "quarters": 49,
-     "top5_share": 0.3248811138310833
+     "top5_share": 0.3248823769343677,
+     "ci90": [
+      0.001952374670908111,
+      0.009249963490091906
+     ]
     },
     "risk_matched": {
-     "cagr": 0.02711814678975122,
-     "max_drawdown": -0.05498832231040984,
-     "return_per_drawdown": 0.4931619233019859
+     "cagr": 0.027118146741164084,
+     "max_drawdown": -0.0549883063289518,
+     "return_per_drawdown": 0.49316206574789806
     },
-    "risk_fraction": 0.1428459501572785,
-    "per_volatility": 0.51155609862056,
-    "index_per_volatility": 0.918675812466268,
+    "risk_fraction": 0.14284593592347283,
+    "per_volatility": 0.5115558491102739,
+    "index_per_volatility": 0.9186756160669428,
+    "risk": {
+     "median_net": 0.011303171665324352,
+     "net_p10": -0.012691792401291868,
+     "net_p90": 0.025948566987734577,
+     "best_net": 0.06768879734763944,
+     "worst_net": -0.15076795422798228,
+     "profit_factor": 2.598103948858385,
+     "mean_net_without_best3": 0.006258325138332445,
+     "mean_net_at_cost_bp": {
+      "2": 0.007888745352299055,
+      "5": 0.007586318243271606,
+      "10": 0.007082273061559051,
+      "20": 0.00607418269813406
+     },
+     "mae_median": -0.014276855680471656,
+     "mae_p10": -0.05500876835779569,
+     "mae_worst": -0.19730965793625488,
+     "mfe_median": 0.015946430821432545,
+     "trades_mae_below_5pct": 13,
+     "trades_mae_below_10pct": 4,
+     "mean_gross_exit_next_open": 0.008092822876434067,
+     "by_year": {
+      "2010": [
+       6,
+       0.015145141638255274
+      ],
+      "2011": [
+       6,
+       0.0004515478267060706
+      ],
+      "2012": [
+       7,
+       0.003706305256195403
+      ],
+      "2013": [
+       6,
+       0.013965260106369004
+      ],
+      "2014": [
+       11,
+       0.01091729106157076
+      ],
+      "2015": [
+       5,
+       0.0007969903385975253
+      ],
+      "2016": [
+       7,
+       0.010061434438223524
+      ],
+      "2017": [
+       3,
+       0.013195020282550077
+      ],
+      "2018": [
+       8,
+       0.0067459554183150194
+      ],
+      "2019": [
+       4,
+       0.022028735082649464
+      ],
+      "2020": [
+       3,
+       -0.04882104665537531
+      ],
+      "2021": [
+       8,
+       0.015240780144700927
+      ],
+      "2022": [
+       9,
+       0.007557211422072354
+      ],
+      "2023": [
+       4,
+       -0.0005319504326641022
+      ],
+      "2024": [
+       3,
+       0.008835808466534053
+      ],
+      "2025": [
+       4,
+       0.023887987563677493
+      ],
+      "2026": [
+       10,
+       0.007753126554136458
+      ]
+     }
+    },
     "strategy": {
-     "cagr": 0.047703312577193735,
-     "max_drawdown": -0.17434519512140112,
-     "return_per_drawdown": 0.2736141511899807
+     "cagr": 0.04770329505221871,
+     "max_drawdown": -0.1743451224366276,
+     "return_per_drawdown": 0.27361416474130673
     },
     "matched": {
-     "cagr": 0.01648516023370261,
-     "max_drawdown": -0.03356223918170076,
-     "return_per_drawdown": 0.4911817755798268
+     "cagr": 0.01648516189142124,
+     "max_drawdown": -0.03356223280723403,
+     "return_per_drawdown": 0.4911819182622444
     }
    },
    "holdout": {
@@ -2147,6 +4977,7 @@
     "risk_fraction": 0.12004540819167837,
     "per_volatility": 0.6445488613838058,
     "index_per_volatility": 0.14925640623983255,
+    "risk": null,
     "strategy": {
      "cagr": 0.08205061266462121,
      "max_drawdown": -0.19506561969393288,
@@ -2157,6 +4988,30 @@
      "max_drawdown": -0.126565475353556,
      "return_per_drawdown": 0.03372655387409128
     }
+   },
+   "forward": {
+    "since": "2026-11-13",
+    "trades": 0,
+    "mean_excess": null,
+    "mean_net": null,
+    "band_lower": null,
+    "status": "none yet",
+    "development_mean_excess": 0.005959402040580117,
+    "development_sd": 0.025613548509796146,
+    "last_signal": null
+   },
+   "leveraged": {
+    "instrument": "TQQQ",
+    "trades": 102,
+    "mean_net": 0.02101248128181339,
+    "median_net": 0.030819467528276134,
+    "win_rate": 0.7450980392156863,
+    "worst_net": -0.47612727007172917,
+    "mae_median": -0.04157072548129476,
+    "mae_worst": -0.5253016425428166,
+    "mean_gross": 0.021216724626738723,
+    "mean_gross_1x": 0.008247468200213959,
+    "ratio_to_1x": 2.5725136625793006
    }
   }
  ],
@@ -2164,7 +5019,7 @@
   "SPY:rsi2_below_10": {
    "version": "v1",
    "description": "RSI(2) closes below 10 (short-term oversold)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "1993-02-16",
     "1993-02-17",
@@ -2972,13 +5827,15 @@
     "2026-09-10",
     "2026-10-14",
     "2026-10-30",
-    "2026-11-02"
+    "2026-11-02",
+    "2026-11-16",
+    "2026-11-17"
    ]
   },
   "SPY:rsi14_below_30": {
    "version": "v1",
    "description": "RSI(14) closes below 30 (classic oversold)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "1994-03-29",
     "1994-03-30",
@@ -3104,7 +5961,7 @@
   "SPY:bollinger_lower_close": {
    "version": "v1",
    "description": "Close below the lower Bollinger band (20 days, 2 standard deviations)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "1993-04-02",
     "1993-04-05",
@@ -3546,7 +6403,7 @@
   "QQQ:rsi2_below_10": {
    "version": "v1",
    "description": "RSI(2) closes below 10 (short-term oversold)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "1999-03-23",
     "1999-04-14",
@@ -4253,13 +7110,14 @@
     "2026-10-16",
     "2026-10-30",
     "2026-11-02",
-    "2026-11-05"
+    "2026-11-05",
+    "2026-11-17"
    ]
   },
   "QQQ:rsi14_below_30": {
    "version": "v1",
    "description": "RSI(14) closes below 30 (classic oversold)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "2000-04-14",
     "2000-10-11",
@@ -4372,7 +7230,7 @@
   "QQQ:bollinger_lower_close": {
    "version": "v1",
    "description": "Close below the lower Bollinger band (20 days, 2 standard deviations)",
-   "last_date": "2026-11-13",
+   "last_date": "2026-11-17",
    "dates": [
     "1999-05-24",
     "1999-05-25",

@@ -1,0 +1,985 @@
+{
+ "kind": "filter_tests",
+ "schema": 1,
+ "generated_at": "2026-11-18T07:08:30+00:00",
+ "code": "43f0869",
+ "data_fingerprint": "d09e16aa32e780ea",
+ "report": "2026-11-18-070830-filter-tests.md",
+ "development": {
+  "start": "2010-01-01",
+  "end": "2026-11-13"
+ },
+ "parameters": {
+  "version": "v1",
+  "registered": "2026-11-18",
+  "resamples": 10000,
+  "dev_p": 0.05,
+  "dev_q": 0.1,
+  "holdout_p": 0.1,
+  "min_group": 8,
+  "coverage": 0.9,
+  "strategies": [
+   [
+    "QQQ",
+    "bollinger_lower_close",
+    "close_above_sma5",
+    "etf_next_open"
+   ],
+   [
+    "SPY",
+    "bollinger_lower_close",
+    "close_above_sma5",
+    "etf_next_open"
+   ],
+   [
+    "QQQ",
+    "rsi14_below_30",
+    "close_above_sma5",
+    "etf_next_open"
+   ],
+   [
+    "QQQ",
+    "rsi2_below_10",
+    "close_above_sma5",
+    "etf_close"
+   ]
+  ],
+  "splits": [
+   {
+    "name": "gap_at_next_open",
+    "version": "v1",
+    "description": "The next open's gap from the signal close (idea 7)",
+    "group": "gap up 0.5% or more",
+    "rest": "smaller gap, or a gap down",
+    "entries": [
+     "etf_next_open"
+    ],
+    "before_2010": true,
+    "buckets": [
+     "gap down more than 0.5%",
+     "within 0.5%",
+     "gap up 0.5% to 1.5%",
+     "gap up 1.5% or more"
+    ]
+   },
+   {
+    "name": "spy_200d_trend",
+    "version": "v1",
+    "description": "SPY's close against its 200-day average at the signal close (idea 8)",
+    "group": "SPY below its 200-day average",
+    "rest": "SPY above it",
+    "entries": [
+     "etf_next_open",
+     "etf_close"
+    ],
+    "before_2010": true,
+    "buckets": []
+   },
+   {
+    "name": "vix_level",
+    "version": "v1",
+    "description": "The VIX close on the signal day (idea 8)",
+    "group": "VIX 20 or higher",
+    "rest": "VIX below 20",
+    "entries": [
+     "etf_next_open",
+     "etf_close"
+    ],
+    "before_2010": true,
+    "buckets": [
+     "VIX below 15",
+     "VIX 15-20",
+     "VIX 20-30",
+     "VIX 30 and up"
+    ]
+   },
+   {
+    "name": "vix_term_structure",
+    "version": "v1",
+    "description": "VIX above VIX3M on the signal day: an inverted curve, a stress reading",
+    "group": "VIX above VIX3M",
+    "rest": "VIX at or below VIX3M",
+    "entries": [
+     "etf_next_open",
+     "etf_close"
+    ],
+    "before_2010": false,
+    "buckets": []
+   },
+   {
+    "name": "release_within_5_sessions",
+    "version": "v1",
+    "description": "A scheduled CPI, jobs or Fed release in the five sessions after the signal",
+    "group": "a release within 5 sessions",
+    "rest": "no release",
+    "entries": [
+     "etf_next_open",
+     "etf_close"
+    ],
+    "before_2010": false,
+    "buckets": []
+   }
+  ],
+  "volatility_test": {
+   "name": "volatility_matched_baseline",
+   "version": "v1",
+   "description": "Excess over every same-length trade that started on a day in the same VIX bucket",
+   "buckets": [
+    "VIX below 15",
+    "VIX 15-20",
+    "VIX 20-30",
+    "VIX 30 and up"
+   ]
+  },
+  "window": "lead_v3 development window",
+  "statistic": "difference in mean excess, quarter-cluster resampling",
+  "family": "every split and volatility test of a registered run"
+ },
+ "tests": [
+  {
+   "test": "gap_at_next_open",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "gap up 0.5% or more",
+   "group": 29,
+   "rest": 75,
+   "diff": -0.01270335584465623,
+   "ci90": [
+    -0.025296626782290475,
+    -0.0024280525344051156
+   ],
+   "p": 0.029797020297970205,
+   "q": 0.1084891510848915,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 63,
+    "measured": 63,
+    "group": 17,
+    "rest": 46,
+    "group_mean": 0.01893776883603725,
+    "rest_mean": 0.012732849239960004,
+    "strategy_mean": 0.014407192623028472,
+    "buckets": [
+     {
+      "label": "gap down more than 0.5%",
+      "trades": 16,
+      "mean_excess": 0.00861551880484851
+     },
+     {
+      "label": "within 0.5%",
+      "trades": 30,
+      "mean_excess": 0.014928758805352806
+     },
+     {
+      "label": "gap up 0.5% to 1.5%",
+      "trades": 13,
+      "mean_excess": 0.013665499987252779
+     },
+     {
+      "label": "gap up 1.5% or more",
+      "trades": 4,
+      "mean_excess": 0.0360726425945868
+     }
+    ],
+    "status": "ok",
+    "quarters": 32,
+    "diff": 0.006204919596077246,
+    "ci90": [
+     -0.00799826579694762,
+     0.020019927649892133
+    ],
+    "p": 0.4567543245675432
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "spy_200d_trend",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "SPY below its 200-day average",
+   "group": 30,
+   "rest": 74,
+   "diff": -0.002667544458055079,
+   "ci90": [
+    -0.016879598294746556,
+    0.00965697232455546
+   ],
+   "p": 0.7481251874812519,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 63,
+    "measured": 63,
+    "group": 38,
+    "rest": 25,
+    "group_mean": 0.021768175826561775,
+    "rest_mean": 0.0032184981536578427,
+    "strategy_mean": 0.014407192623028472,
+    "buckets": [],
+    "status": "ok",
+    "quarters": 32,
+    "diff": 0.01854967767290393,
+    "ci90": [
+     0.0045227424415369925,
+     0.0323342062988862
+    ],
+    "p": 0.031996800319968
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_level",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "VIX 20 or higher",
+   "group": 60,
+   "rest": 44,
+   "diff": 0.001976953107786475,
+   "ci90": [
+    -0.006031615071969373,
+    0.009337209881299768
+   ],
+   "p": 0.642935706429357,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 63,
+    "measured": 63,
+    "group": 42,
+    "rest": 21,
+    "group_mean": 0.0208827445344332,
+    "rest_mean": 0.0014560888002190164,
+    "strategy_mean": 0.014407192623028472,
+    "buckets": [
+     {
+      "label": "VIX below 15",
+      "trades": 12,
+      "mean_excess": 9.459171289795817e-05
+     },
+     {
+      "label": "VIX 15-20",
+      "trades": 9,
+      "mean_excess": 0.003271418249980428
+     },
+     {
+      "label": "VIX 20-30",
+      "trades": 30,
+      "mean_excess": 0.019370556781151023
+     },
+     {
+      "label": "VIX 30 and up",
+      "trades": 12,
+      "mean_excess": 0.02466321391763863
+     }
+    ],
+    "status": "ok",
+    "quarters": 32,
+    "diff": 0.019426655734214184,
+    "ci90": [
+     0.0076462246192076444,
+     0.030231656897746356
+    ],
+    "p": 0.010798920107989201
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_term_structure",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "VIX above VIX3M",
+   "group": 38,
+   "rest": 66,
+   "diff": 0.003917476736138097,
+   "ci90": [
+    -0.0075852429489544695,
+    0.015072301235789442
+   ],
+   "p": 0.5475452454754525,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "release_within_5_sessions",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "a release within 5 sessions",
+   "group": 51,
+   "rest": 53,
+   "diff": -0.0011679322572554123,
+   "ci90": [
+    -0.009698096579241014,
+    0.006339504991988916
+   ],
+   "p": 0.8115188481151885,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "volatility_matched_baseline",
+   "version": "v1",
+   "kind": "baseline",
+   "strategy": "QQQ:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": null,
+   "group": null,
+   "rest": null,
+   "diff": 0.004971486621817155,
+   "ci90": [
+    0.0009030101332600798,
+    0.008318135555367786
+   ],
+   "p": 0.025097490250974904,
+   "q": 0.1084891510848915,
+   "label": "Not shown beyond volatility",
+   "holdout": {
+    "trades": 63,
+    "measured": 63,
+    "v2_mean_excess": 0.014407192623028472,
+    "mean_excess": 0.014044925918634788,
+    "status": "ok",
+    "quarters": 32,
+    "ci90": [
+     0.006724601616709925,
+     0.021177006880219514
+    ],
+    "p": 0.000999900009999
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "gap_at_next_open",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": "gap up 0.5% or more",
+   "group": 24,
+   "rest": 75,
+   "diff": -0.014278411132381014,
+   "ci90": [
+    -0.03179749619160763,
+    -0.0019841273595247997
+   ],
+   "p": 0.0287971202879712,
+   "q": 0.1084891510848915,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 96,
+    "measured": 96,
+    "group": 25,
+    "rest": 71,
+    "group_mean": 0.003346814513102151,
+    "rest_mean": 0.005367029717624041,
+    "strategy_mean": 0.004840932008113132,
+    "buckets": [
+     {
+      "label": "gap down more than 0.5%",
+      "trades": 11,
+      "mean_excess": 0.033089094710768624
+     },
+     {
+      "label": "within 0.5%",
+      "trades": 60,
+      "mean_excess": 0.0002846511355475335
+     },
+     {
+      "label": "gap up 0.5% to 1.5%",
+      "trades": 21,
+      "mean_excess": 0.002888187170855001
+     },
+     {
+      "label": "gap up 1.5% or more",
+      "trades": 4,
+      "mean_excess": 0.005754608059899677
+     }
+    ],
+    "status": "ok",
+    "quarters": 52,
+    "diff": -0.0020202152045218896,
+    "ci90": [
+     -0.01437252908869856,
+     0.010509955488772933
+    ],
+    "p": 0.8153184681531847
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "spy_200d_trend",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": "SPY below its 200-day average",
+   "group": 29,
+   "rest": 70,
+   "diff": -0.001949643666144681,
+   "ci90": [
+    -0.018511424558701486,
+    0.01132601940009758
+   ],
+   "p": 0.9011098890110989,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 96,
+    "measured": 92,
+    "group": 47,
+    "rest": 45,
+    "group_mean": 0.0025517653605231423,
+    "rest_mean": 0.007507990456281784,
+    "strategy_mean": 0.004976005896492044,
+    "buckets": [],
+    "status": "ok",
+    "quarters": 49,
+    "diff": -0.004956225095758642,
+    "ci90": [
+     -0.01383530884277816,
+     0.003960021375224392
+    ],
+    "p": 0.36876312368763126
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_level",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": "VIX 20 or higher",
+   "group": 62,
+   "rest": 37,
+   "diff": 0.002146303902688914,
+   "ci90": [
+    -0.006246871523897892,
+    0.00924106646606997
+   ],
+   "p": 0.6039396060393961,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 96,
+    "measured": 96,
+    "group": 66,
+    "rest": 30,
+    "group_mean": 0.006098369751092028,
+    "rest_mean": 0.0020745689735595634,
+    "strategy_mean": 0.004840932008113132,
+    "buckets": [
+     {
+      "label": "VIX below 15",
+      "trades": 14,
+      "mean_excess": -0.0011080455041623876
+     },
+     {
+      "label": "VIX 15-20",
+      "trades": 16,
+      "mean_excess": 0.00485935664156627
+     },
+     {
+      "label": "VIX 20-30",
+      "trades": 50,
+      "mean_excess": 0.006224943550301223
+     },
+     {
+      "label": "VIX 30 and up",
+      "trades": 16,
+      "mean_excess": 0.0057028266285632885
+     }
+    ],
+    "status": "ok",
+    "quarters": 52,
+    "diff": 0.004023800777532465,
+    "ci90": [
+     -0.002698657006433801,
+     0.01095832100344134
+    ],
+    "p": 0.32256774322567744
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_term_structure",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": "VIX above VIX3M",
+   "group": 41,
+   "rest": 58,
+   "diff": -1.1932834826687902e-06,
+   "ci90": [
+    -0.012262675063922214,
+    0.011165545947979036
+   ],
+   "p": 0.922107789221078,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "release_within_5_sessions",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": "a release within 5 sessions",
+   "group": 51,
+   "rest": 48,
+   "diff": -0.009329738571917644,
+   "ci90": [
+    -0.018825326736956756,
+    -0.001003440926229924
+   ],
+   "p": 0.06079392060793921,
+   "q": 0.18238176182381763,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "volatility_matched_baseline",
+   "version": "v1",
+   "kind": "baseline",
+   "strategy": "SPY:bollinger_lower_close+close_above_sma5|etf_next_open",
+   "symbol": "SPY",
+   "mode": "etf_next_open",
+   "group_label": null,
+   "group": null,
+   "rest": null,
+   "diff": 0.002382846488712756,
+   "ci90": [
+    -0.0030541777942760624,
+    0.006621756706189781
+   ],
+   "p": 0.1987801219878012,
+   "q": 0.4638202846382028,
+   "label": "Not shown beyond volatility",
+   "holdout": {
+    "trades": 96,
+    "measured": 96,
+    "v2_mean_excess": 0.004840932008113132,
+    "mean_excess": 0.004747084441158371,
+    "status": "ok",
+    "quarters": 52,
+    "ci90": [
+     0.00040212972306903546,
+     0.009156232157298572
+    ],
+    "p": 0.03519648035196481
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "gap_at_next_open",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "gap up 0.5% or more",
+   "group": 14,
+   "rest": 12,
+   "diff": -0.027231785344195,
+   "ci90": [
+    -0.04961856189456387,
+    -0.0063566174579938965
+   ],
+   "p": 0.030996900309969003,
+   "q": 0.1084891510848915,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 23,
+    "measured": 23,
+    "group": 11,
+    "rest": 12,
+    "group_mean": 0.023773471491929047,
+    "rest_mean": 0.023008314759759053,
+    "strategy_mean": 0.02337425928384036,
+    "buckets": [
+     {
+      "label": "gap down more than 0.5%",
+      "trades": 3,
+      "mean_excess": 0.029608910525871165
+     },
+     {
+      "label": "within 0.5%",
+      "trades": 9,
+      "mean_excess": 0.020808116171055033
+     },
+     {
+      "label": "gap up 0.5% to 1.5%",
+      "trades": 8,
+      "mean_excess": 0.014681624712819856
+     },
+     {
+      "label": "gap up 1.5% or more",
+      "trades": 3,
+      "mean_excess": 0.048018396236220236
+     }
+    ],
+    "status": "ok",
+    "quarters": 14,
+    "diff": 0.0007651567321699942,
+    "ci90": [
+     -0.03558284135446842,
+     0.03592773255507938
+    ],
+    "p": 0.9713028697130287
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "spy_200d_trend",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "SPY below its 200-day average",
+   "group": 17,
+   "rest": 9,
+   "diff": 0.014186113499602478,
+   "ci90": [
+    0.0007526341053038726,
+    0.031814332732594465
+   ],
+   "p": 0.0788,
+   "q": 0.20684999999999998,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 23,
+    "measured": 23,
+    "group": 21,
+    "rest": 2,
+    "group_mean": 0.025504314879576856,
+    "rest_mean": 0.0010086755286071803,
+    "strategy_mean": 0.02337425928384036,
+    "buckets": [],
+    "status": "too few"
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_level",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "VIX 20 or higher",
+   "group": 23,
+   "rest": 3,
+   "diff": null,
+   "ci90": null,
+   "p": null,
+   "q": null,
+   "label": "Too few trades",
+   "holdout": {
+    "trades": 23,
+    "measured": 23,
+    "group": 19,
+    "rest": 4,
+    "group_mean": 0.02670355110695659,
+    "rest_mean": 0.007560123124038284,
+    "strategy_mean": 0.02337425928384036,
+    "buckets": [
+     {
+      "label": "VIX below 15",
+      "trades": 2,
+      "mean_excess": 0.0010086755286071803
+     },
+     {
+      "label": "VIX 15-20",
+      "trades": 2,
+      "mean_excess": 0.014111570719469387
+     },
+     {
+      "label": "VIX 20-30",
+      "trades": 9,
+      "mean_excess": 0.027074298750684848
+     },
+     {
+      "label": "VIX 30 and up",
+      "trades": 10,
+      "mean_excess": 0.026369878227601153
+     }
+    ],
+    "status": "too few"
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_term_structure",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "VIX above VIX3M",
+   "group": 20,
+   "rest": 6,
+   "diff": null,
+   "ci90": null,
+   "p": null,
+   "q": null,
+   "label": "Too few trades",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "release_within_5_sessions",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": "a release within 5 sessions",
+   "group": 13,
+   "rest": 13,
+   "diff": 0.0014314786243917743,
+   "ci90": [
+    -0.01570155431020292,
+    0.021292975235383736
+   ],
+   "p": 0.9419058094190581,
+   "q": 0.941905809419058,
+   "label": "No meaningful difference",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "volatility_matched_baseline",
+   "version": "v1",
+   "kind": "baseline",
+   "strategy": "QQQ:rsi14_below_30+close_above_sma5|etf_next_open",
+   "symbol": "QQQ",
+   "mode": "etf_next_open",
+   "group_label": null,
+   "group": null,
+   "rest": null,
+   "diff": 0.02497106583236482,
+   "ci90": [
+    0.016882521593980248,
+    0.03517764423743978
+   ],
+   "p": 9.999000099990002e-05,
+   "q": 0.0020997900209979003,
+   "label": "Edge beyond volatility",
+   "holdout": {
+    "trades": 23,
+    "measured": 23,
+    "v2_mean_excess": 0.02337425928384036,
+    "mean_excess": 0.02102011054637445,
+    "status": "ok",
+    "quarters": 14,
+    "ci90": [
+     -0.0006980497474071869,
+     0.043809581776386615
+    ],
+    "p": 0.0552944705529447
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "spy_200d_trend",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "mode": "etf_close",
+   "group_label": "SPY below its 200-day average",
+   "group": 44,
+   "rest": 148,
+   "diff": 0.0003969131929666839,
+   "ci90": [
+    -0.008668277624366809,
+    0.008525138919024209
+   ],
+   "p": 0.9277072292770723,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 143,
+    "measured": 143,
+    "group": 71,
+    "rest": 72,
+    "group_mean": 0.008160717116901944,
+    "rest_mean": 0.009680332022804392,
+    "strategy_mean": 0.008925837908684994,
+    "buckets": [],
+    "status": "ok",
+    "quarters": 44,
+    "diff": -0.0015196149059024475,
+    "ci90": [
+     -0.011677979361849269,
+     0.00818685671470324
+    ],
+    "p": 0.8329167083291671
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_level",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "mode": "etf_close",
+   "group_label": "VIX 20 or higher",
+   "group": 84,
+   "rest": 108,
+   "diff": 0.0031465042163281447,
+   "ci90": [
+    -0.0024789165737072343,
+    0.008434724946261322
+   ],
+   "p": 0.3291670832916708,
+   "q": 0.6912508749125087,
+   "label": "Insufficient evidence",
+   "holdout": {
+    "trades": 143,
+    "measured": 143,
+    "group": 93,
+    "rest": 50,
+    "group_mean": 0.012320304409604244,
+    "rest_mean": 0.002612130216975198,
+    "strategy_mean": 0.008925837908684994,
+    "buckets": [
+     {
+      "label": "VIX below 15",
+      "trades": 28,
+      "mean_excess": 0.0020218190164123335
+     },
+     {
+      "label": "VIX 15-20",
+      "trades": 22,
+      "mean_excess": 0.0033634353813279355
+     },
+     {
+      "label": "VIX 20-30",
+      "trades": 69,
+      "mean_excess": 0.009269065973663929
+     },
+     {
+      "label": "VIX 30 and up",
+      "trades": 24,
+      "mean_excess": 0.02109261491293263
+     }
+    ],
+    "status": "ok",
+    "quarters": 44,
+    "diff": 0.009708174192629045,
+    "ci90": [
+     0.0020803154802512946,
+     0.017239429446421005
+    ],
+    "p": 0.0357964203579642
+   },
+   "holdout_source": "first look, stored in the ledger"
+  },
+  {
+   "test": "vix_term_structure",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "mode": "etf_close",
+   "group_label": "VIX above VIX3M",
+   "group": 35,
+   "rest": 157,
+   "diff": -0.0011114858578451414,
+   "ci90": [
+    -0.010741438891094213,
+    0.007832736300475188
+   ],
+   "p": 0.8861113888611138,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "release_within_5_sessions",
+   "version": "v1",
+   "kind": "split",
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "mode": "etf_close",
+   "group_label": "a release within 5 sessions",
+   "group": 98,
+   "rest": 94,
+   "diff": -0.0006490341120565474,
+   "ci90": [
+    -0.006004536881063059,
+    0.004523318385514418
+   ],
+   "p": 0.8555144485551445,
+   "q": 0.941905809419058,
+   "label": "Insufficient evidence",
+   "holdout": null,
+   "holdout_source": null
+  },
+  {
+   "test": "volatility_matched_baseline",
+   "version": "v1",
+   "kind": "baseline",
+   "strategy": "QQQ:rsi2_below_10+close_above_sma5|etf_close",
+   "symbol": "QQQ",
+   "mode": "etf_close",
+   "group_label": null,
+   "group": null,
+   "rest": null,
+   "diff": 0.002933958578360766,
+   "ci90": [
+    0.000572919934140363,
+    0.005111798847986185
+   ],
+   "p": 0.021397860213978603,
+   "q": 0.1084891510848915,
+   "label": "Not shown beyond volatility",
+   "holdout": {
+    "trades": 143,
+    "measured": 143,
+    "v2_mean_excess": 0.008925837908684994,
+    "mean_excess": 0.008853026687856856,
+    "status": "ok",
+    "quarters": 44,
+    "ci90": [
+     0.004131788149683263,
+     0.013574456741400691
+    ],
+    "p": 0.000999900009999
+   },
+   "holdout_source": "first look, stored in the ledger"
+  }
+ ]
+}

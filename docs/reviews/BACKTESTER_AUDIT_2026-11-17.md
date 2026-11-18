@@ -1,5 +1,8 @@
 # Backtester audit, trading-edge validation and research-app integration (2026-11-17)
 
+> **Update 2026-11-18.** The backtester-side fixes from this review are done; see `docs/CHANGES_2026-11-18.md` for
+> what changed, before and after. This review describes the app as it was at 407cd65.
+
 A read-only review of the trading backtester (`C:\Claude\trading-backtester`, code 407cd65, results through the
 2026-11-17 runs) and of how it works with the research app (`C:\Claude\trading-research`), written to the user's brief
 of 2026-11-17. Checks ran on 2026-11-18 from a scratch copy; neither app's code, data or settings were changed.
