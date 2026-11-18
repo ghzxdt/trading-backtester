@@ -31,13 +31,31 @@ Open items:
   has not yet been seen on this laptop (the System log showed only power-button and USB wakes).
 - Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
 - `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
-- Full audit of 2026-11-17: `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md`; its roadmap (part 11) lists what is left.
+- Full audit of 2026-11-17: `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md`. What is left, merged with the Codex review
+  of 2026-11-14: `docs/reviews/APP_REVIEW_2026-11-18.md`, section 4. Top two (backtester): a settings-and-method
+  identity on every holdout-ledger entry, and the weekly script committing only its own files.
 - Known residual: each Yahoo re-download moves adjusted prices by about 1e-6 and flips two knife-edge exits (QQQ
   2013-12-12, SPY 1993-07-22), so QQQ RSI(2)'s p moves by about 0.0005 between downloads. Visible in the
   verdict-change list; a tolerance would need a new exit version.
 
 Next ideas (each a new registered version, never an edit): watch the forward record and the gap-up effect forward;
 a credit-spread split; a leveraged-ETF verdict once a loss limit is set; stops once intraday bars exist.
+
+## 2026-11-18 (later): review built on the Codex review of 2026-11-14
+- User asked for another app review based on the Codex package in
+  `C:\Users\timothy\Documents\Codex\2026-11-14\https-github-com-ghzxdt-trading-backtester-3\outputs\`. Result:
+  `docs/reviews/APP_REVIEW_2026-11-18.md`. Read-only; nothing in either app changed.
+- Reproduced Codex's benchmark finding exactly: at the same total volatility, QQQ held beat every Lead's CAGR in
+  2010-2026 (QQQ Bollinger next open +4.77% against +9.17%, similar drawdown). The Leads are timing on top of a
+  position, not better allocations.
+- Confirmed three backtester problems the 2026-11-17 audit missed: the holdout ledger reuses 1993-2009 statistics
+  after a settings change (sandbox: 2 -> 50 bp, old 2 bp numbers kept under a 50 bp header; nothing recorded is
+  affected, settings unchanged since 2026-11-08); `run_weekly.ps1` commits anything staged and pushes without a branch
+  check; 2009 study windows run into 2010 (one SPY signal). All open; first two are top of the merged list.
+- Research app (read-only): System status still shows intraday collection OK with 0 of 16 minute-bar tickers; all
+  120,705 minute bars are `retrieved_archive`, so intraday paper evidence can never qualify; the minute archive has
+  not grown since 2026-11-14. For the research chat.
+- Pick up here: section 4 of that review (combined priorities) supersedes the order in the audit's part 11.
 
 ## 2026-11-18: audit fixes (Lead v3, filter tests, risk and evidence cards)
 - User asked to order the audit's fixes, act on them and give a before/after change log: `docs/CHANGES_2026-11-18.md`.
