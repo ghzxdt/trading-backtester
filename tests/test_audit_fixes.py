@@ -188,6 +188,22 @@ class LeadV3Tests(unittest.TestCase):
         self.assertIsNone(run_trades.verdict_changes(previous, [{**rows[0], "verdict": run_trades.PARTIAL}]))
 
 
+class StudyWindowTests(unittest.TestCase):
+    def test_study_results_do_not_move_when_data_is_added(self):
+        import run_studies
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(lead_v3, "DEV_END", "2011-12-30"):
+            short = make_app(Path(tmp) / "short", last="2011-12-30", context=False)
+            long_ = make_app(Path(tmp) / "long", last="2012-06-29", context=False)
+            a = run_studies.run(["SPY", "QQQ", "IWM"], [1, 5], 200, 7, CFG, short)
+            b = run_studies.run(["SPY", "QQQ", "IWM"], [1, 5], 200, 7, CFG, long_)
+
+        def key(r):
+            return r["dev"].get("signals"), r["dev"].get("excess"), r["dev"].get("p"), r.get("dev_ci90")
+        self.assertEqual([key(r) for r in a], [key(r) for r in b])  # the outcome of a late signal waits for the forward record
+        self.assertTrue(all(r["forward"]["signals"] == 0 for r in a))
+        self.assertTrue(any(r["forward"]["signals"] > 0 for r in b))
+
+
 class ContextFileTests(unittest.TestCase):
     def test_old_fingerprints_and_context_snapshots(self):
         with tempfile.TemporaryDirectory() as tmp:

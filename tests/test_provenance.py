@@ -100,7 +100,7 @@ class RunRecordTests(unittest.TestCase):
             self.assertEqual(run_trades.main([]), 0)  # the registered settings
             record = registry.read(tmp / "trials.jsonl")[-1]
             self.assertEqual(record["settings"]["costs_round_trip_bps"]["etf"], 2)
-            self.assertEqual((record["family"], record["method"]), ("registered", 2))
+            self.assertEqual((record["family"], record["method"]), ("registered", 3))  # 3: fixed development window
             self.assertEqual(record["rules"], lock.marks())
             self.assertTrue((tmp / "reports" / record["report"]).exists())
             trades = pd.read_csv(tmp / record["trade_list"])

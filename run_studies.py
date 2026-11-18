@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from backtester import catalog, data, lock, registry, runlog
+from backtester import catalog, data, lead_v3, lock, registry, runlog
 from backtester.catalog import STUDIES
 from backtester.ledger import HoldoutLedger, holdout_result, rng_for
 from backtester.report_html import render
@@ -27,7 +27,8 @@ HERE = Path(__file__).resolve().parent
 REPORTS = HERE / "reports"
 TRIALS = HERE / "trials.jsonl"
 LEDGER = HERE / "holdout_ledger.jsonl"
-METHOD = 2  # 2 (2026-11-13): one random stream per test, holdout read from the ledger. 1: one shared stream.
+METHOD = 3  # 3 (2026-11-18): development window fixed at lead_v3.DEV_END, outcomes known by then; forward apart.
+# 2 (2026-11-13): one random stream per test, holdout read from the ledger. 1: one shared stream.
 PARTIAL = "Partial run (no verdict)"
 
 
@@ -53,7 +54,11 @@ def run(symbols, horizons, draws, seed, cfg=None, root=None, ledger: HoldoutLedg
     rows = []
     for symbol in symbols:
         frame = data.load(symbol, root)
-        dev_mask, hold_mask = period_mask(frame.index, cfg["development"]), period_mask(frame.index, cfg["holdout"])
+        # Method 3: the development window ends at lead_v3.DEV_END and only outcomes known by then count, so adding
+        # data never moves a development result; signals after it are reported apart as the forward record.
+        dev_mask, hold_mask = lead_v3.development_mask(frame.index, cfg), period_mask(frame.index, cfg["holdout"])
+        known = frame[frame.index <= pd.Timestamp(lead_v3.DEV_END)]
+        after = lead_v3.forward_mask(frame.index).to_numpy()
         for study in STUDIES:
             if study.needs_volume and frame["volume"].isna().all():
                 continue
@@ -61,17 +66,22 @@ def run(symbols, horizons, draws, seed, cfg=None, root=None, ledger: HoldoutLedg
             for h in horizons:
                 who = (study.name, study.version, symbol, h)  # each test draws from its own random stream
                 close_fwd = forward_return(frame, h, "close")
+                dev_fwd = forward_return(known, h, "close").reindex(frame.index)
                 holdout, source = holdout_result(
                     ledger, registered, f"study|{study.name}@{study.version}|{symbol}|h{h}", bool(hold_mask.any()),
                     lambda: evaluate(signal, close_fwd, hold_mask, h, draws, rng_for(seed, *who, "holdout")))
-                dev = evaluate(signal, close_fwd, dev_mask, h, draws, rng_for(seed, *who, "development"))
+                dev = evaluate(signal, dev_fwd, dev_mask, h, draws, rng_for(seed, *who, "development"))
+                later = close_fwd[after & signal.to_numpy() & close_fwd.notna().to_numpy()]
                 rows.append({"study": study.name, "version": study.version, "description": study.description,
                              "symbol": symbol, "horizon": h, "dev": dev,
                              # 90% interval of the excess (added 2026-11-18): its own random stream, so p is unchanged
-                             "dev_ci90": excess_interval(signal, close_fwd, dev_mask, rng_for(seed, *who, "development", "ci"))
+                             "dev_ci90": excess_interval(signal, dev_fwd, dev_mask, rng_for(seed, *who, "development", "ci"))
                              if dev.get("status") == "ok" else None,
+                             "forward": {"signals": int(len(later)),
+                                         "excess": float(later.mean() - dev["base_mean"]) if len(later) and dev.get("base_mean") is not None else None},
                              "holdout": holdout, "holdout_source": source,
-                             "next_open": evaluate(signal, forward_return(frame, h, "next_open"), dev_mask, h, 0)})
+                             "next_open": evaluate(signal, forward_return(known, h, "next_open").reindex(frame.index),
+                                                   dev_mask, h, 0)})
     if not registered:  # the correction needs the whole registered family, so a partial run gives no verdicts
         for row in rows:
             row["verdict"] = PARTIAL
@@ -115,6 +125,9 @@ def report(rows, cfg, fingerprint, version, started) -> str:
              f"Code {version}; research-app data fingerprint {fingerprint}; {len(rows)} tests "
              f"({sum(1 for r in rows if r['dev'].get('status') == 'ok')} with enough signals).", "",
              *holdout_note(rows),
+             f"**Development window: {cfg['development']['start']} to {lead_v3.DEV_END}** (method 3, 2026-11-18). Only "
+             "outcomes known by its last day count, so new data never moves these results; signals after it are listed "
+             "under *Forward signals* at the end.", "",
              "**How to read this.** Each row asks: after the signal (known at that day's close), how did the index do "
              "over the next *h* sessions compared with all days in the same period? *Excess* is that difference in "
              "basis points (100 bp = 1%), with a 90% interval in brackets (calendar quarters of signals resampled, so "
@@ -146,6 +159,15 @@ def report(rows, cfg, fingerprint, version, started) -> str:
                 bp(n.get("excess")) if n.get("status") == "ok" else "–",
                 r["verdict"]]) + " |")
         lines.append("")
+    forward = [r for r in rows if (r.get("forward") or {}).get("signals")]
+    lines += [f"## Forward signals (after {lead_v3.DEV_END})", ""]
+    if not forward:
+        lines += ["None with a complete outcome yet.", ""]
+    else:
+        lines += ["Untouched evidence: excess against the development all-days mean. Read counts first; a few signals "
+                  "say little.", "", "| Study | Symbol | h | Signals | Excess bp |", "|---|---|---|---|---|"]
+        lines += [f"| {r['study']} | {r['symbol']} | {r['horizon']} | {r['forward']['signals']} | {bp(r['forward']['excess'])} |"
+                  for r in forward] + [""]
     tally = pd.Series([r["verdict"] for r in rows]).value_counts()
     lines += ["## Summary", ""] + [f"- {k}: {v}" for k, v in tally.items()] + [
         "", "These are historical event studies on adjusted daily ETF prices, not trades: no stops, sizing or "
@@ -176,7 +198,7 @@ def main(argv=None) -> int:
     text = report(rows, cfg, fingerprint, version, started)
     # The record goes first: if it can't be written (a broken chain), no report appears without one.
     registry.append(TRIALS, {"run_at": started.isoformat(timespec="seconds"), "code": version, "data": fingerprint,
-                             "settings": runlog.settings(cfg), "method": METHOD,
+                             "settings": runlog.settings(cfg), "method": METHOD, "development_end": lead_v3.DEV_END,
                              "family": "registered" if is_registered(symbols, args.horizons, args.draws, args.seed) else "partial",
                              "rules": {k: v for k, v in rules.items() if k.startswith("study:")},
                              "seed": args.seed, "draws": args.draws, "report": path.name,
@@ -185,6 +207,8 @@ def main(argv=None) -> int:
                                         "horizon": r["horizon"], "verdict": r["verdict"],
                                         "dev_excess": r["dev"].get("excess"), "dev_p": r["dev"].get("p"),
                                         "dev_ci90": r.get("dev_ci90"),
+                                        "forward_signals": (r.get("forward") or {}).get("signals"),
+                                        "forward_excess": (r.get("forward") or {}).get("excess"),
                                         "q": r.get("q"), "holdout_excess": (r["holdout"] or {}).get("excess"),
                                         "holdout_p": (r["holdout"] or {}).get("p")} for r in rows]})
     ledger.commit(started.isoformat(timespec="seconds"), version, fingerprint, args.seed, args.draws)
