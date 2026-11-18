@@ -23,9 +23,29 @@ Open items:
   has not yet been seen on this laptop (the System log showed only power-button and USB wakes).
 - Not verified: whether a Kalshi perp can be bought near the ETF close at 4:05 PM (no perp prices inspected).
 - `snapshots/` is on this machine only. It is inside `C:\Claude`, so the manual backup covers it.
+- Full audit of 2026-11-17: `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md`. Its first fixes: report verdict changes
+  and intra-trade risk (MAE); Lead v3 with the development window frozen at 2026-11-13 and a forward block; see its
+  roadmap (part 11) before starting new work.
 
 Next ideas (each a new registered version, never an edit): score trades after 2026-11-08 as the only untouched
 evidence, a trend or volatility filter, stops once intraday bars exist, and leverage scaling for the risk view.
+
+## 2026-11-17 and 2026-11-18: full audit (read-only)
+- The user's brief (backtester audit, edge validation, research-app integration), run in a session started from this
+  project's chat. Nothing in either app was changed; checks ran from a scratch copy. Review:
+  `docs/reviews/BACKTESTER_AUDIT_2026-11-17.md` (index and executive assessment) and 13 parts in
+  `docs/reviews/backtester_audit_2026-11-17/`, including the verification scripts (appendix A).
+- Verified: 36 tests pass; the 2026-11-17 runs (committed in 28ce2c8) rebuild with zero differences; an independent
+  re-implementation reproduces every SPY/QQQ study number and all 24 development ETF strategy-pricings. No
+  calculation error found.
+- Findings to act on: (1) the open-ended development window lets weekly runs mix post-registration trades into
+  "development" and flip verdicts silently (QQQ RSI(2) next open is at q 0.110); (2) reports hide intra-trade risk:
+  worst intra-trade lows at 1x were -11.7% (QQQ RSI(14)), -19.7% (QQQ Bollinger), -22.9% (SPY), so no leveraged use
+  until MAE and TQQQ/UPRO pricing exist; (3) both p-value methods are near nominal but about 1.5-1.8x lenient for rare
+  signals (synthetic test); (4) the 5-day-average exit decides at the close it sells at (moving it to the next open
+  changes means by -7 to +7 bp); (5) Yahoo's 1e-6 re-adjustments flipped two knife-edge exits between snapshots
+  (round to the cent); (6) the VIX is loaded but unused, so no regime test exists. Regime splits were deliberately
+  not computed, to keep the research app's idea 8 blind; 1993-2009 was not looked at for any new variant.
 
 ## 2026-11-13 and 2026-11-14
 - Review of the whole app at 80c4f2a (in this project's chat). Main findings: the simulator re-tested signals on
