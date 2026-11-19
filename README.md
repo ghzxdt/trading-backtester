@@ -59,7 +59,8 @@ sessions) it reports:
 - **Holdout**: the same rule on 1993-2009 data that played no part in choosing it (SPY and QQQ; IWM from 2000-05-26
   once the research app saved its longer history on 2026-11-18; its first look comes with the next registered run).
   Looked at once per rule version.
-- **Next-open**: the excess if you buy at the next morning's open rather than the close (perps trade at ~4:05 PM).
+- **Next-open**: the excess if you buy at the next morning's open rather than the close (the entry still available
+  once the signal is known).
 - **Verdict**: *Candidate* only if the development result survives q < 0.10, beats the ETF round-trip cost, and the
   holdout agrees (same direction, p < 0.10). Otherwise *No evidence*, *Failed holdout*, *Development only*,
   *Real but smaller than costs*, or *Opposite effect*.
@@ -67,7 +68,8 @@ sessions) it reports:
 ## What the trade simulation measures
 
 The three oversold signals that were Candidates, turned into trades with two fixed exits on SPY and QQQ (12
-strategies), each priced four ways. The verdict is **Lead v3** (`backtester/lead_v3.py`, registered 2026-11-18): the
+strategies), each priced two ways (ETF at the close, ETF at the next open; Kalshi perpetual pricings were removed
+on 2026-11-19 at the user's request). The verdict is **Lead v3** (`backtester/lead_v3.py`, registered 2026-11-18): the
 tests of Lead v2 (`backtester/lead_v2.py`, registered 2026-11-13) on a development window fixed at 2010-01-01 to
 2026-11-13, so a verdict no longer moves as data is added.
 

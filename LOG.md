@@ -41,6 +41,17 @@ Open items:
 Next ideas (each a new registered version, never an edit): watch the forward record and the gap-up effect forward;
 a credit-spread split; a leveraged-ETF verdict once a loss limit is set; stops once intraday bars exist.
 
+## 2026-11-19: Kalshi and perpetuals removed (user decision)
+- User: "as for anything kalshi or perpetual information weve been tracking i want that gone ... no more tracking
+  that." Backtester: the perp_maker and perp_taker pricings are gone (strategies.MODES is ETF at the close and at the
+  next open), `config.json` no longer holds Kalshi fees or funding, reports and docs no longer mention perps, and
+  `simulate.costs_for` refuses a non-ETF pricing. Perps were never in a verdict's test family, so no verdict, p or q
+  changes; trial records and reports before today keep their perp rows. CLAUDE.md records the rule.
+- The research chat was asked the same day to remove its Kalshi collection, the Leverage tab and perp readings,
+  archive (not delete) the collected Kalshi files, and leave the frozen four-rule experiment as recorded.
+- Note for the planned settings guard on the holdout ledger: the recorded settings lost the Kalshi keys today; they
+  never affected an ETF statistic, so the guard should hash only settings that do (ETF cost, periods, statistics).
+
 ## 2026-11-18 (afternoon): IWM history from 2000 in the research app's data
 - The research chat (5fc6bec) added IWM to `data/raw/etfs_long.csv` from 2000-05-26 (6,659 sessions). Checked here:
   `data.load("IWM")` now starts 2000-05-26, SPY and QQQ are unchanged apart from the usual 1e-6 re-download drift,

@@ -6,9 +6,9 @@ common, simple rules; nothing is tuned. A changed rule gets a new version, never
 Execution models (the same trades, priced different ways):
 - etf_close:      buy the ETF at the signal day's close (a market-on-close order), sell at the exit close.
 - etf_next_open:  buy the ETF at the next morning's open, sell at the exit close.
-- perp_maker / perp_taker: the Kalshi perp entered just after the close (~4:05 PM ET, priced at the ETF close
-  as a proxy), exited just before a later 4 PM close, paying Kalshi's maker or taker fee on both sides and
-  the daily 4 PM funding for every 4 PM it is held through.
+The Kalshi perpetual pricings (perp_maker, perp_taker) were removed on 2026-11-19 at the user's request: the user
+trades the ETFs and charts them, and no longer tracks perps. They were information only and never part of a
+verdict's test family; runs before 2026-11-19 report them.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from .catalog import STUDIES
 
 SIGNALS = ("rsi2_below_10", "rsi14_below_30", "bollinger_lower_close")
 SYMBOLS = ("SPY", "QQQ")
-MODES = ("etf_close", "etf_next_open", "perp_maker", "perp_taker")
+MODES = ("etf_close", "etf_next_open")
 DRAWS, SEED = 2000, 11  # the registered run; other settings get no holdout look
 
 

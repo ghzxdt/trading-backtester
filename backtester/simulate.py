@@ -1,12 +1,12 @@
 """Trade simulation for registered strategies (backtester/strategies.py), with two benchmarks.
 
 Daily data only: no stops (there is no honest intraday path to fill them), one position at a time, 1x notional.
-Prices are adjusted ETF prices; for the perp modes they stand in for the Kalshi perp, whose fees and 4 PM funding
-are charged explicitly.
+Prices are adjusted ETF prices (dividends included). Kalshi perpetual pricings were removed on 2026-11-19 at the
+user's request; reports before then show them.
 
 Benchmarks:
 - Exposure-matched buy-and-hold: hold the same instrument every day at a constant fraction equal to the
-  strategy's time in the market (perp modes also pay funding on that fraction every calendar day).
+  strategy's time in the market.
 - Random entries: the same number of trades with the same holding lengths at random entry days in the period;
   the strategy's mean gross trade return is ranked against 2,000 such draws (percentile).
 """
@@ -37,12 +37,10 @@ def find_trades(frame: pd.DataFrame, signal: pd.Series, exit_rule, mask: pd.Seri
 
 
 def costs_for(mode: str, cfg: dict, entry_day: pd.Timestamp, exit_day: pd.Timestamp) -> float:
-    """Round-trip cost as a fraction of notional."""
-    fees = cfg["costs_round_trip_bps"]
-    if mode.startswith("etf"):
-        return fees["etf"] / 1e4
-    crossings = max((exit_day - entry_day).days - 1, 0)  # 4 PM fundings between a ~4:05 PM entry and a pre-4 PM exit
-    return (fees["kalshi_maker" if mode == "perp_maker" else "kalshi_taker"] + cfg["funding_bps_per_day"] * crossings) / 1e4
+    """Round-trip cost as a fraction of notional (ETF pricings only)."""
+    if not mode.startswith("etf"):
+        raise ValueError(f"Unknown pricing {mode!r}: only ETF pricings remain (perps removed 2026-11-19)")
+    return cfg["costs_round_trip_bps"]["etf"] / 1e4
 
 
 PRICED_COLUMNS = ["signal_day", "entry_day", "entry_price", "exit_day", "exit_price", "sessions", "gross", "cost", "net",
@@ -133,9 +131,6 @@ def daily_returns(frame: pd.DataFrame, trades, mode: str, cfg: dict, mask: pd.Se
 
 def matched_buy_and_hold(frame: pd.DataFrame, mask: pd.Series, exposure: float, mode: str, cfg: dict) -> pd.Series:
     r = frame["close"].pct_change().fillna(0.0)
-    if mode.startswith("perp"):
-        gap = pd.Series(frame.index, index=frame.index).diff().dt.days.fillna(1)
-        r = r - cfg["funding_bps_per_day"] / 1e4 * gap
     return (exposure * r)[mask.to_numpy(bool)]
 
 

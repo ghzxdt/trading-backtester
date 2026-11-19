@@ -28,6 +28,8 @@ charts with indicators; this app measures which indicators actually carried info
   is a new version, and 1993-2009 is looked at once per split version through the holdout ledger.
 - The research app reads `exports/trade_simulation.json` (schema 1). Keep every field it reads; add, don't rename.
   `exports/evidence.json` (one evidence card per strategy and ETF entry) is for a later version of its Daily thesis.
+- No Kalshi or perpetual-futures tracking or pricing (user, 2026-11-19): the user trades and charts the ETFs; a new
+  instrument is added only when a specific idea needs it. Runs before 2026-11-19 show perp columns; leave them.
 - Indicators must be causal (a value at day t uses data up to t only); the tests check this.
 - After every change: run the tests, commit with a clear message, push `main` to the private GitHub repo
   https://github.com/ghzxdt/trading-backtester.

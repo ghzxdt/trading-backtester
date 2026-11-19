@@ -1,7 +1,7 @@
 """Event studies: what happened after a signal, compared with all days in the same period.
 
-For a signal known at day t's close, the forward return runs from t's close (the price a Kalshi perp
-can be traded near at ~4:05 PM) or from t+1's open (an ETF bought the next morning) to the close
+For a signal known at day t's close, the forward return runs from t's close (a market-on-close order
+placed on an estimate of that close) or from t+1's open (an ETF bought the next morning) to the close
 h sessions later. Each signal is judged against every day in the same period ("excess"), so normal
 market drift is not mistaken for an edge.
 

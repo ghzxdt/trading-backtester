@@ -2,8 +2,8 @@
 
     ..\\trading-research\\.venv\\Scripts\\python.exe -B run_trades.py
 
-12 strategies (SPY/QQQ x 3 oversold signals x 2 exits), each priced four ways (ETF at the close, ETF at the next
-open, Kalshi perp as maker or taker using the ETF as the price proxy). The verdict is Lead v3 (backtester/lead_v3.py):
+12 strategies (SPY/QQQ x 3 oversold signals x 2 exits), each priced two ways (ETF at the close, ETF at the next
+open; the Kalshi perpetual pricings were removed on 2026-11-19 at the user's request). The verdict is Lead v3 (backtester/lead_v3.py):
 v2's tests on a development window fixed at 2010-01-01 to 2026-11-13, a separate forward record of trades signalled
 after it, and the 1993-2009 holdout read from the ledger. v1 and v2 are computed beside it on v2's window (2010 to the
 latest data). Writes reports/<date-time>-trade-simulation.md and .html, exports/trade_simulation.json (read by the
@@ -33,9 +33,8 @@ REPORTS = HERE / "reports"
 EXPORTS = HERE / "exports"
 TRIALS = HERE / "trials.jsonl"
 LEDGER = HERE / "holdout_ledger.jsonl"
-MODE_LABELS = {"etf_close": "ETF at close", "etf_next_open": "ETF next open",
-               "perp_maker": "Perp, maker", "perp_taker": "Perp, taker"}
-THESIS_MODES = ("etf_close", "etf_next_open")  # user, 2026-11-08: the thesis shows ETFs only, no Kalshi
+MODE_LABELS = {"etf_close": "ETF at close", "etf_next_open": "ETF next open"}
+THESIS_MODES = ("etf_close", "etf_next_open")  # user, 2026-11-08: ETFs only; perps removed entirely 2026-11-19
 LEVERAGED = {"QQQ": "TQQQ", "SPY": "UPRO"}  # descriptive repricing of the same trades (added 2026-11-18)
 
 
@@ -114,8 +113,8 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
                                                "dates": [f"{d:%Y-%m-%d}" for d in frame.index[signal.to_numpy()]]}
             for ex in EXITS:
                 for mode in MODES:
-                    # One random stream per test. The three close-entry modes are the same test of the same
-                    # gross trades, so they share a stream; the next-open entry has its own.
+                    # One random stream per test: the close entry and the next-open entry each have their own
+                    # (identities unchanged since the perp pricings, which shared the close entry's, were removed).
                     entry = "next_open" if mode == "etf_next_open" else "close"
                     who = (name, study.version, ex.name, ex.version, symbol, entry)
                     tag = dict(symbol=symbol, signal=name, signal_version=study.version, exit=ex.name,
@@ -156,9 +155,9 @@ def run(draws: int, seed: int, cfg=None, root=None, symbols=SYMBOLS,
 
 
 def judge(rows: list[dict], registered: bool) -> None:
-    """Set each row's verdicts. A correction covers every strategy x entry price of a registered run once: the
-    close-entry pricings are one test, so the perp rows take their ETF-at-close row's q. v3 (the verdict) uses v3's
-    development window; v2 (reported beside it) uses v2's window to date."""
+    """Set each row's verdicts. A correction covers every strategy x entry price of a registered run once (until
+    2026-11-19 the perp pricings shared their ETF-at-close row's test). v3 (the verdict) uses v3's development window;
+    v2 (reported beside it) uses v2's window to date."""
     if not registered:
         for row in rows:
             row.update(q=None, q_v2=None, verdict=PARTIAL, verdict_v2=PARTIAL)
@@ -307,16 +306,14 @@ def report(rows, cfg, fingerprint, version, started, draws, full, trades_file: s
              "position at a time, fully invested (1x) while in a trade, cash earns nothing in between. No stops: "
              "daily bars can't show whether a stop would have filled.", "",
              "**Pricing.** *ETF at close*: buy at the signal day's close. *ETF next open*: buy at the next morning's "
-             f"open. Both pay {fees['etf']} bp per round trip. *Perp* columns price the same trades as a Kalshi perp "
-             f"bought just after the close: {fees['kalshi_maker']} bp (maker) or {fees['kalshi_taker']} bp (taker) per "
-             f"round trip plus {cfg['funding_bps_per_day']} bp of funding for every calendar day held through a 4 PM "
-             "funding time. The perp columns use the ETF's adjusted price as a stand-in for the perp's price.", "",
+             f"open. Both pay {fees['etf']} bp per round trip. (Reports before 2026-11-19 also priced the trades as "
+             "Kalshi perpetuals; those columns were removed at the user's request.)", "",
              f"**The test (verdict v3, registered 2026-11-18).** v2's test, unchanged, on a development window fixed at "
              f"{start} to {end}, so a verdict no longer moves as data is added. *Excess* is the average trade minus the "
              "average of every possible trade of the same length in the period, with a 90% interval. Its p-value comes "
              f"from resampling the rule's own trades by calendar quarter {lead_v2.RESAMPLES:,} times, so the spread is the "
              "rule's own and trades from one sell-off stay together. q corrects the development p-values for every "
-             "strategy and entry price in the run (the three close-entry pricings are one test).", "",
+             "strategy and entry price in the run.", "",
              f"**Forward record.** Trades signalled after {end} are untouched evidence, kept apart and compared with the "
              "development result: each trade's excess uses the development mean of trades of its length. From "
              f"{lead_v3.MIN_FORWARD} forward trades, a forward mean below the development mean minus {lead_v3.BAND_SE:g} "
@@ -455,7 +452,7 @@ VERDICT_DEFINITION = lead_v3.DEFINITION
 
 def export(rows, signal_days, cfg, fingerprint, version, started, report_name, full, run_info: dict | None = None,
            changes: list[dict] | None = None) -> dict:
-    """Evidence for the research app's Daily thesis tab: ETF pricing only (no Kalshi in the thesis).
+    """Evidence for the research app's Daily thesis tab: ETF pricings (the only pricings since 2026-11-19).
 
     Schema 1 is unchanged for the reader; the fields from "verdict_definition" down were added 2026-11-13, and
     "development_end", "verdict_changes", and per row "verdict_v2", "q_v2", "forward", "leveraged" and

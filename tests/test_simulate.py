@@ -1,4 +1,4 @@
-"""Trade simulation mechanics: entries and exits, no overlap, costs and funding, benchmarks, verdicts."""
+"""Trade simulation mechanics: entries and exits, no overlap, costs, benchmarks, verdicts."""
 import sys, unittest
 from pathlib import Path
 
@@ -7,9 +7,10 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from backtester import simulate  # noqa: E402
+from backtester import strategies  # noqa: E402
 from backtester.strategies import EXITS  # noqa: E402
 
-CFG = {"costs_round_trip_bps": {"etf": 2, "kalshi_taker": 24, "kalshi_maker": 4}, "funding_bps_per_day": 1.37}
+CFG = {"costs_round_trip_bps": {"etf": 2}}
 DAYS = pd.bdate_range("2011-01-03", periods=1500)
 
 
@@ -45,12 +46,13 @@ class TradeTests(unittest.TestCase):
         exits = rule(f, np.arange(20, 200))
         self.assertTrue(((exits > np.arange(20, 200)) & (exits <= np.arange(20, 200) + 10)).all())
 
-    def test_costs_and_funding_crossings(self):
-        mon, tue, fri, next_mon = (pd.Timestamp(d) for d in ("2026-11-02", "2026-11-03", "2026-11-06", "2026-11-09"))
+    def test_costs(self):
+        mon, fri = pd.Timestamp("2026-11-02"), pd.Timestamp("2026-11-06")
         self.assertAlmostEqual(simulate.costs_for("etf_close", CFG, mon, fri), 2e-4)
-        self.assertAlmostEqual(simulate.costs_for("perp_taker", CFG, mon, tue), 24e-4)  # no 4 PM crossed
-        self.assertAlmostEqual(simulate.costs_for("perp_maker", CFG, fri, next_mon), (4 + 2 * 1.37) * 1e-4)
-        self.assertAlmostEqual(simulate.costs_for("perp_maker", CFG, mon, next_mon), (4 + 6 * 1.37) * 1e-4)
+        self.assertAlmostEqual(simulate.costs_for("etf_next_open", CFG, mon, fri), 2e-4)
+        with self.assertRaises(ValueError):  # perpetual pricings were removed on 2026-11-19
+            simulate.costs_for("perp_taker", CFG, mon, fri)
+        self.assertEqual(strategies.MODES, ("etf_close", "etf_next_open"))
 
     def test_entry_prices_by_mode(self):
         f = frame()
@@ -69,7 +71,7 @@ class TradeTests(unittest.TestCase):
         f = frame()
         trades = [(30, 35), (50, 58)]
         mask = everywhere(f)
-        for mode in ("etf_close", "etf_next_open", "perp_taker"):
+        for mode in ("etf_close", "etf_next_open"):
             returns, exposure = simulate.daily_returns(f, trades, mode, CFG, mask)
             priced = simulate.price_trades(f, trades, mode, CFG)
             expected = np.prod(1 + priced["net"])  # the trade list and the equity curve agree
@@ -82,9 +84,9 @@ class TradeTests(unittest.TestCase):
         mask = everywhere(f)
         full = simulate.matched_buy_and_hold(f, mask, 1.0, "etf_close", CFG)
         pd.testing.assert_series_equal(full, f["close"].pct_change().fillna(0.0), check_names=False)
-        self.assertEqual(simulate.matched_buy_and_hold(f, mask, 0.0, "perp_taker", CFG).abs().sum(), 0.0)
-        half = simulate.matched_buy_and_hold(f, mask, 0.5, "perp_maker", CFG)
-        self.assertLess(half.sum(), (0.5 * full).sum())  # funding is charged
+        self.assertEqual(simulate.matched_buy_and_hold(f, mask, 0.0, "etf_close", CFG).abs().sum(), 0.0)
+        half = simulate.matched_buy_and_hold(f, mask, 0.5, "etf_next_open", CFG)
+        pd.testing.assert_series_equal(half, 0.5 * full)
 
     def test_planted_edge_ranks_high_and_noise_does_not(self):
         f = frame(seed=5)
@@ -139,7 +141,7 @@ class RunTradesTests(unittest.TestCase):
             raw.mkdir(parents=True)
             table.to_csv(raw / "etfs_long.csv", index=False)
             rows, signal_days, full, trades = run_trades.run(50, 1, cfg, Path(tmp), symbols=("SPY",))
-        self.assertEqual(len(rows), 3 * 2 * 4)
+        self.assertEqual(len(rows), 3 * 2 * 2)
         self.assertNotIn("priced", rows[0]["dev"])  # the trade list is not left inside a result
         self.assertEqual(len(trades), sum(r["dev"]["trades"] + r["holdout"]["trades"] for r in rows))
         self.assertEqual(list(trades.columns), run_trades.TRADE_COLUMNS)

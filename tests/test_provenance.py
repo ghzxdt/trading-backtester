@@ -15,7 +15,7 @@ from backtester.ledger import HoldoutLedger, rng_for  # noqa: E402
 
 CFG = {"research_app": "unused", "development": {"start": "2010-01-01", "end": None},
        "holdout": {"start": "1993-01-01", "end": "2009-12-31"},
-       "costs_round_trip_bps": {"etf": 2, "kalshi_taker": 24, "kalshi_maker": 4}, "funding_bps_per_day": 1.37,
+       "costs_round_trip_bps": {"etf": 2},
        "verdict_cost": "etf"}
 
 

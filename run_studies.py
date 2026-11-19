@@ -135,8 +135,7 @@ def report(rows, cfg, fingerprint, version, started) -> str:
              "the same signal pattern; *q* corrects p for every test in this run. *Holdout* re-checks the same rule on "
              "1993-2009 data that played no part in choosing it. *Next-open* is the excess if you buy at the next "
              "morning's open instead of the close.", "",
-             f"Costs: ETF round trip {costs['etf']} bp (used for verdicts); Kalshi perps {costs['kalshi_taker']} bp as "
-             f"taker or {costs['kalshi_maker']} bp as maker. A candidate must clear the ETF cost.", ""]
+             f"Costs: ETF round trip {costs['etf']} bp, used for verdicts; a candidate must clear it.", ""]
     for name in dict.fromkeys(r["study"] for r in rows):
         group = [r for r in rows if r["study"] == name]
         lines += [f"## {name} ({group[0]['version']})", "", group[0]["description"] + ".", "",
